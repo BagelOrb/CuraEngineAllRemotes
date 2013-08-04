@@ -265,11 +265,12 @@ void processFile(const char* input_filename, ConfigSettings& config, GCodeExport
         }
         if (config.supportAngle > -1)
         {
-            SupportPolyGenerator supportGenerator(storage.support, z, config.supportAngle, config.supportEverywhere > 0, true);
+            int32_t z2 = (layerNr+1) * config.layerThickness;
+            SupportPolyGenerator supportGenerator(storage.support, z2, config.supportAngle, config.supportEverywhere > 0, true);
             gcodeLayer.addPolygonsByOptimizer(supportGenerator.polygons, &supportConfig);
             if (layerNr == 0)
             {
-                SupportPolyGenerator supportGenerator2(storage.support, z, config.supportAngle, config.supportEverywhere > 0, false);
+                SupportPolyGenerator supportGenerator2(storage.support, z2, config.supportAngle, config.supportEverywhere > 0, false);
                 gcodeLayer.addPolygonsByOptimizer(supportGenerator2.polygons, &supportConfig);
             }
         }
