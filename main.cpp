@@ -1,4 +1,9 @@
 /** Copyright (C) 2013 David Braam - Released under terms of the AGPLv3 License */
+
+#ifndef LONG_LONG_MAX
+#define LONG_LONG_MAX LLONG_MAX
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -33,13 +38,14 @@
 #include "comb.h"
 #include "gcodeExport.h"
 
-#define VERSION "13.07"
+#define VERSION "13.07/Jouni"
 
 int verbose_level;
 int maxObjectHeight;
 
 void processFile(const char* input_filename, ConfigSettings& config, GCodeExport& gcode, bool firstFile)
 {
+	gcode.addComment(" ================================ FILE:%s ====================================== ", input_filename);
     for(unsigned int n=1; n<16;n++)
         gcode.setExtruderOffset(n, config.extruderOffset[n].p());
     gcode.setFlavor(config.gcodeFlavor);
@@ -200,6 +206,8 @@ void processFile(const char* input_filename, ConfigSettings& config, GCodeExport
         logProgress("export", layerNr+1, totalLayers);
         
         GCodePlanner gcodeLayer(gcode, config.moveSpeed, config.retractionMinimalDistance);
+
+		gcode.addLine("M117 %.0f %.0f%% %d/%d mh:%d", gcode.totalPrintTime/60.0,((double)layerNr/(double)totalLayers)*100.0,layerNr+1,totalLayers,maxObjectHeight/1000.0);
         gcode.addComment("LAYER:%d", layerNr);
         int32_t z = config.initialLayerThickness + layerNr * config.layerThickness;
         z += config.raftBaseThickness + config.raftInterfaceThickness;
@@ -310,8 +318,6 @@ void processFile(const char* input_filename, ConfigSettings& config, GCodeExport
             int n = config.initialSpeedupLayers;
             int layer0Factor = config.initialLayerSpeed * 100 / config.printSpeed;
             gcodeLayer.setExtrudeSpeedFactor((layer0Factor * (n - layerNr) + 100 * (layerNr)) / n);
-            if (layerNr == 0)//On the first layer, also slow down the travel
-                gcodeLayer.setTravelSpeedFactor(layer0Factor);
         }
         gcodeLayer.forceMinimalLayerTime(config.minimalLayerTime, config.minimalFeedrate);
         if (layerNr == 0)
@@ -485,6 +491,7 @@ int main(int argc, char **argv)
                         logError("Failed to open %s for output.\n", argv[argn]);
                         exit(1);
                     }
+                        
                     break;
                 case 's':
                     {
