@@ -267,18 +267,27 @@ public:
         if (currentFanSpeed == speed)
             return;
         if (speed > 0)
+
         {
+
             if (flavor == GCODE_FLAVOR_MAKERBOT)
+
                 fprintf(f, "M126 T0 ; value = %d\n", speed * 255 / 100);
+
             else
                 fprintf(f, "M106 S%d\n", speed * 255 / 100);
+
         }
         else
+
         {
             if (flavor == GCODE_FLAVOR_MAKERBOT)
+
                 fprintf(f, "M127 T0\n");
+
             else
                 fprintf(f, "M107\n");
+
         }
         currentFanSpeed = speed;
     }
@@ -332,6 +341,7 @@ private:
     
     GCodePathConfig travelConfig;
     int extrudeSpeedFactor;
+
     int travelSpeedFactor;
     int currentExtruder;
     int retractionMinimalDistance;
@@ -366,6 +376,7 @@ public:
         lastPosition = gcode.getPositionXY();
         comb = NULL;
         extrudeSpeedFactor = 100;
+
         travelSpeedFactor = 100;
         extraTime = 0.0;
         totalPrintTime = 0.0;
@@ -534,11 +545,16 @@ public:
                 if (speed < minimalSpeed)
                     factor = double(minimalSpeed) / double(path->config->speed);
             }
+
             
+
             //Only slow down with the minimal time if that will be slower then a factor already set. First layer slowdown also sets the speed factor.
+
             if (factor * 100 < getExtrudeSpeedFactor())
                 setExtrudeSpeedFactor(factor * 100);
+
             else
+
                 factor = getExtrudeSpeedFactor() / 100.0;
             
             if (minTime - (extrudeTime / factor) - travelTime > 0.1)
@@ -615,7 +631,7 @@ public:
             }
         }
         
-        gcode.totalPrintTime += this->totalPrintTime;
+        gcode.totalPrintTime += (this->totalPrintTime*1.2);
         if (liftHeadIfNeeded && extraTime > 0.0)
         {
             gcode.totalPrintTime += extraTime;

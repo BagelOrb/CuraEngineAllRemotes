@@ -200,6 +200,10 @@ void processFile(const char* input_filename, ConfigSettings& config, GCodeExport
         }
     }
 
+
+    // printing below 230 celcius is waste of time..    
+	gcode.addLine("M109 S230     ;override to 230C\n");
+
     int volumeIdx = 0;
     for(unsigned int layerNr=0; layerNr<totalLayers; layerNr++)
     {
@@ -207,7 +211,7 @@ void processFile(const char* input_filename, ConfigSettings& config, GCodeExport
         
         GCodePlanner gcodeLayer(gcode, config.moveSpeed, config.retractionMinimalDistance);
 
-		gcode.addLine("M117 %.0f %.0f%% %d/%d mh:%d", gcode.totalPrintTime/60.0,((double)layerNr/(double)totalLayers)*100.0,layerNr+1,totalLayers,maxObjectHeight/1000.0);
+		gcode.addLine("M117 %.0f %.0f%% %d/%d %d %.2f", gcode.totalPrintTime/60.0,((double)layerNr/(double)totalLayers)*100.0,layerNr+1,totalLayers,config.filamentDiameter/100,config.layerThickness/1000.0);
         gcode.addComment("LAYER:%d", layerNr);
         int32_t z = config.initialLayerThickness + layerNr * config.layerThickness;
         z += config.raftBaseThickness + config.raftInterfaceThickness;
@@ -444,7 +448,7 @@ int main(int argc, char **argv)
     config.gcodeFlavor = GCODE_FLAVOR_REPRAP;
     
     config.startCode =
-        "M109 S210     ;Heatup to 210C\n"
+        "M109 S230     ;Heatup to 210C\n"
         "G21           ;metric values\n"
         "G90           ;absolute positioning\n"
         "G28           ;Home\n"
