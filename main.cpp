@@ -41,6 +41,7 @@ void processFile(const char* input_filename, ConfigSettings& config, GCodeExport
     for(unsigned int n=1; n<16;n++)
         gcode.setExtruderOffset(n, config.extruderOffset[n].p());
     gcode.setFlavor(config.gcodeFlavor);
+    log("GCode flavor is %d...\n", config.gcodeFlavor);
     
     double t = getTime();
     log("Loading %s from disk...\n", input_filename);
