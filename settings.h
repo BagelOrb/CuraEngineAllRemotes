@@ -53,7 +53,7 @@ public:
  *  Almost the same as for Makerbot
  *   G1 is used instead of G0
  **/
-#define GCODE_FLAVOR_MYRIWELL           99
+#define GCODE_FLAVOR_MYRIWELL           3
 
 class ConfigSettings
 {
