@@ -48,6 +48,12 @@ public:
  *   Homing is done with G162 X Y F2000
  **/
 #define GCODE_FLAVOR_MAKERBOT           2
+/**
+ * MYRIWELL flavored GCode.
+ *  Almost the same as for Makerbot
+ *   G1 is used instead of G0
+ **/
+#define GCODE_FLAVOR_MYRIWELL           99
 
 class ConfigSettings
 {

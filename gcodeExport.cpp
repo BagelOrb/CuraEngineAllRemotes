@@ -184,7 +184,9 @@ void GCodeExport::addMove(Point p, int speed, int lineWidth)
         }
         extrusionAmount += extrusionPerMM * double(lineWidth) / 1000.0 * vSizeMM(diff);
         fprintf(f, "G1");
-    }else{
+    }else if (flavor == GCODE_FLAVOR_MYRIWELL){
+        fprintf(f, "G1");
+    }else
         fprintf(f, "G0");
     }
     
