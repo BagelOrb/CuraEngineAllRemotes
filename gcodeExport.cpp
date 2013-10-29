@@ -186,7 +186,7 @@ void GCodeExport::addMove(Point p, int speed, int lineWidth)
         fprintf(f, "G1");
     }else if (flavor == GCODE_FLAVOR_MYRIWELL){
         fprintf(f, "G1");
-    }else
+    }else{
         fprintf(f, "G0");
     }
     
