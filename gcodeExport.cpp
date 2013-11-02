@@ -282,22 +282,20 @@ void GCodeExport::tellFileSize() {
 
 GCodePath* GCodePlanner::getLatestPathWithConfig(GCodePathConfig* config)
 {
-    if (paths.size() > 0 && paths[paths.size()-1].config == config)
+    if (paths.size() > 0 && paths[paths.size()-1].config == config && !paths[paths.size()-1].done)
         return &paths[paths.size()-1];
     paths.push_back(GCodePath());
     GCodePath* ret = &paths[paths.size()-1];
     ret->retract = false;
     ret->config = config;
     ret->extruder = currentExtruder;
+    ret->done = false;
     return ret;
 }
 void GCodePlanner::forceNewPathStart()
 {
-    paths.push_back(GCodePath());
-    GCodePath* ret = &paths[paths.size()-1];
-    ret->retract = false;
-    ret->config = &travelConfig;
-    ret->extruder = currentExtruder;
+    if (paths.size() > 0)
+        paths[paths.size()-1].done = true;
 }
 
 GCodePlanner::GCodePlanner(GCodeExport& gcode, int travelSpeed, int retractionMinimalDistance)
@@ -325,7 +323,7 @@ void GCodePlanner::addTravel(Point p)
     GCodePath* path = getLatestPathWithConfig(&travelConfig);
     if (forceRetraction)
     {
-        if (!shorterThen(lastPosition - p, 1500))
+        if (!shorterThen(lastPosition - p, retractionMinimalDistance))
         {
             path->retract = true;
         }
@@ -358,12 +356,14 @@ void GCodePlanner::addExtrusionMove(Point p, GCodePathConfig* config)
     lastPosition = p;
 }
 
-void GCodePlanner::moveInsideCombBoundary()
+void GCodePlanner::moveInsideCombBoundary(int distance)
 {
     if (!comb || comb->checkInside(lastPosition)) return;
     Point p = lastPosition;
-    if (comb->moveInside(p))
+    if (comb->moveInside(&p, distance))
     {
+        //Move inside again, so we move out of tight 90deg corners
+        comb->moveInside(&p, distance);
         addTravel(p);
         //Make sure the that any retraction happens after this move, not before it by starting a new move path.
         forceNewPathStart();
@@ -449,10 +449,11 @@ void GCodePlanner::forceMinimalLayerTime(double minTime, int minimalSpeed)
     }
 }
 
-void GCodePlanner::writeGCode(bool liftHeadIfNeeded)
+void GCodePlanner::writeGCode(bool liftHeadIfNeeded, int layerThickness)
 {
     GCodePathConfig* lastConfig = NULL;
     int extruder = gcode.getExtruderNr();
+
     for(unsigned int n=0; n<paths.size(); n++)
     {
         GCodePath* path = &paths[n];
@@ -506,9 +507,35 @@ void GCodePlanner::writeGCode(bool liftHeadIfNeeded)
                 continue;
             }
         }
-        for(unsigned int i=0; i<path->points.size(); i++)
+        
+        if (path->config->spiralize)
         {
-            gcode.addMove(path->points[i], speed, path->config->lineWidth);
+            //If we need to spiralize then raise the head slowly by 1 layer as this path progresses.
+            float totalLength = 0.0;
+            int z = gcode.getPositionZ();
+            Point p0 = gcode.getPositionXY();
+            for(unsigned int i=0; i<path->points.size(); i++)
+            {
+                Point p1 = path->points[i];
+                totalLength += vSizeMM(p0 - p1);
+                p0 = p1;
+            }
+            
+            float length = 0.0;
+            p0 = gcode.getPositionXY();
+            for(unsigned int i=0; i<path->points.size(); i++)
+            {
+                Point p1 = path->points[i];
+                length += vSizeMM(p0 - p1);
+                p0 = p1;
+                gcode.setZ(z + layerThickness * length / totalLength);
+                gcode.addMove(path->points[i], speed, path->config->lineWidth);
+            }
+        }else{
+            for(unsigned int i=0; i<path->points.size(); i++)
+            {
+                gcode.addMove(path->points[i], speed, path->config->lineWidth);
+            }
         }
     }
     

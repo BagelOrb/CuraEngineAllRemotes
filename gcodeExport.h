@@ -90,10 +90,12 @@ public:
     int speed;
     int lineWidth;
     const char* name;
+    bool spiralize;
     
     GCodePathConfig(int speed, int lineWidth, const char* name)
     : speed(speed), lineWidth(lineWidth), name(name)
     {
+        spiralize = false;
     }
 };
 
@@ -104,6 +106,7 @@ public:
     bool retract;
     int extruder;
     vector<Point> points;
+    bool done;//Path is finished, no more moves should be added, and a new path should be started instead of any appending done to this one.
 };
 
 class GCodePlanner
@@ -179,7 +182,7 @@ public:
     
     void addExtrusionMove(Point p, GCodePathConfig* config);
     
-    void moveInsideCombBoundary();
+    void moveInsideCombBoundary(int distance);
 
     void addPolygon(ClipperLib::Polygon& polygon, int startIdx, GCodePathConfig* config);
 
@@ -187,7 +190,7 @@ public:
     
     void forceMinimalLayerTime(double minTime, int minimalSpeed);
     
-    void writeGCode(bool liftHeadIfNeeded);
+    void writeGCode(bool liftHeadIfNeeded, int layerThickness);
 };
 
 #endif//GCODEEXPORT_H

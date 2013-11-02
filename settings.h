@@ -116,6 +116,7 @@ public:
     int objectSink;
     
     int fixHorrible;
+    int spiralizeMode;
     int gcodeFlavor;
     
     IntPoint extruderOffset[16];
