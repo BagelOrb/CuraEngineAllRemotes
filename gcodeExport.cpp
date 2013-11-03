@@ -174,7 +174,12 @@ void GCodeExport::addMove(Point p, int speed, int lineWidth)
             if (flavor == GCODE_FLAVOR_ULTIGCODE)
             {
                 fprintf(f, "G11\n");
-            }else{
+            }else if (flavor == GCODE_FLAVOR_MYRIWELL) {
+				fprintf(f, "G1 F%i\n", retractionSpeed * 60);
+				fprintf(f, "G1 E%0.5lf\n", extrusionAmount);
+				fprintf(f, "G1 F%i\n", currentSpeed * 60);
+				fprintf(f, "M101\n");
+			}else{
                 fprintf(f, "G1 F%i E%0.5lf\n", retractionSpeed * 60, extrusionAmount);
                 currentSpeed = retractionSpeed;
             }
@@ -190,14 +195,14 @@ void GCodeExport::addMove(Point p, int speed, int lineWidth)
         fprintf(f, "G0");
     }
     
+    fprintf(f, " X%0.2f Y%0.2f", float(p.X - extruderOffset[extruderNr].X)/1000, float(p.Y - extruderOffset[extruderNr].Y)/1000);
+    if (zPos != currentPosition.z)
+        fprintf(f, " Z%0.2f", float(zPos)/1000);
     if (currentSpeed != speed)
     {
         fprintf(f, " F%i", speed * 60);
         currentSpeed = speed;
     }
-    fprintf(f, " X%0.2f Y%0.2f", float(p.X - extruderOffset[extruderNr].X)/1000, float(p.Y - extruderOffset[extruderNr].Y)/1000);
-    if (zPos != currentPosition.z)
-        fprintf(f, " Z%0.2f", float(zPos)/1000);
     if (lineWidth != 0)
         fprintf(f, " E%0.5lf", extrusionAmount);
     fprintf(f, "\n");
@@ -212,7 +217,12 @@ void GCodeExport::addRetraction()
         if (flavor == GCODE_FLAVOR_ULTIGCODE)
         {
             fprintf(f, "G10\n");
-        }else{
+        }else if (flavor == GCODE_FLAVOR_MYRIWELL) {
+			fprintf(f, "G1 F%i\n", retractionSpeed * 60);
+            fprintf(f, "G1 E%0.5lf\n", extrusionAmount - retractionAmount);
+			fprintf(f, "G1 F%i\n", currentSpeed * 60);
+			fprintf(f, "M103\n");
+        } else {
             fprintf(f, "G1 F%i E%0.5lf\n", retractionSpeed * 60, extrusionAmount - retractionAmount);
             currentSpeed = retractionSpeed;
         }
