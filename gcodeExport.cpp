@@ -195,15 +195,26 @@ void GCodeExport::addMove(Point p, int speed, int lineWidth)
         fprintf(f, "G0");
     }
     
+	if (flavor != GCODE_FLAVOR_MYRIWELL)
+	{
+		if (currentSpeed != speed)
+		{
+			fprintf(f, " F%i", speed * 60);
+			currentSpeed = speed;
+		}
+    }
     fprintf(f, " X%0.2f Y%0.2f", float(p.X - extruderOffset[extruderNr].X)/1000, float(p.Y - extruderOffset[extruderNr].Y)/1000);
     if (zPos != currentPosition.z)
         fprintf(f, " Z%0.2f", float(zPos)/1000);
-    if (currentSpeed != speed)
-    {
-        fprintf(f, " F%i", speed * 60);
-        currentSpeed = speed;
+	if (flavor == GCODE_FLAVOR_MYRIWELL)
+	{
+		if (currentSpeed != speed)
+		{
+			fprintf(f, " F%i", speed * 60);
+			currentSpeed = speed;
+		}
     }
-    if (lineWidth != 0)
+	if (lineWidth != 0)
         fprintf(f, " E%0.5lf", extrusionAmount);
     fprintf(f, "\n");
     
