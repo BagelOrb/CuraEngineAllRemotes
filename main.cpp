@@ -32,13 +32,13 @@
 #include "comb.h"
 #include "gcodeExport.h"
 
-#define VERSION "13.10"
+#define VERSION "13.11"
 
 int maxObjectHeight;
 
 void processFile(const char* input_filename, ConfigSettings& config, GCodeExport& gcode, bool firstFile)
 {
-    for(unsigned int n=1; n<16;n++)
+    for(unsigned int n=1; n<MAX_EXTRUDERS;n++)
         gcode.setExtruderOffset(n, config.extruderOffset[n].p());
     gcode.setFlavor(config.gcodeFlavor);
     log("GCode flavor is %d...\n", config.gcodeFlavor);
@@ -105,6 +105,29 @@ void processFile(const char* input_filename, ConfigSettings& config, GCodeExport
         }
         logProgress("inset",layerNr+1,totalLayers);
     }
+    if (config.enableOozeShield && storage.volumes.size() > 1)
+    {
+        for(unsigned int layerNr=0; layerNr<totalLayers; layerNr++)
+        {
+            Polygons oozeShield;
+            for(unsigned int volumeIdx=0; volumeIdx<storage.volumes.size(); volumeIdx++)
+            {
+                for(unsigned int partNr=0; partNr<storage.volumes[volumeIdx].layers[layerNr].parts.size(); partNr++)
+                {
+                    oozeShield = oozeShield.unionPolygons(storage.volumes[volumeIdx].layers[layerNr].parts[partNr].outline.offset(2000));
+                }
+            }
+            storage.oozeShield.push_back(oozeShield);
+        }
+        
+        for(unsigned int layerNr=0; layerNr<totalLayers; layerNr++)
+            storage.oozeShield[layerNr] = storage.oozeShield[layerNr].offset(-1000).offset(1000);
+        int offsetAngle = tan(60.0*M_PI/180) * config.layerThickness;//Allow for a 60deg angle in the oozeShield.
+        for(unsigned int layerNr=1; layerNr<totalLayers; layerNr++)
+            storage.oozeShield[layerNr] = storage.oozeShield[layerNr].unionPolygons(storage.oozeShield[layerNr-1].offset(-offsetAngle));
+        for(unsigned int layerNr=totalLayers-1; layerNr>0; layerNr--)
+            storage.oozeShield[layerNr-1] = storage.oozeShield[layerNr-1].unionPolygons(storage.oozeShield[layerNr].offset(-offsetAngle));
+    }
     log("Generated inset in %5.3fs\n", timeElapsed(t));
 
     for(unsigned int layerNr=0; layerNr<totalLayers; layerNr++)
@@ -145,6 +168,7 @@ void processFile(const char* input_filename, ConfigSettings& config, GCodeExport
             gcode.addCode(";FLAVOR:UltiGCode");
             gcode.addCode(";TIME:<__TIME__>");
             gcode.addCode(";MATERIAL:<FILAMENT>");
+            gcode.addCode(";MATERIAL2:<FILAMEN2>");
         }
         gcode.addCode(config.startCode);
     }else{
@@ -208,13 +232,19 @@ void processFile(const char* input_filename, ConfigSettings& config, GCodeExport
         gcode.setZ(z);
         if (layerNr == 0)
             gcodeLayer.addPolygonsByOptimizer(storage.skirt, &skirtConfig);
-        
         for(unsigned int volumeCnt = 0; volumeCnt < storage.volumes.size(); volumeCnt++)
         {
             if (volumeCnt > 0)
                 volumeIdx = (volumeIdx + 1) % storage.volumes.size();
             SliceLayer* layer = &storage.volumes[volumeIdx].layers[layerNr];
             gcodeLayer.setExtruder(volumeIdx);
+            
+            if (storage.oozeShield.size() > 0)
+            {
+                gcodeLayer.setAlwaysRetract(true);
+                gcodeLayer.addPolygonsByOptimizer(storage.oozeShield[layerNr], &inset0Config);
+                gcodeLayer.setAlwaysRetract(!config.enableCombing);
+            }
             
             PathOrderOptimizer partOrderOptimizer(gcode.getPositionXY());
             for(unsigned int partNr=0; partNr<layer->parts.size(); partNr++)
@@ -231,7 +261,10 @@ void processFile(const char* input_filename, ConfigSettings& config, GCodeExport
                     gcodeLayer.setCombBoundary(&part->combBoundery);
                 else
                     gcodeLayer.setAlwaysRetract(true);
-                gcodeLayer.forceRetract();
+                
+                //Force retraction on inter-island travel.
+                if (partOrderOptimizer.polyOrder.size() > 1)
+                    gcodeLayer.forceRetract();
                 
                 if (config.insetCount > 0)
                 {
@@ -283,7 +316,15 @@ void processFile(const char* input_filename, ConfigSettings& config, GCodeExport
         if (storage.support.generated)
         {
             if (config.supportExtruder > -1)
+            {
                 gcodeLayer.setExtruder(config.supportExtruder);
+                if (storage.oozeShield.size() > 0)
+                {
+                    gcodeLayer.setAlwaysRetract(true);
+                    gcodeLayer.addPolygonsByOptimizer(storage.oozeShield[layerNr], &inset0Config);
+                    gcodeLayer.setAlwaysRetract(!config.enableCombing);
+                }
+            }
             SupportPolyGenerator supportGenerator(storage.support, z);
             for(unsigned int volumeCnt = 0; volumeCnt < storage.volumes.size(); volumeCnt++)
             {
@@ -296,20 +337,25 @@ void processFile(const char* input_filename, ConfigSettings& config, GCodeExport
             supportGenerator.polygons = supportGenerator.polygons.offset(-1000);
             supportGenerator.polygons = supportGenerator.polygons.offset(1000);
             
-            Polygons supportLines;
-            if (config.supportLineDistance > 0)
-            {
-                if (config.supportLineDistance > config.extrusionWidth * 4)
-                {
-                    generateLineInfill(supportGenerator.polygons, supportLines, config.extrusionWidth, config.supportLineDistance*2, config.infillOverlap, 0);
-                    generateLineInfill(supportGenerator.polygons, supportLines, config.extrusionWidth, config.supportLineDistance*2, config.infillOverlap, 90);
-                }else{
-                    generateLineInfill(supportGenerator.polygons, supportLines, config.extrusionWidth, config.supportLineDistance, config.infillOverlap, (layerNr & 1) ? 0 : 90);
-                }
-            }
+            vector<Polygons> supportIslands = supportGenerator.polygons.splitIntoParts();
             
-            gcodeLayer.addPolygonsByOptimizer(supportGenerator.polygons, &supportConfig);
-            gcodeLayer.addPolygonsByOptimizer(supportLines, &supportConfig);
+            for(unsigned int n=0; n<supportIslands.size(); n++)
+            {
+                Polygons supportLines;
+                if (config.supportLineDistance > 0)
+                {
+                    if (config.supportLineDistance > config.extrusionWidth * 4)
+                    {
+                        generateLineInfill(supportIslands[n], supportLines, config.extrusionWidth, config.supportLineDistance*2, config.infillOverlap, 0);
+                        generateLineInfill(supportIslands[n], supportLines, config.extrusionWidth, config.supportLineDistance*2, config.infillOverlap, 90);
+                    }else{
+                        generateLineInfill(supportIslands[n], supportLines, config.extrusionWidth, config.supportLineDistance, config.infillOverlap, (layerNr & 1) ? 0 : 90);
+                    }
+                }
+            
+                gcodeLayer.addPolygonsByOptimizer(supportIslands[n], &supportConfig);
+                gcodeLayer.addPolygonsByOptimizer(supportLines, &supportConfig);
+            }
         }
 
         //Finish the layer by applying speed corrections for minimal layer times and slowdown for the initial layer.
@@ -428,6 +474,7 @@ int main(int argc, char **argv)
     config.retractionAmountExtruderSwitch = 14500;
     config.retractionMinimalDistance = 1500;
     config.minimalExtrusionBeforeRetraction = 100;
+    config.enableOozeShield = 0;
     config.enableCombing = 1;
     config.multiVolumeOverlap = 0;
 
@@ -536,18 +583,23 @@ int main(int argc, char **argv)
     if (gcode.isValid())
     {
         gcode.addFanCommand(0);
+        gcode.addRetraction();
         gcode.setZ(maxObjectHeight + 5000);
+        gcode.addMove(gcode.getPositionXY(), config.moveSpeed, 0);
         gcode.addCode(config.endCode);
         log("Print time: %d\n", int(gcode.getTotalPrintTime()));
-        log("Filament: %d\n", int(gcode.getTotalFilamentUsed()));
+        log("Filament: %d\n", int(gcode.getTotalFilamentUsed(0)));
+        log("Filament2: %d\n", int(gcode.getTotalFilamentUsed(1)));
         
         if (gcode.getFlavor() == GCODE_FLAVOR_ULTIGCODE)
         {
             char numberString[16];
             sprintf(numberString, "%d", int(gcode.getTotalPrintTime()));
             gcode.replaceTagInStart("<__TIME__>", numberString);
-            sprintf(numberString, "%d", int(gcode.getTotalFilamentUsed()));
+            sprintf(numberString, "%d", int(gcode.getTotalFilamentUsed(0)));
             gcode.replaceTagInStart("<FILAMENT>", numberString);
+            sprintf(numberString, "%d", int(gcode.getTotalFilamentUsed(1)));
+            gcode.replaceTagInStart("<FILAMEN2>", numberString);
         }
     }
 }

@@ -55,6 +55,8 @@ public:
  **/
 #define GCODE_FLAVOR_MYRIWELL           3
 
+#define MAX_EXTRUDERS 16
+
 class ConfigSettings
 {
 private:
@@ -79,6 +81,7 @@ public:
     int retractionMinimalDistance;
     int minimalExtrusionBeforeRetraction;
     int enableCombing;
+    int enableOozeShield;
     int multiVolumeOverlap;
     
     int initialSpeedupLayers;
@@ -119,7 +122,7 @@ public:
     int spiralizeMode;
     int gcodeFlavor;
     
-    IntPoint extruderOffset[16];
+    IntPoint extruderOffset[MAX_EXTRUDERS];
     const char* startCode;
     const char* endCode;
     
