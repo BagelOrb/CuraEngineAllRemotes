@@ -4,14 +4,7 @@
 #include <utils/floatpoint.h>
 #include <vector>
 
-class _ConfigSettingIndex
-{
-public:
-    const char* key;
-    int* ptr;
-    
-    _ConfigSettingIndex(const char* key, int* ptr) : key(key), ptr(ptr) {}
-};
+#define VERSION "13.11.2"
 
 #define FIX_HORRIBLE_UNION_ALL_TYPE_A    0x01
 #define FIX_HORRIBLE_UNION_ALL_TYPE_B    0x02
@@ -57,6 +50,15 @@ public:
 
 #define MAX_EXTRUDERS 16
 
+class _ConfigSettingIndex
+{
+public:
+    const char* key;
+    int* ptr;
+    
+    _ConfigSettingIndex(const char* key, int* ptr) : key(key), ptr(ptr) {}
+};
+
 class ConfigSettings
 {
 private:
@@ -82,6 +84,7 @@ public:
     int minimalExtrusionBeforeRetraction;
     int enableCombing;
     int enableOozeShield;
+    int enableWipeTower;
     int multiVolumeOverlap;
     
     int initialSpeedupLayers;
