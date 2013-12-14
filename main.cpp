@@ -91,7 +91,7 @@ int main(int argc, char **argv)
     config.minimalExtrusionBeforeRetraction = 100;
     config.enableOozeShield = 0;
     config.enableCombing = 1;
-    config.enableWipeTower = 0;
+    config.wipeTowerSize = 0;
     config.multiVolumeOverlap = 0;
 
     config.minimalLayerTime = 5;
@@ -131,7 +131,7 @@ int main(int argc, char **argv)
         "M84                         ;steppers off\n"
         "G90                         ;absolute positioning\n";
 
-    fprintf(stderr,"Cura_SteamEngine version %s\n", VERSION);
+    fprintf(stdout,"Cura_SteamEngine version %s\n", VERSION);
 
     for(int argn = 1; argn < argc; argn++)
     {

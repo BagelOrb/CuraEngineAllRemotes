@@ -199,6 +199,19 @@ private:
             logProgress("skin",layerNr+1,totalLayers);
         }
         log("Generated up/down skin in %5.3fs\n", timeKeeper.restart());
+
+        if (config.wipeTowerSize > 0)
+        {
+            ClipperLib::Polygon p;
+            p.push_back(Point(storage.modelMin.x - 3000, storage.modelMax.y + 3000));
+            p.push_back(Point(storage.modelMin.x - 3000, storage.modelMax.y + 3000 + config.wipeTowerSize));
+            p.push_back(Point(storage.modelMin.x - 3000 - config.wipeTowerSize, storage.modelMax.y + 3000 + config.wipeTowerSize));
+            p.push_back(Point(storage.modelMin.x - 3000 - config.wipeTowerSize, storage.modelMax.y + 3000));
+            storage.wipeTower.add(p);
+            
+            storage.wipePoint = Point(storage.modelMin.x - 3000 - config.wipeTowerSize / 2, storage.modelMax.y + 3000 + config.wipeTowerSize / 2);
+        }
+
         generateSkirt(storage, config.skirtDistance, config.extrusionWidth, config.skirtLineCount, config.skirtMinLength);
         generateRaft(storage, config.raftMargin);
         
@@ -273,19 +286,6 @@ private:
                 
                 gcodeLayer.writeGCode(false, config.raftInterfaceThickness);
             }
-        }
-        
-        if (config.enableWipeTower)
-        {
-            int wipeTowerSize = 10000;
-            ClipperLib::Polygon p;
-            p.push_back(Point(storage.modelMin.x - 3000, storage.modelMax.y + 3000));
-            p.push_back(Point(storage.modelMin.x - 3000, storage.modelMax.y + 3000 + wipeTowerSize));
-            p.push_back(Point(storage.modelMin.x - 3000 - wipeTowerSize, storage.modelMax.y + 3000 + wipeTowerSize));
-            p.push_back(Point(storage.modelMin.x - 3000 - wipeTowerSize, storage.modelMax.y + 3000));
-            storage.wipeTower.add(p);
-            
-            storage.wipePoint = Point(storage.modelMin.x - 3000 - wipeTowerSize / 2, storage.modelMax.y + 3000 + wipeTowerSize / 2);
         }
 
         int volumeIdx = 0;
@@ -511,7 +511,7 @@ private:
     
     void addWipeTower(SliceDataStorage& storage, GCodePlanner& gcodeLayer, int layerNr, int prevExtruder)
     {
-        if (!config.enableWipeTower)
+        if (config.wipeTowerSize < 1)
             return;
         //If we changed extruder, print the wipe/prime tower for this nozzle;
         gcodeLayer.addPolygonsByOptimizer(storage.wipeTower, &supportConfig);
