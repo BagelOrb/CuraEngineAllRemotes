@@ -19,6 +19,7 @@ GCodeExport::GCodeExport()
     extrusionAmount = 0;
     extrusionPerMM = 0;
     retractionAmount = 4.5;
+    zLiftAmount = 0.2;
     minimalExtrusionBeforeRetraction = 0.0;
     extrusionAmountAtPreviousRetraction = -10000;
     extruderSwitchRetraction = 14.5;
@@ -32,6 +33,7 @@ GCodeExport::GCodeExport()
     currentSpeed = 0;
     retractionSpeed = 45;
     isRetracted = true;
+    isLifted = false;
     memset(extruderOffset, 0, sizeof(extruderOffset));
     f = stdout;
 }
@@ -93,12 +95,13 @@ void GCodeExport::setExtrusion(int layerThickness, int filamentDiameter, int flo
         extrusionPerMM = double(layerThickness) / 1000.0 / filamentArea * double(flow) / 100.0;
 }
 
-void GCodeExport::setRetractionSettings(int retractionAmount, int retractionSpeed, int extruderSwitchRetraction, int minimalExtrusionBeforeRetraction)
+void GCodeExport::setRetractionSettings(int retractionAmount, int retractionSpeed, int extruderSwitchRetraction, int minimalExtrusionBeforeRetraction, int zLiftAmount)
 {
     this->retractionAmount = double(retractionAmount) / 1000.0;
     this->retractionSpeed = retractionSpeed;
     this->extruderSwitchRetraction = double(extruderSwitchRetraction) / 1000.0;
     this->minimalExtrusionBeforeRetraction = double(minimalExtrusionBeforeRetraction) / 1000.0;
+    this->zLiftAmount = float(zLiftAmount) / 1000.0;
 }
 
 void GCodeExport::setZ(int z)
@@ -195,6 +198,12 @@ void GCodeExport::addMove(Point p, int speed, int lineWidth)
             isRetracted = false;
         }
         extrusionAmount += extrusionPerMM * double(lineWidth) / 1000.0 * vSizeMM(diff);
+        if (isLifted) {
+            // undo lift
+            fprintf(f, "G0 F9000 Z%0.5lf ; undo z-lift\n", float(currentPosition.z) / 1000.0);
+            estimateCalculator.plan(TimeEstimateCalculator::Position(double(currentPosition.x) / 1000.0, (currentPosition.y) / 1000.0, double(currentPosition.z) / 1000.0, extrusionAmount), 240);
+            isLifted = false;
+        }
         fprintf(f, "G1");
     }else{
         fprintf(f, "G0");
@@ -224,12 +233,25 @@ void GCodeExport::addRetraction()
         {
             fprintf(f, "G10\n");
         }else{
-            fprintf(f, "G1 F%i E%0.5lf\n", retractionSpeed * 60, extrusionAmount - retractionAmount);
+            fprintf(f, "G1 F%i E%0.5lf\n", retractionSpeed * 60, extrusionAmount - retractionAmount);       
             estimateCalculator.plan(TimeEstimateCalculator::Position(double(currentPosition.x) / 1000.0, (currentPosition.y) / 1000.0, double(currentPosition.z) / 1000.0, extrusionAmount - retractionAmount), currentSpeed);
+            if (zLiftAmount > 0) {
+                // Lift z-Axis on retract
+                fprintf(f, "G0 F9000 Z%0.5lf ; z-lift\n", float(currentPosition.z) / 1000.0 + zLiftAmount);
+                estimateCalculator.plan(TimeEstimateCalculator::Position(double(currentPosition.x) / 1000.0, (currentPosition.y) / 1000.0, double(currentPosition.z) / 1000.0 + zLiftAmount, extrusionAmount - retractionAmount), 240);
+                isLifted = true;
+            }
             currentSpeed = retractionSpeed;
         }
         extrusionAmountAtPreviousRetraction = extrusionAmount;
         isRetracted = true;
+    } else {
+        if (zLiftAmount > 0) {
+            // Lift z-Axis even if we're not retracting here
+            fprintf(f, "G0 F9000 Z%0.5lf ; z-lift without retract\n", float(currentPosition.z) / 1000.0 + zLiftAmount);
+            estimateCalculator.plan(TimeEstimateCalculator::Position(double(currentPosition.x) / 1000.0, (currentPosition.y) / 1000.0, double(currentPosition.z) / 1000.0 + zLiftAmount, extrusionAmount - retractionAmount), 240);
+            isLifted = true;
+        }
     }
 }
 

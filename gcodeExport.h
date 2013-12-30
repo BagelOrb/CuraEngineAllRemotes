@@ -20,11 +20,13 @@ private:
     double extruderSwitchRetraction;
     double minimalExtrusionBeforeRetraction;
     double extrusionAmountAtPreviousRetraction;
+    float zLiftAmount;
     Point3 currentPosition;
     Point extruderOffset[MAX_EXTRUDERS];
     int currentSpeed, retractionSpeed;
     int zPos;
     bool isRetracted;
+    bool isLifted;
     int extruderNr;
     int currentFanSpeed;
     int flavor;
@@ -51,7 +53,7 @@ public:
     
     void setExtrusion(int layerThickness, int filamentDiameter, int flow);
     
-    void setRetractionSettings(int retractionAmount, int retractionSpeed, int extruderSwitchRetraction, int minimalExtrusionBeforeRetraction);
+    void setRetractionSettings(int retractionAmount, int retractionSpeed, int extruderSwitchRetraction, int minimalExtrusionBeforeRetraction, int zLiftAmount);
     
     void setZ(int z);
     

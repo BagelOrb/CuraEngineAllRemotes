@@ -85,6 +85,7 @@ int main(int argc, char **argv)
     config.supportXYDistance = 700;
     config.supportZDistance = 150;
     config.retractionAmount = 4500;
+    config.zLiftAmount = 200;
     config.retractionSpeed = 45;
     config.retractionAmountExtruderSwitch = 14500;
     config.retractionMinimalDistance = 1500;

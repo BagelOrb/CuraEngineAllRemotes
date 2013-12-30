@@ -37,6 +37,7 @@ ConfigSettings::ConfigSettings()
     SETTING(supportExtruder);
     
     SETTING(retractionAmount);
+    SETTING(zLiftAmount);
     SETTING(retractionSpeed);
     SETTING(retractionAmountExtruderSwitch);
     SETTING(retractionMinimalDistance);

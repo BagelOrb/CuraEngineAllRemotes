@@ -72,6 +72,7 @@ public:
     int skirtLineCount;
     int skirtMinLength;
     int retractionAmount;
+    int zLiftAmount;
     int retractionAmountExtruderSwitch;
     int retractionSpeed;
     int retractionMinimalDistance;
