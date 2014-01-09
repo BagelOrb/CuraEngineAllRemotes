@@ -190,6 +190,7 @@ void GCodeExport::addMove(Point p, int speed, int lineWidth)
 				fprintf(f, "G1 E%0.5lf\n", extrusionAmount);
 				fprintf(f, "G1 F%i\n", currentSpeed * 60);
 				fprintf(f, "M101\n");
+				estimateCalculator.plan(TimeEstimateCalculator::Position(double(p.X) / 1000.0, (p.Y) / 1000.0, double(zPos) / 1000.0, extrusionAmount), retractionSpeed);
 			}else{
                 fprintf(f, "G1 F%i E%0.5lf\n", retractionSpeed * 60, extrusionAmount);
                 currentSpeed = retractionSpeed;
@@ -246,11 +247,11 @@ void GCodeExport::addRetraction()
             fprintf(f, "G1 E%0.5lf\n", extrusionAmount - retractionAmount);
 			fprintf(f, "G1 F%i\n", currentSpeed * 60);
 			fprintf(f, "M103\n");
-            estimateCalculator.plan(TimeEstimateCalculator::Position(double(currentPosition.x) / 1000.0, (currentPosition.y) / 1000.0, double(currentPosition.z) / 1000.0, extrusionAmount - retractionAmount), currentSpeed);
+            estimateCalculator.plan(TimeEstimateCalculator::Position(double(currentPosition.x) / 1000.0, (currentPosition.y) / 1000.0, double(currentPosition.z) / 1000.0, extrusionAmount - retractionAmount), retractionSpeed);
         } else {
             fprintf(f, "G1 F%i E%0.5lf\n", retractionSpeed * 60, extrusionAmount - retractionAmount);
-            estimateCalculator.plan(TimeEstimateCalculator::Position(double(currentPosition.x) / 1000.0, (currentPosition.y) / 1000.0, double(currentPosition.z) / 1000.0, extrusionAmount - retractionAmount), currentSpeed);
             currentSpeed = retractionSpeed;
+            estimateCalculator.plan(TimeEstimateCalculator::Position(double(currentPosition.x) / 1000.0, (currentPosition.y) / 1000.0, double(currentPosition.z) / 1000.0, extrusionAmount - retractionAmount), currentSpeed);
         }
         extrusionAmountAtPreviousRetraction = extrusionAmount;
         isRetracted = true;
