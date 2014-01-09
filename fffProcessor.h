@@ -202,17 +202,16 @@ private:
 
         if (config.wipeTowerSize > 0)
         {
-            ClipperLib::Polygon p;
-            p.push_back(Point(storage.modelMin.x - 3000, storage.modelMax.y + 3000));
-            p.push_back(Point(storage.modelMin.x - 3000, storage.modelMax.y + 3000 + config.wipeTowerSize));
-            p.push_back(Point(storage.modelMin.x - 3000 - config.wipeTowerSize, storage.modelMax.y + 3000 + config.wipeTowerSize));
-            p.push_back(Point(storage.modelMin.x - 3000 - config.wipeTowerSize, storage.modelMax.y + 3000));
-            storage.wipeTower.add(p);
+            PolygonRef p = storage.wipeTower.newPoly();
+            p.add(Point(storage.modelMin.x - 3000, storage.modelMax.y + 3000));
+            p.add(Point(storage.modelMin.x - 3000, storage.modelMax.y + 3000 + config.wipeTowerSize));
+            p.add(Point(storage.modelMin.x - 3000 - config.wipeTowerSize, storage.modelMax.y + 3000 + config.wipeTowerSize));
+            p.add(Point(storage.modelMin.x - 3000 - config.wipeTowerSize, storage.modelMax.y + 3000));
             
             storage.wipePoint = Point(storage.modelMin.x - 3000 - config.wipeTowerSize / 2, storage.modelMax.y + 3000 + config.wipeTowerSize / 2);
         }
 
-        generateSkirt(storage, config.skirtDistance, config.extrusionWidth, config.skirtLineCount, config.skirtMinLength);
+        generateSkirt(storage, config.skirtDistance, config.extrusionWidth, config.skirtLineCount, config.skirtMinLength, config.initialLayerThickness);
         generateRaft(storage, config.raftMargin);
         
         for(unsigned int volumeIdx=0; volumeIdx<storage.volumes.size(); volumeIdx++)
@@ -472,7 +471,6 @@ private:
             }
         }
         int32_t z = config.initialLayerThickness + layerNr * config.layerThickness;
-        z += config.raftBaseThickness + config.raftInterfaceThickness;
         SupportPolyGenerator supportGenerator(storage.support, z);
         for(unsigned int volumeCnt = 0; volumeCnt < storage.volumes.size(); volumeCnt++)
         {
