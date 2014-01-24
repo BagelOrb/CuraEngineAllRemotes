@@ -82,8 +82,8 @@ private:
     void preSetup()
     {
         skirtConfig.setData(config.printSpeed, config.extrusionWidth, "SKIRT");
-        inset0Config.setData(config.printSpeed, config.extrusionWidth, "WALL-OUTER");
-        inset1Config.setData(config.printSpeed, config.extrusionWidth, "WALL-INNER");
+        inset0Config.setData(config.wallOuterSpeed, config.extrusionWidth, "WALL-OUTER");
+        inset1Config.setData(config.wallInnerSpeed, config.extrusionWidth, "WALL-INNER");
         fillConfig.setData(config.infillSpeed, config.extrusionWidth, "FILL");
         supportConfig.setData(config.printSpeed, config.extrusionWidth, "SUPPORT");
 

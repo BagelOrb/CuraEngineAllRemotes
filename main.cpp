@@ -67,6 +67,8 @@ int main(int argc, char **argv)
     config.initialSpeedupLayers = 4;
     config.initialLayerSpeed = 20;
     config.printSpeed = 50;
+    config.wallInnerSpeed = config.printSpeed;
+    config.wallOuterSpeed = config.printSpeed;
     config.infillSpeed = 50;
     config.moveSpeed = 200;
     config.fanFullOnLayerNr = 2;

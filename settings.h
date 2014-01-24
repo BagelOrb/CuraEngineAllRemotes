@@ -84,6 +84,8 @@ public:
     int initialSpeedupLayers;
     int initialLayerSpeed;
     int printSpeed;
+    int wallInnerSpeed;
+    int wallOuterSpeed;
     int infillSpeed;
     int moveSpeed;
     int fanFullOnLayerNr;
