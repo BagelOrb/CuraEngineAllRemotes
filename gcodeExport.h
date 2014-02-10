@@ -17,6 +17,7 @@ class GCodeExport
 private:
     FILE* f;
     double extrusionAmount;
+    double relativeExtrusionValue;
     double extrusionPerMM;
     double retractionAmount;
     int retractionZHop;
@@ -40,6 +41,8 @@ public:
     GCodeExport();
     
     ~GCodeExport();
+    
+    bool relativeE;
     
     void replaceTagInStart(const char* tag, const char* replaceValue);
     
