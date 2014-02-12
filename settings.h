@@ -77,6 +77,7 @@ public:
     int skirtLineCount;
     int skirtMinLength;
     int perimInset;
+    int relativeE;
 
     //Retraction settings
     int retractionAmount;

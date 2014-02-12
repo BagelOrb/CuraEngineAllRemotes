@@ -32,6 +32,7 @@ private:
     int extruderNr;
     int currentFanSpeed;
     int flavor;
+    int relativeE;
     
     double totalFilament[MAX_EXTRUDERS];
     double totalPrintTime;
@@ -41,8 +42,6 @@ public:
     GCodeExport();
     
     ~GCodeExport();
-    
-    bool relativeE;
     
     void replaceTagInStart(const char* tag, const char* replaceValue);
     
@@ -55,7 +54,7 @@ public:
     
     bool isOpened();
     
-    void setExtrusion(int layerThickness, int filamentDiameter, int flow);
+    void setExtrusion(int layerThickness, int filamentDiameter, int flow, int type);
     
     void setRetractionSettings(int retractionAmount, int retractionSpeed, int extruderSwitchRetraction, int minimalExtrusionBeforeRetraction, int zHop);
     

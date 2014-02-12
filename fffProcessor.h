@@ -323,7 +323,7 @@ private:
                 gcode.writeComment("RAFT");
                 GCodePlanner gcodeLayer(gcode, config.moveSpeed, config.retractionMinimalDistance);
                 gcode.setZ(config.raftBaseThickness);
-                gcode.setExtrusion(config.raftBaseThickness, config.filamentDiameter, config.filamentFlow);
+                gcode.setExtrusion(config.raftBaseThickness, config.filamentDiameter, config.filamentFlow, config.relativeE);
                 gcodeLayer.addPolygonsByOptimizer(storage.raftOutline, &raftBaseConfig);
                 
                 Polygons raftLines;
@@ -338,7 +338,7 @@ private:
                 gcode.writeComment("RAFT");
                 GCodePlanner gcodeLayer(gcode, config.moveSpeed, config.retractionMinimalDistance);
                 gcode.setZ(config.raftBaseThickness + config.raftInterfaceThickness);
-                gcode.setExtrusion(config.raftInterfaceThickness, config.filamentDiameter, config.filamentFlow);
+                gcode.setExtrusion(config.raftInterfaceThickness, config.filamentDiameter, config.filamentFlow, config.relativeE);
                 
                 Polygons raftLines;
                 generateLineInfill(storage.raftOutline, raftLines, config.raftInterfaceLinewidth, config.raftLineSpacing, config.infillOverlap, 90);
@@ -371,9 +371,9 @@ private:
             
             gcode.writeComment("LAYER:%d", layerNr);
             if (layerNr == 0)
-                gcode.setExtrusion(config.initialLayerThickness, config.filamentDiameter, config.filamentFlow);
+                gcode.setExtrusion(config.initialLayerThickness, config.filamentDiameter, config.filamentFlow, config.relativeE);
             else
-                gcode.setExtrusion(config.layerThickness, config.filamentDiameter, config.filamentFlow);
+                gcode.setExtrusion(config.layerThickness, config.filamentDiameter, config.filamentFlow, config.relativeE);
 
             GCodePlanner gcodeLayer(gcode, config.moveSpeed, config.retractionMinimalDistance);
             int32_t z = config.initialLayerThickness + layerNr * config.layerThickness;

@@ -17,8 +17,6 @@
 GCodeExport::GCodeExport()
 : currentPosition(0,0,0)
 {
-    relativeE = true;
-    
     extrusionAmount = 0;
     relativeExtrusionValue = 0;
     extrusionPerMM = 0;
@@ -93,8 +91,9 @@ bool GCodeExport::isOpened()
     return f != NULL;
 }
 
-void GCodeExport::setExtrusion(int layerThickness, int filamentDiameter, int flow)
+void GCodeExport::setExtrusion(int layerThickness, int filamentDiameter, int flow, int type)
 {
+    this->relativeE = type;
     double filamentArea = M_PI * (double(filamentDiameter) / 1000.0 / 2.0) * (double(filamentDiameter) / 1000.0 / 2.0);
     if (flavor == GCODE_FLAVOR_ULTIGCODE)//UltiGCode uses volume extrusion as E value, and thus does not need the filamentArea in the mix.
         extrusionPerMM = double(layerThickness) / 1000.0;
@@ -198,7 +197,7 @@ void GCodeExport::writeMove(Point p, int speed, int lineWidth)
             {
                 fprintf(f, "G11\n");
             }else{
-            	if (relativeE)
+            	if (relativeE > 0)
 		{
 	                fprintf(f, "G1 F%i E%0.5lf\n", retractionSpeed * 60, retractionAmount);
 	        }else{
@@ -227,7 +226,7 @@ void GCodeExport::writeMove(Point p, int speed, int lineWidth)
     if (zPos != currentPosition.z)
         fprintf(f, " Z%0.2f", float(zPos)/1000);
     if (lineWidth != 0)
-            	if (relativeE)
+            	if (relativeE > 0)
 		{
 			fprintf(f, " E%0.5lf", relativeExtrusionValue);
 		}else{
@@ -247,7 +246,7 @@ void GCodeExport::writeRetraction()
         {
             fprintf(f, "G10\n");
         }else{
-            	if (relativeE)
+            	if (relativeE > 0)
 		{
 	        	fprintf(f, "G1 F%i E%0.5lf\n", retractionSpeed * 60, 0 - retractionAmount);
 	        }else{
