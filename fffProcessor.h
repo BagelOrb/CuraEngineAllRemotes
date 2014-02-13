@@ -302,6 +302,12 @@ private:
                 gcode.writeCode(";MATERIAL2:<FILAMEN2>");
             }
             gcode.writeCode(config.startCode);
+            if (config.relativeE > 0)
+            {
+            	gcode.writeCode("M83");
+            }else{
+            	gcode.writeCode("M82");
+            }
         }else{
             gcode.writeFanCommand(0);
             gcode.resetExtrusionValue();
