@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "utils/gettime.h"
+#include "utils/logoutput.h"
 
 #include "slicer.h"
 #include "polygonOptimizer.h"
@@ -13,8 +14,7 @@ void SlicerLayer::makePolygons(OptimizedVolume* ov, bool keepNoneClosed, bool ex
         if (segmentList[startSegment].addedToPolygon)
             continue;
         
-        Polygons tmpPolygons;
-        PolygonRef poly = tmpPolygons.newPoly();
+        Polygon poly;
         poly.add(segmentList[startSegment].start);
         
         unsigned int segmentIndex = startSegment;
@@ -83,7 +83,7 @@ void SlicerLayer::makePolygons(OptimizedVolume* ov, bool keepNoneClosed, bool ex
             }
         }
     }
-    
+
     //Next link up all the missing ends, closing up the smallest gaps first. This is an inefficient implementation which can run in O(n*n*n) time.
     while(1)
     {
@@ -133,14 +133,21 @@ void SlicerLayer::makePolygons(OptimizedVolume* ov, bool keepNoneClosed, bool ex
         }else{
             if (reversed)
             {
-                for(unsigned int n=openPolygonList[bestB].size()-1; int(n)>=0; n--)
-                    openPolygonList[bestA].add(openPolygonList[bestB][n]);
+                if (openPolygonList[bestA].polygonLength() > openPolygonList[bestB].polygonLength())
+                {
+                    for(unsigned int n=openPolygonList[bestB].size()-1; int(n)>=0; n--)
+                        openPolygonList[bestA].add(openPolygonList[bestB][n]);
+                    openPolygonList[bestB].clear();
+                }else{
+                    for(unsigned int n=openPolygonList[bestA].size()-1; int(n)>=0; n--)
+                        openPolygonList[bestB].add(openPolygonList[bestA][n]);
+                    openPolygonList[bestA].clear();
+                }
             }else{
                 for(unsigned int n=0; n<openPolygonList[bestB].size(); n++)
                     openPolygonList[bestA].add(openPolygonList[bestB][n]);
+                openPolygonList[bestB].clear();
             }
-
-            openPolygonList[bestB].clear();
         }
     }
 
@@ -226,8 +233,7 @@ void SlicerLayer::makePolygons(OptimizedVolume* ov, bool keepNoneClosed, bool ex
                     }
                     else if (bestResult.AtoB)
                     {
-                        Polygons tmpPolygons;
-                        PolygonRef poly = tmpPolygons.newPoly();
+                        Polygon poly;
                         for(unsigned int n = bestResult.pointIdxA; n != bestResult.pointIdxB; n = (n + 1) % polygonList[bestResult.polygonIdx].size())
                             poly.add(polygonList[bestResult.polygonIdx][n]);
                         for(unsigned int n=poly.size()-1;int(n) >= 0; n--)
@@ -258,9 +264,9 @@ void SlicerLayer::makePolygons(OptimizedVolume* ov, bool keepNoneClosed, bool ex
     for(unsigned int i=0;i<openPolygonList.size();i++)
     {
         if (openPolygonList[i].size() < 2) continue;
-        if (!q) printf("***\n");
-        printf("S: %f %f\n", float(openPolygonList[i][0].X), float(openPolygonList[i][0].Y));
-        printf("E: %f %f\n", float(openPolygonList[i][openPolygonList[i].size()-1].X), float(openPolygonList[i][openPolygonList[i].size()-1].Y));
+        if (!q) log("***\n");
+        log("S: %f %f\n", float(openPolygonList[i][0].X), float(openPolygonList[i][0].Y));
+        log("E: %f %f\n", float(openPolygonList[i][openPolygonList[i].size()-1].X), float(openPolygonList[i][openPolygonList[i].size()-1].Y));
         q = 1;
     }
     */
@@ -307,8 +313,13 @@ Slicer::Slicer(OptimizedVolume* ov, int32_t initial, int32_t thickness, bool kee
     modelMin = ov->model->vMin;
     
     int layerCount = (modelSize.z - initial) / thickness + 1;
-    fprintf(stdout, "Layer count: %i\n", layerCount);
+    log("Layer count: %i\n", layerCount);
     layers.resize(layerCount);
+    
+    for(int32_t layerNr = 0; layerNr < layerCount; layerNr++)
+    {
+        layers[layerNr].z = initial + thickness * layerNr;
+    }
     
     for(unsigned int i=0; i<ov->faces.size(); i++)
     {
@@ -370,8 +381,11 @@ void Slicer::dumpSegmentsToHTML(const char* filename)
     for(unsigned int i=0; i<layers.size(); i++)
     {
         fprintf(f, "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" style='width:%ipx;height:%ipx'>\n", int(modelSize.x / scale), int(modelSize.y / scale));
+        fprintf(f, "<marker id='MidMarker' viewBox='0 0 10 10' refX='5' refY='5' markerUnits='strokeWidth' markerWidth='10' markerHeight='10' stroke='lightblue' stroke-width='2' fill='none' orient='auto'>");
+        fprintf(f, "<path d='M 0 0 L 10 5 M 0 10 L 10 5'/>");
+        fprintf(f, "</marker>");
         fprintf(f, "<g fill-rule='evenodd' style=\"fill: gray; stroke:black;stroke-width:1\">\n");
-        fprintf(f, "<path d=\"");
+        fprintf(f, "<path marker-mid='url(#MidMarker)' d=\"");
         for(unsigned int j=0; j<layers[i].polygonList.size(); j++)
         {
             PolygonRef p = layers[i].polygonList[j];
@@ -391,7 +405,7 @@ void Slicer::dumpSegmentsToHTML(const char* filename)
         {
             PolygonRef p = layers[i].openPolygonList[j];
             if (p.size() < 1) continue;
-            fprintf(f, "<polyline points=\"");
+            fprintf(f, "<polyline marker-mid='url(#MidMarker)' points=\"");
             for(unsigned int n=0; n<p.size(); n++)
             {
                 fprintf(f, "%f,%f ", float(p[n].X - modelMin.x)/scale, float(p[n].Y - modelMin.y)/scale);

@@ -3,15 +3,15 @@
 #
 
 # simplest working invocation to compile it
-#g++ main.cpp modelFile/modelFile.cpp clipper/clipper.cpp -I. -o CuraEngine
+#g++ main.cpp modelFile/modelFile.cpp clipper/clipper.cpp -o CuraEngine
 
 CXX ?= g++
-CFLAGS += -I. -c -Wall -Wextra -O3 -fomit-frame-pointer
+CFLAGS += -c -Wall -Wextra -O3 -fomit-frame-pointer
 # also include debug symbols
 #CFLAGS+=-ggdb
 LDFLAGS +=
 SOURCES  = bridge.cpp comb.cpp gcodeExport.cpp infill.cpp inset.cpp layerPart.cpp main.cpp optimizedModel.cpp pathOrderOptimizer.cpp polygonOptimizer.cpp raft.cpp settings.cpp skin.cpp skirt.cpp slicer.cpp support.cpp timeEstimate.cpp
-SOURCES += clipper/clipper.cpp modelFile/modelFile.cpp utils/gettime.cpp utils/logoutput.cpp
+SOURCES += clipper/clipper.cpp modelFile/modelFile.cpp utils/gettime.cpp utils/logoutput.cpp utils/socket.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
 EXECUTABLE = ./CuraEngine
 UNAME := $(shell uname)
@@ -30,7 +30,7 @@ ifeq ($(UNAME), MINGW32_NT-6.1)
 	#For windows make it large address aware, which allows the process to use more then 2GB of memory.
 	EXECUTABLE := $(EXECUTABLE).exe
 	CFLAGS += -march=pentium4
-	LDFLAGS += -Wl,--large-address-aware -lm
+	LDFLAGS += -Wl,--large-address-aware -lm -lwsock32
 endif
 ifeq ($(UNAME), MINGW32_NT-5.1)
 	#For windows make it large address aware, which allows the process to use more then 2GB of memory.
@@ -40,7 +40,7 @@ endif
 all: $(SOURCES) $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS)
-	$(CXX) $(LDFLAGS) $(OBJECTS) -o $@
+	$(CXX) $(OBJECTS) -o $@ $(LDFLAGS)
 
 .cpp.o:
 	$(CXX) $(CFLAGS) $< -o $@

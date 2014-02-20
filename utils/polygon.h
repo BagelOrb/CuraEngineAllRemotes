@@ -4,9 +4,9 @@
 #include <vector>
 #include <assert.h>
 using std::vector;
-#include "clipper/clipper.hpp"
+#include "../clipper/clipper.hpp"
 
-#include "utils/intpoint.h"
+#include "intpoint.h"
 
 //#define CHECK_POLY_ACCESS
 #ifdef CHECK_POLY_ACCESS
@@ -35,6 +35,11 @@ public:
     {
         POLY_ASSERT(index < size());
         return (*polygon)[index];
+    }
+    
+    void* data()
+    {
+        return polygon->data();
     }
     
     void add(const Point p)
@@ -109,6 +114,18 @@ public:
     
     friend class Polygons;
 };
+
+class _Polygon : public PolygonRef
+{
+    ClipperLib::Path poly;
+public:
+    _Polygon()
+    : PolygonRef(poly)
+    {
+    }
+};
+//<windows.h> defines a Polygon structure, to prevent a clash define Polygon as _Polygon.
+#define Polygon _Polygon
 
 class Polygons
 {
