@@ -24,7 +24,7 @@ ClientSocket::ClientSocket()
 #ifdef WIN32
     if (!wsaStartupDone)
     {
-        WSADATA wsaData = {0};
+        WSADATA wsaData;
         //WSAStartup needs to be called on windows before sockets can be used. Request version 1.1, which is supported on windows 98 and higher.
         WSAStartup(MAKEWORD(1, 1), &wsaData);
         wsaStartupDone = true;

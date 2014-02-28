@@ -32,6 +32,9 @@ ifeq ($(UNAME), MINGW32_NT-6.1)
 	CFLAGS += -march=pentium4
 	LDFLAGS += -Wl,--large-address-aware -lm -lwsock32
 endif
+EXECUTABLE := $(EXECUTABLE).exe
+CFLAGS += -march=pentium4
+LDFLAGS += -Wl,--large-address-aware -lm -lwsock32
 
 all: $(SOURCES) $(EXECUTABLE)
 
