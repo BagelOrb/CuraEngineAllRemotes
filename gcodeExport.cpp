@@ -146,6 +146,7 @@ void GCodeExport::updateTotalPrintTime()
 {
     totalPrintTime += estimateCalculator.calculate();
     estimateCalculator.reset();
+<<<<<<< HEAD
 }
 
 void GCodeExport::writeComment(const char* comment, ...)
@@ -180,6 +181,42 @@ void GCodeExport::resetExtrusionValue()
 
 void GCodeExport::writeDelay(double timeAmount)
 {
+=======
+}
+
+void GCodeExport::writeComment(const char* comment, ...)
+{
+    va_list args;
+    va_start(args, comment);
+    fprintf(f, ";");
+    vfprintf(f, comment, args);
+    fprintf(f, "\n");
+    va_end(args);
+}
+
+void GCodeExport::writeLine(const char* line, ...)
+{
+    va_list args;
+    va_start(args, line);
+    vfprintf(f, line, args);
+    fprintf(f, "\n");
+    va_end(args);
+}
+
+void GCodeExport::resetExtrusionValue()
+{
+    if (extrusionAmount != 0.0 && flavor != GCODE_FLAVOR_MAKERBOT)
+    {
+        fprintf(f, "G92 E0\n");
+        totalFilament[extruderNr] += extrusionAmount;
+        extrusionAmountAtPreviousRetraction -= extrusionAmount;
+        extrusionAmount = 0.0;
+    }
+}
+
+void GCodeExport::writeDelay(double timeAmount)
+{
+>>>>>>> upstreamMaster
     fprintf(f, "G4 P%d\n", int(timeAmount * 1000));
     totalPrintTime += timeAmount;
 }
