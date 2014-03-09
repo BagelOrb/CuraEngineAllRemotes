@@ -324,13 +324,15 @@ private:
         {
             sendPolygonsToGui("support", 0, config.raftBaseThickness, storage.raftOutline);
             sendPolygonsToGui("support", 0, config.raftBaseThickness + config.raftInterfaceThickness, storage.raftOutline);
-
+            
             GCodePathConfig raftBaseConfig(config.initialLayerSpeed, config.raftBaseLinewidth, "SUPPORT");
             GCodePathConfig raftInterfaceConfig(config.initialLayerSpeed, config.raftInterfaceLinewidth, "SUPPORT");
             {
                 gcode.writeComment("LAYER:-2");
                 gcode.writeComment("RAFT");
                 GCodePlanner gcodeLayer(gcode, config.moveSpeed, config.retractionMinimalDistance);
+                if (config.supportExtruder > 0)
+                    gcodeLayer.setExtruder(config.supportExtruder);
                 gcodeLayer.setAlwaysRetract(true);
                 gcode.setZ(config.raftBaseThickness);
                 gcode.setExtrusion(config.raftBaseThickness, config.filamentDiameter, config.filamentFlow);
@@ -439,7 +441,11 @@ private:
         int prevExtruder = gcodeLayer.getExtruder();
         bool extruderChanged = gcodeLayer.setExtruder(volumeIdx);
         if (layerNr == 0 && volumeIdx == 0)
+        {
+            if (storage.skirt.size() > 0)
+                gcodeLayer.addTravel(storage.skirt[storage.skirt.size()-1].closestPointTo(gcode.getPositionXY()));
             gcodeLayer.addPolygonsByOptimizer(storage.skirt, &skirtConfig);
+        }
 
         SliceLayer* layer = &storage.volumes[volumeIdx].layers[layerNr];
         if (extruderChanged)
