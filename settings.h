@@ -58,12 +58,6 @@
  *   Homing is done with G162 X Y F2000
  **/
 #define GCODE_FLAVOR_MAKERBOT           2
-/**
- * MYRIWELL flavored GCode.
- *  Almost the same as for Makerbot
- *   G1 is used instead of G0
- **/
-#define GCODE_FLAVOR_MYRIWELL           3
 
 /**
  * Bits From Bytes GCode.
@@ -78,6 +72,13 @@
  *  MACH3 is CNC control software, which expects A/B/C/D for extruders, instead of E.
  **/
 #define GCODE_FLAVOR_MACH3              4
+
+/**
+ * MYRIWELL flavored GCode.
+ *  Almost the same as for Makerbot
+ *   G1 is used instead of G0
+ **/
+#define GCODE_FLAVOR_MYRIWELL           5
 
 #define MAX_EXTRUDERS 16
 
