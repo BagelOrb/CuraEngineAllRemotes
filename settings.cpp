@@ -18,6 +18,7 @@ ConfigSettings::ConfigSettings()
     SETTING(initialLayerThickness, 300);
     SETTING(filamentDiameter, 2890);
     SETTING(filamentFlow, 100);
+    SETTING(layer0extrusionWidth, 600);
     SETTING(extrusionWidth, 400);
     SETTING(insetCount, 2);
     SETTING(downSkinCount, 6);
@@ -46,6 +47,7 @@ ConfigSettings::ConfigSettings()
     SETTING(supportExtruder, -1);
 
     SETTING(retractionAmount, 4500);
+    SETTING(retractionAmountPrime, 0);
     SETTING(retractionSpeed, 45);
     SETTING(retractionAmountExtruderSwitch, 14500);
     SETTING(retractionMinimalDistance, 1500);
@@ -66,6 +68,15 @@ ConfigSettings::ConfigSettings()
     SETTING(raftBaseLinewidth, 0);
     SETTING(raftInterfaceThickness, 0);
     SETTING(raftInterfaceLinewidth, 0);
+    SETTING(raftInterfaceLineSpacing, 250);
+    SETTING(raftAirGap, 0);
+    SETTING(raftBaseSpeed, 0);
+    SETTING(raftFanSpeed, 0);
+    SETTING(raftSurfaceThickness, 0);
+    SETTING(raftSurfaceLinewidth, 0);
+    SETTING(raftSurfaceLineSpacing, 0);
+    SETTING(raftSurfaceLayers, 0);
+    SETTING(raftSurfaceSpeed, 0);
 
     SETTING(minimalLayerTime, 5);
     SETTING(minimalFeedrate, 10);
