@@ -15,6 +15,5 @@ void generateRaft(SliceDataStorage& storage, int distance)
     }
 
     SupportPolyGenerator supportGenerator(storage.support, 0);
-    storage.raftOutline = storage.raftOutline.unionPolygons(supportGenerator.polygons.offset(distance));
-    storage.raftOutline = storage.raftOutline.unionPolygons(storage.wipeTower.offset(distance));
+    storage.raftOutline = storage.raftOutline.unionPolygons(supportGenerator.polygons);
 }

@@ -30,8 +30,7 @@ public:
 class SliceLayer
 {
 public:
-    int sliceZ;
-    int printZ;
+    int z;
     vector<SliceLayerPart> parts;
 };
 
