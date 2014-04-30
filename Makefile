@@ -43,8 +43,7 @@ ifeq ($(OS),Windows_NT)
 	MKDIR_PREFIX = mkdir -p
 ifeq ($(UNAME), MINGW32_NT-5.1)
 	#For windows make it large address aware, which allows the process to use more then 2GB of memory.
-	CFLAGS += -march=pentium4
-	LDFLAGS += -Wl,--large-address-aware -lm -static-libgcc -static-libstdc++ -lwsock32
+	LDFLAGS += -static-libgcc -static-libstdc++
 endif
 else
 	MKDIR_PREFIX = mkdir -p
