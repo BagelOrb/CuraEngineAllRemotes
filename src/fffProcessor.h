@@ -468,6 +468,8 @@ private:
             gcode.writeFanCommand(fanSpeed);
 
             gcodeLayer.writeGCode(config.coolHeadLift > 0, static_cast<int>(layerNr) > 0 ? config.layerThickness : config.initialLayerThickness);
+
+	    if( (layerNr > 1) && (layerNr % config.ArevoPauseAfterNLayers) == 0 ) gcodeLayer.writeArevoPauseGCode(config.ArevoCustomPauseCode.c_str());
         }
 
         cura::log("Wrote layers in %5.2fs.\n", timeKeeper.restart());
@@ -537,9 +539,12 @@ private:
             }
 
             Polygons fillPolygons;
-            int fillAngle = 45;
-            if (layerNr & 1)
-                fillAngle += 90;
+
+            int fillAngle = config.ArevoFillAngle;	// used to be 45
+	    int layerModuloindex = (layerNr % config.ArevoFillAngleLayerRepeatCnt);
+            fillAngle = config.ArevoFillAngle +  layerModuloindex * config.ArevoFillAngleDelta;	
+            cura::log("ArevoFillAngle : %d \n", fillAngle);
+
             int extrusionWidth = config.extrusionWidth;
             if (layerNr == 0)
                 extrusionWidth = config.layer0extrusionWidth;

@@ -117,6 +117,16 @@ ConfigSettings::ConfigSettings()
         "G28 X0 Y0                      ;move X/Y to min endstops, so the head is out of the way\n"
         "M84                         ;steppers off\n"
         "G90                         ;absolute positioning\n";
+
+    // Arevo specific settings initialization
+    SETTING(ArevoFillAngle, 45);
+    SETTING(ArevoFillAngleDelta, 90);
+    SETTING(ArevoFillAngleLayerRepeatCnt, 2);
+    SETTING(ArevoPauseAfterNLayers, 25);
+    ArevoCustomPauseCode =
+        "G4 P1        ;Pause for 1 second delay \n";
+
+
 }
 
 #undef STRINGIFY
@@ -138,6 +148,11 @@ bool ConfigSettings::setSetting(const char* key, const char* value)
         return true;
     }
     if (stringcasecompare(key, "endCode") == 0)
+    {
+        this->endCode = value;
+        return true;
+    }
+    if (stringcasecompare(key, "ArevoCustomPauseCode") == 0)
     {
         this->endCode = value;
         return true;

@@ -671,4 +671,17 @@ void GCodePlanner::writeGCode(bool liftHeadIfNeeded, int layerThickness)
     }
 }
 
+void GCodePlanner::writeArevoPauseGCode(const char* pauseCode)
+{
+        gcode.writeComment("ArevoPauseAfterNLayers Code Begin");
+        gcode.writeRetraction();
+        gcode.setZ(gcode.getPositionZ() + MM2INT(3.0));
+        gcode.writeMove(gcode.getPositionXY(), travelConfig.speed, 0);
+        gcode.writeMove(gcode.getPositionXY() - Point(-MM2INT(20.0), 0), travelConfig.speed, 0);
+	// Now put out the CustoPauseCode
+    	gcode.writeCode(pauseCode);
+        gcode.writeComment("ArevoPauseAfterNLayers Code End");
+    	cura::log("ArevoPause inserted : %s\n", pauseCode);
+}
+
 }//namespace cura

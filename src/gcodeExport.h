@@ -220,6 +220,9 @@ public:
     void forceMinimalLayerTime(double minTime, int minimalSpeed);
     
     void writeGCode(bool liftHeadIfNeeded, int layerThickness);
+
+    void writeArevoPauseGCode(const char* pauseCode);
+
 };
 
 }//namespace cura
