@@ -380,7 +380,7 @@ private:
                 gcodeLayer.addPolygonsByOptimizer(storage.raftOutline, &raftBaseConfig);
 
                 Polygons raftLines;
-                generateLineInfill(storage.raftOutline, raftLines, config.raftBaseLinewidth, config.raftLineSpacing, config.infillOverlap, 0);
+                generateGridInfill(storage.raftOutline, raftLines, config.raftBaseLinewidth, config.raftLineSpacing, config.infillOverlap, 0);
                 gcodeLayer.addPolygonsByOptimizer(raftLines, &raftBaseConfig);
 
                 gcodeLayer.writeGCode(false, config.raftBaseThickness);
