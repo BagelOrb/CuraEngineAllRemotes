@@ -3,10 +3,13 @@
 #define BRIDGE_H
 
 #include "sliceDataStorage.h"
+typedef signed long long cInt;
 
 namespace cura {
 
 int bridgeAngle(Polygons outline, SliceLayer* prevLayer);
+cInt measureAngleCandidate( Polygons outline,  Polygons prevLayerPolygons);
+
 
 }//namespace cura
 
