@@ -26,37 +26,40 @@ cInt measureAngleCandidate(Polygons outline,  Polygons prevLayerPolygons)
 
     for(int x=minX; x<maxX; x+=1000)
     {
-        for(unsigned int pointNr=0; pointNr < outline[0].size()-1; ++pointNr)
+        for(unsigned int polyNr=0; polyNr<outline.size(); ++polyNr)
         {
-            if(outline[0][pointNr].X<x && outline[0][pointNr+1].X>x)
+            for(unsigned int pointNr=0; pointNr < outline[polyNr].size()-1; ++pointNr)
             {
-                cInt y = (x-outline[0][pointNr].X) / (outline[0][pointNr+1].X-outline[0][pointNr].X * (outline[0][pointNr+1].Y-outline[0][pointNr].Y) + outline[0][pointNr].Y);
-                crossings.push_back(y);
-            }
-            else if(outline[0][pointNr].X>x && outline[0][pointNr+1].X<x)
-            {
-                cInt y = (x-outline[0][pointNr].X) / (outline[0][pointNr+1].X-outline[0][pointNr].X * (outline[0][pointNr+1].Y-outline[0][pointNr].Y) + outline[0][pointNr].Y);
-                crossings.push_back(y);
-            }
-            std::sort(crossings.begin(), crossings.end());
-
-            for(unsigned int i=0;i<crossings.size()-1;++i)
-            {
-                Point p1,p2;
-                p1.X=x;
-                p1.Y=crossings[i];
-                p2.X=x;
-                p2.Y=crossings[i+1];
-
-                cInt pathLength = p2.Y-p1.Y;
-
-                if(!prevLayerPolygons.inside(p1) || !prevLayerPolygons.inside(p2))
+                if(outline[polyNr][pointNr].X<x && outline[polyNr][pointNr+1].X>x)
                 {
-                    // one endpoint doesn't lie on the previous layer. This path gets a penalty!
-                    pathLength+=penalty;
+                    cInt y = (x-outline[polyNr][pointNr].X) / (outline[polyNr][pointNr+1].X-outline[polyNr][pointNr].X * (outline[polyNr][pointNr+1].Y-outline[polyNr][pointNr].Y) + outline[polyNr][pointNr].Y);
+                    crossings.push_back(y);
                 }
+                else if(outline[polyNr][pointNr].X>x && outline[polyNr][pointNr+1].X<x)
+                {
+                    cInt y = (x-outline[polyNr][pointNr].X) / (outline[polyNr][pointNr+1].X-outline[polyNr][pointNr].X * (outline[polyNr][pointNr+1].Y-outline[polyNr][pointNr].Y) + outline[polyNr][pointNr].Y);
+                    crossings.push_back(y);
+                }
+                std::sort(crossings.begin(), crossings.end());
 
-                totalLengthSquare+=pathLength^2;
+                for(unsigned int i=0;i<crossings.size()-1;++i)
+                {
+                    Point p1,p2;
+                    p1.X=x;
+                    p1.Y=crossings[i];
+                    p2.X=x;
+                    p2.Y=crossings[i+1];
+
+                    cInt pathLength = p2.Y-p1.Y;
+
+                    if(!prevLayerPolygons.inside(p1) || !prevLayerPolygons.inside(p2))
+                    {
+                        // one endpoint doesn't lie on the previous layer. This path gets a penalty!
+                        pathLength+=penalty;
+                    }
+
+                    totalLengthSquare+=pathLength^2;
+                }
             }
         }
     }
@@ -120,38 +123,6 @@ int bridgeAngle(Polygons outline, SliceLayer* prevLayer)
 }
 
 //int measureBridgingQuality(PolygonRef outline, SliceLayer* prevLayer)
-//{
-//    // find Xmin and Xmax
-//    int xMin = 0xFFFFFFFF;
-//    int xMax = 0;
-//    for(int i=0; i<outline.size(); ++i)
-//    {
-//        int x = outline[i].X;
-//        if(x < xMin)
-//            xMin = x;
-//        if(x > xMax)
-//            xMax = x;
-//    }
-//
-//    for(int x=xMin;x<xMax;x+=1000)
-//    {
-//        vector<int> intersections;
-//        for(int polyPoint=0; polyPoint<outline.size()-1; ++polyPoint)
-//        {
-//            if(outline[polyPoint]<x && outline[polyPoint+1]>x)
-//            {
-//                // We have an "incoming" intersection
-//                intersections.push_back(y);
-//            }
-//            else if(outline[polyPoint]>x && outline[polyPoint+1]<x)
-//            {
-//                //we have an "outgoing intersecion
-//
-//            }
-//        }
-//    }
-//
-//}
 
 }//namespace cura
 
