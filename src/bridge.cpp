@@ -8,7 +8,7 @@ namespace cura {
 
 std::vector<cInt> crossings;
 
-cInt measureAngleCandidate(Polygons outline,  Polygons prevLayerPolygons)
+cInt measureAngleCandidate(Polygons& outline,  Polygons prevLayerPolygons)
 {
     const int penalty = 100*1000; // 100mm
     cInt totalLengthSquare=0;
@@ -28,16 +28,18 @@ cInt measureAngleCandidate(Polygons outline,  Polygons prevLayerPolygons)
     {
         for(unsigned int polyNr=0; polyNr<outline.size(); ++polyNr)
         {
-            for(unsigned int pointNr=0; pointNr < outline[polyNr].size()-1; ++pointNr)
+            for(unsigned int startPoint=0; startPoint < outline[polyNr].size()-1; startPoint+=2)
             {
-                if(outline[polyNr][pointNr].X<x && outline[polyNr][pointNr+1].X>x)
+                unsigned int endPoint;
+                if(startPoint==outline[polyNr].size())
+                    endPoint = 0;
+                else
+                    endPoint=startPoint+1;
+
+                if((outline[polyNr][startPoint].X<x && outline[polyNr][startPoint].X>x)
+                         || (outline[polyNr][startPoint].X>x && outline[polyNr][endPoint].X<x))
                 {
-                    cInt y = (x-outline[polyNr][pointNr].X) / (outline[polyNr][pointNr+1].X-outline[polyNr][pointNr].X * (outline[polyNr][pointNr+1].Y-outline[polyNr][pointNr].Y) + outline[polyNr][pointNr].Y);
-                    crossings.push_back(y);
-                }
-                else if(outline[polyNr][pointNr].X>x && outline[polyNr][pointNr+1].X<x)
-                {
-                    cInt y = (x-outline[polyNr][pointNr].X) / (outline[polyNr][pointNr+1].X-outline[polyNr][pointNr].X * (outline[polyNr][pointNr+1].Y-outline[polyNr][pointNr].Y) + outline[polyNr][pointNr].Y);
+                    cInt y = (x-outline[polyNr][startPoint].X) / (outline[polyNr][endPoint].X-outline[polyNr][startPoint].X * (outline[polyNr][endPoint].Y-outline[polyNr][startPoint].Y) + outline[polyNr][startPoint].Y);
                     crossings.push_back(y);
                 }
                 std::sort(crossings.begin(), crossings.end());
