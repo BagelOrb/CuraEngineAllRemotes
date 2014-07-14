@@ -359,7 +359,7 @@ private:
         unsigned int totalLayers = storage.volumes[0].layers.size();
         gcode.writeComment("Layer count: %d", totalLayers);
 
-        if (config.raftBaseThickness > 0 && config.raftInterfaceThickness > 0)
+        if (config.raftBaseThickness > 0 || config.raftInterfaceThickness > 0)
         {
             sendPolygonsToGui("support", 0, config.raftBaseThickness, storage.raftOutline);
             sendPolygonsToGui("support", 0, config.raftBaseThickness + config.raftInterfaceThickness, storage.raftOutline);
@@ -369,7 +369,8 @@ private:
             GCodePathConfig raftInterfaceConfig(config.printSpeed, config.raftInterfaceLinewidth, "SUPPORT");
             GCodePathConfig raftSurfaceConfig((config.raftSurfaceSpeed > 0) ? config.raftSurfaceSpeed : config.printSpeed, config.raftSurfaceLinewidth, "SUPPORT");
 
-            {
+            if (config.raftBaseThickness > 0)
+			{
                 gcode.writeComment("LAYER:-2");
                 gcode.writeComment("RAFT");
                 GCodePlanner gcodeLayer(gcode, config.moveSpeed, config.retractionMinimalDistance);
@@ -390,7 +391,8 @@ private:
                 gcode.writeFanCommand(config.raftFanSpeed);
             }
 
-            {
+            if (config.raftInterfaceThickness > 0)
+			{
                 gcode.writeComment("LAYER:-1");
                 gcode.writeComment("RAFT");
                 GCodePlanner gcodeLayer(gcode, config.moveSpeed, config.retractionMinimalDistance);
