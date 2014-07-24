@@ -7,8 +7,10 @@ typedef signed long long cInt;
 
 namespace cura {
 
+cInt measureAngleCandidate(cura::Polygons outline,  cura::Polygons prevLayerPolygons, double angle);
+
 int bridgeAngle(Polygons outline, SliceLayer* prevLayer);
-cInt measureAngleCandidate(Polygons& outline,  Polygons prevLayerPolygons);
+
 
 
 }//namespace cura
