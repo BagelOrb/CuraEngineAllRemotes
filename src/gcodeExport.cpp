@@ -7,6 +7,7 @@
 #include "timeEstimate.h"
 #include "settings.h"
 #include "utils/logoutput.h"
+#include "utils/string.h"
 
 namespace cura {
 
@@ -378,7 +379,7 @@ void GCodeExport::tellFileSize() {
     }
 }
 
-void GCodeExport::finalize(int maxObjectHeight, int moveSpeed, const char* endCode)
+void GCodeExport::finalize(int maxObjectHeight, int moveSpeed, const char* endCode, std::vector<_ConfigSettingIndex> index)
 {
     writeFanCommand(0);
     writeRetraction();
@@ -388,6 +389,21 @@ void GCodeExport::finalize(int maxObjectHeight, int moveSpeed, const char* endCo
     cura::log("Print time: %d\n", int(getTotalPrintTime()));
     cura::log("Filament: %d\n", int(getTotalFilamentUsed(0)));
     cura::log("Filament2: %d\n", int(getTotalFilamentUsed(1)));
+
+
+    // use a tag like <_layerThickness_> to get slicer settings exported to gcode
+    // usefull for postprocessing plugins
+    for(unsigned int n=0; n < index.size(); n++)
+    {
+      if (stringcasecompare(index[n].key, "startCode") != 0 && stringcasecompare(index[n].key, "endCode") != 0 && stringcasecompare(index[n].key, "preSwitchExtruderCode") != 0 && stringcasecompare(index[n].key, "postSwitchExtruderCode") != 0)
+        {
+	  char keyString[strlen(index[n].key) + 4 + 1];
+	  char numberString[16];
+	  sprintf(keyString, "<_%s_>", index[n].key);
+	  sprintf(numberString, "%d", *((int*)index[n].ptr));
+	  replaceTagInStart(keyString, numberString);
+	}
+    }
     
     if (getFlavor() == GCODE_FLAVOR_ULTIGCODE)
     {
