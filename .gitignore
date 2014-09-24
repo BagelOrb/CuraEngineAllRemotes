@@ -17,3 +17,8 @@ build/*
 *~
 NUL
 CuraEngine.layout
+.project
+.pydevproject
+.settings/
+.svn/
+ReadMe
