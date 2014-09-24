@@ -52,6 +52,11 @@ int compare_int64_t(const void* a, const void* b)
 
 void generateLineInfill(const Polygons& in_outline, Polygons& result, int extrusionWidth, int lineSpacing, int infillOverlap, double rotation)
 {
+	generateLineInfill(in_outline, result, extrusionWidth, lineSpacing, infillOverlap, rotation, false);
+}
+
+void generateLineInfill(const Polygons& in_outline, Polygons& result, int extrusionWidth, int lineSpacing, int infillOverlap, double rotation, bool isSupport)
+{
     Polygons outline = in_outline.offset(extrusionWidth * infillOverlap / 100);
     PointMatrix matrix(rotation);
     
@@ -65,9 +70,11 @@ void generateLineInfill(const Polygons& in_outline, Polygons& result, int extrus
     for(int n=0; n<lineCount; n++)
         cutList.push_back(vector<int64_t>());
 
+    int idxMax = 0;
     for(unsigned int polyNr=0; polyNr < outline.size(); polyNr++)
     {
         Point p1 = outline[polyNr][outline[polyNr].size()-1];
+        idxMax = (p1.X - boundary.min.X) / lineSpacing;
         for(unsigned int i=0; i < outline[polyNr].size(); i++)
         {
             Point p0 = outline[polyNr][i];
@@ -89,18 +96,59 @@ void generateLineInfill(const Polygons& in_outline, Polygons& result, int extrus
     }
     
     int idx = 0;
+
+	//definition for the starting and ending points of the support line
+    Point tmpStartP;
+    Point tmpEndP;
+    
     for(int64_t x = boundary.min.X + lineSpacing / 2; x < boundary.max.X; x += lineSpacing)
     {
-        qsort(cutList[idx].data(), cutList[idx].size(), sizeof(int64_t), compare_int64_t);
-        for(unsigned int i = 0; i + 1 < cutList[idx].size(); i+=2)
-        {
-            if (cutList[idx][i+1] - cutList[idx][i] < extrusionWidth / 5)
-                continue;
-            PolygonRef p = result.newPoly();
-            p.add(matrix.unapply(Point(x, cutList[idx][i])));
-            p.add(matrix.unapply(Point(x, cutList[idx][i+1])));
-        }
-        idx += 1;
+    	qsort(cutList[idx].data(), cutList[idx].size(), sizeof(int64_t), compare_int64_t);
+    	if(!isSupport)
+    	{
+    		for(unsigned int i = 0; i + 1 < cutList[idx].size(); i+=2)
+    		{
+    			if (cutList[idx][i+1] - cutList[idx][i] < extrusionWidth / 5)
+    				continue;
+    			PolygonRef p = result.newPoly();
+    			p.add(matrix.unapply(Point(x, cutList[idx][i])));
+    			p.add(matrix.unapply(Point(x, cutList[idx][i+1])));
+    		}
+    	}else
+    	{
+    		for(unsigned int i = 0; i + 1 < cutList[idx].size(); i+=2)
+    		{
+    			if (cutList[idx][i+1] - cutList[idx][i] < extrusionWidth / 5)
+    				continue;
+    			if(idx != 0 )
+    			{
+    				if(idx % 2 == 0 && tmpStartP.X != 0 && tmpStartP.Y != 0 && x != 0 && cutList[idx][0] != 0)
+    				{
+        				PolygonRef p0 = result.newPoly();
+        				p0.add(matrix.unapply(tmpStartP));
+        				p0.add(matrix.unapply(Point(x, cutList[idx][0])));
+    				}
+    				else if(idx % 2 != 0 && tmpEndP.X !=0 && tmpEndP.Y!= 0 && i+1 < cutList[idx].size() && i+2 >= cutList[idx].size() && x != 0 && cutList[idx][i+1] != 0 )
+    				{
+        				PolygonRef p0 = result.newPoly();
+        				p0.add(matrix.unapply(tmpEndP));
+        				p0.add(matrix.unapply(Point(x, cutList[idx][i+1])));
+    				}
+    			}
+
+    			PolygonRef p = result.newPoly();
+    			p.add(matrix.unapply(Point(x, cutList[idx][i])));
+    			p.add(matrix.unapply(Point(x, cutList[idx][i+1])));
+
+				if(i+1 < cutList[idx].size() && i+2 >= cutList[idx].size())
+				{
+    				tmpStartP = Point(x, cutList[idx][0]);
+    				tmpEndP = Point(x, cutList[idx][i+1]);
+				}
+    		}
+
+    	}
+    	idx += 1;
     }
 }
 

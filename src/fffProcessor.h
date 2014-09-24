@@ -742,6 +742,15 @@ private:
                         generateLineInfill(island, supportLines, config.extrusionWidth, config.supportLineDistance, config.infillOverlap, 0);
                     }
                     break;
+                case SUPPORT_TYPE_LINES_CONNECT:
+                    if (layerNr == 0)
+                    {
+                        generateLineInfill(island, supportLines, config.extrusionWidth, config.supportLineDistance, config.infillOverlap + 150, 0);
+                        generateLineInfill(island, supportLines, config.extrusionWidth, config.supportLineDistance, config.infillOverlap + 150, 90);
+                    }else{
+                        generateLineInfill(island, supportLines, config.extrusionWidth, config.supportLineDistance, config.infillOverlap, 0, true);
+                    }
+                    break;
                 }
             }
 
