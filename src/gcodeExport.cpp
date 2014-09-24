@@ -274,7 +274,30 @@ void GCodeExport::writeMove(Point p, int speed, int lineWidth)
             fprintf(f, " Z%0.3f", INT2MM(zPos));
         if (lineWidth != 0)
             fprintf(f, " %c%0.5f", extruderCharacter[extruderNr], extrusionAmount);
+
+        #define EN_FIRSTLINE 1
+		#if EN_FIRSTLINE == 1
+        static int firstline = 0;
+        if(firstline==0 && lineWidth != 0)
+        {
+        	Point diff = p - getPositionXY();
+        	double e = extrusionPerMM * INT2MM(lineWidth) * vSizeMM(diff);
+        	fprintf(f, " %c%0.5f",extruderCharacter[extruderNr], e);
+        	firstline = 1;
+        }
+		#endif
+		
         fprintf(f, "\n");
+
+		#if EN_FIRSTLINE == 1
+        if( firstline ==1 )
+        {
+        	fprintf(f, "G92 %c0\n", extruderCharacter[extruderNr]);
+        	fprintf(f, "G92 %c0.5\n", extruderCharacter[extruderNr]);
+        	fprintf(f, "G92 %c0\n", extruderCharacter[extruderNr]);
+        	firstline = 2;
+        }
+		#endif
     }
     
     currentPosition = Point3(p.X, p.Y, zPos);
