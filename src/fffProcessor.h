@@ -459,6 +459,10 @@ private:
                 gcode.setExtrusion(config.layerThickness, config.filamentDiameter, config.filamentFlow);
 
             GCodePlanner gcodeLayer(gcode, config.moveSpeed, config.retractionMinimalDistance);
+            if (layerNr == 0)
+            	gcodeLayer.setLayer0Retract(true);
+            else
+            	gcodeLayer.setLayer0Retract(false);
             int32_t z = config.initialLayerThickness + layerNr * config.layerThickness;
             z += config.raftBaseThickness + config.raftInterfaceThickness + config.raftSurfaceLayers*config.raftSurfaceThickness;
             if (config.raftBaseThickness > 0 && config.raftInterfaceThickness > 0)

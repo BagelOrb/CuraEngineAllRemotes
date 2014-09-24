@@ -455,6 +455,7 @@ GCodePlanner::GCodePlanner(GCodeExport& gcode, int travelSpeed, int retractionMi
     alwaysRetract = false;
     currentExtruder = gcode.getExtruderNr();
     this->retractionMinimalDistance = retractionMinimalDistance;
+    layer0Retract = false;
 }
 GCodePlanner::~GCodePlanner()
 {
@@ -691,7 +692,18 @@ void GCodePlanner::writeGCode(bool liftHeadIfNeeded, int layerThickness)
         }else{
             for(unsigned int i=0; i<path->points.size(); i++)
             {
-                gcode.writeMove(path->points[i], speed, path->config->lineWidth);
+            	if(layer0Retract)
+            	{
+            		if(i != 0 && i == path->points.size() - 1 && path->config->lineWidth != 0)
+            		{
+            			gcode.writeMove(path->points[i], speed, path->config->lineWidth);
+            			gcode.writeRetraction();
+            		}
+            		else
+            			gcode.writeMove(path->points[i], speed, path->config->lineWidth);
+            	}
+            	else
+            		gcode.writeMove(path->points[i], speed, path->config->lineWidth);
             }
         }
     }
@@ -706,6 +718,11 @@ void GCodePlanner::writeGCode(bool liftHeadIfNeeded, int layerThickness)
         gcode.writeMove(gcode.getPositionXY() - Point(-MM2INT(20.0), 0), travelConfig.speed, 0);
         gcode.writeDelay(extraTime);
     }
+}
+
+void GCodePlanner::setLayer0Retract(bool _layer0Retract)
+{
+	this->layer0Retract = _layer0Retract;
 }
 
 }//namespace cura
