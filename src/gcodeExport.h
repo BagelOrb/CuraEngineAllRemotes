@@ -10,6 +10,8 @@
 #include "utils/polygon.h"
 #include "timeEstimate.h"
 
+#define EN_FIRSTLINE 1	//Print some silk from the origin point to the starting point,then reset.
+
 namespace cura {
 
 //The GCodeExport class writes the actual GCode. This is the only class that knows how GCode looks and feels.
@@ -41,6 +43,8 @@ private:
     double totalFilament[MAX_EXTRUDERS];
     double totalPrintTime;
     TimeEstimateCalculator estimateCalculator;
+
+    double firstLineSection;
 public:
     
     GCodeExport();
@@ -65,6 +69,8 @@ public:
     
     void setZ(int z);
     
+    void setFirstLineSection(int initialLayerThickness, int filamentDiameter, int filamentFlow, int layer0extrusionWidth);
+
     Point getPositionXY();
     
     int getPositionZ();

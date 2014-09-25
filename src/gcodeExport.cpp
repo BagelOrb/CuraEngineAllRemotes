@@ -32,6 +32,8 @@ GCodeExport::GCodeExport()
     setFlavor(GCODE_FLAVOR_REPRAP);
     memset(extruderOffset, 0, sizeof(extruderOffset));
     f = stdout;
+
+    firstLineSection = 0.0;
 }
 
 GCodeExport::~GCodeExport()
@@ -122,6 +124,15 @@ void GCodeExport::setRetractionSettings(int retractionAmount, int retractionSpee
 void GCodeExport::setZ(int z)
 {
     this->zPos = z;
+}
+
+void GCodeExport::setFirstLineSection(int initialLayerThickness, int filamentDiameter, int filamentFlow, int layer0extrusionWidth)
+{
+	double _filamentArea = M_PI * (INT2MM(filamentDiameter) / 2.0) * (INT2MM(filamentDiameter) / 2.0);
+	if (flavor == GCODE_FLAVOR_ULTIGCODE || flavor == GCODE_FLAVOR_REPRAP_VOLUMATRIC)//UltiGCode uses volume extrusion as E value, and thus does not need the filamentArea in the mix.
+		this->firstLineSection = INT2MM(initialLayerThickness) * INT2MM(layer0extrusionWidth);
+	else
+		this->firstLineSection = INT2MM(initialLayerThickness) / _filamentArea * double(filamentFlow) / 100.0 * INT2MM(layer0extrusionWidth);
 }
 
 Point GCodeExport::getPositionXY()
@@ -275,13 +286,14 @@ void GCodeExport::writeMove(Point p, int speed, int lineWidth)
         if (lineWidth != 0)
             fprintf(f, " %c%0.5f", extruderCharacter[extruderNr], extrusionAmount);
 
-        #define EN_FIRSTLINE 1
 		#if EN_FIRSTLINE == 1
         static int firstline = 0;
-        if(firstline==0 && lineWidth != 0)
+        if(firstline == 0)
         {
-        	Point diff = p - getPositionXY();
-        	double e = extrusionPerMM * INT2MM(lineWidth) * vSizeMM(diff);
+        	double x = INT2MM(p.X - extruderOffset[extruderNr].X);
+        	double y = INT2MM(p.Y - extruderOffset[extruderNr].Y);
+        	double diff = sqrt(x*x+y*y);
+        	double e = 1.5 * this->firstLineSection * diff;
         	fprintf(f, " %c%0.5f",extruderCharacter[extruderNr], e);
         	firstline = 1;
         }
@@ -290,7 +302,7 @@ void GCodeExport::writeMove(Point p, int speed, int lineWidth)
         fprintf(f, "\n");
 
 		#if EN_FIRSTLINE == 1
-        if( firstline ==1 )
+        if(firstline == 1)
         {
         	fprintf(f, "G92 %c0\n", extruderCharacter[extruderNr]);
         	fprintf(f, "G92 %c0.5\n", extruderCharacter[extruderNr]);
