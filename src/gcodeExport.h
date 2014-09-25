@@ -231,6 +231,8 @@ public:
     
     void writeGCode(bool liftHeadIfNeeded, int layerThickness);
 
+    void writeGCode(bool liftHeadIfNeeded, int layerThickness, int layerNr);
+
     void setLayer0Retract(bool _layer0Retract);
 };
 

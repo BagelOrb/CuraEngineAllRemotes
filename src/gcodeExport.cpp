@@ -611,6 +611,11 @@ void GCodePlanner::forceMinimalLayerTime(double minTime, int minimalSpeed)
 
 void GCodePlanner::writeGCode(bool liftHeadIfNeeded, int layerThickness)
 {
+	writeGCode(liftHeadIfNeeded, layerThickness, -3);
+}
+
+void GCodePlanner::writeGCode(bool liftHeadIfNeeded, int layerThickness, int layerNr)
+{
     GCodePathConfig* lastConfig = nullptr;
     int extruder = gcode.getExtruderNr();
 
@@ -623,7 +628,14 @@ void GCodePlanner::writeGCode(bool liftHeadIfNeeded, int layerThickness)
             gcode.switchExtruder(extruder);
         }else if (path->retract)
         {
-            gcode.writeRetraction();
+        	if(layerNr == 0)
+        	{
+        		if(n != 0)
+        			gcode.writeRetraction();
+        	}else
+        	{
+        		gcode.writeRetraction();
+        	}
         }
         if (path->config != &travelConfig && lastConfig != path->config)
         {

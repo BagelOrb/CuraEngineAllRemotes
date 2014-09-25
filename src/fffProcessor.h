@@ -508,7 +508,7 @@ private:
             }
             gcode.writeFanCommand(fanSpeed);
             gcode.setFirstLineSection(config.initialLayerThickness, config.filamentDiameter, config.filamentFlow, config.layer0extrusionWidth);
-            gcodeLayer.writeGCode(config.coolHeadLift > 0, static_cast<int>(layerNr) > 0 ? config.layerThickness : config.initialLayerThickness);
+            gcodeLayer.writeGCode(config.coolHeadLift > 0, static_cast<int>(layerNr) > 0 ? config.layerThickness : config.initialLayerThickness, layerNr);
         }
 
         cura::log("Wrote layers in %5.2fs.\n", timeKeeper.restart());
