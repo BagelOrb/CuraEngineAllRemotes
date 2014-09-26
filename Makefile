@@ -8,7 +8,7 @@ LIBS_DIR = libs
 
 BUILD_TYPE = RELEASE
 
-VERSION ?= 14.09.24
+VERSION ?= DEV
 CXX ?= g++
 CFLAGS += -c -Wall -Wextra -Wold-style-cast -Woverloaded-virtual -std=c++11 -DVERSION=\"$(VERSION)\" -isystem libs
 
