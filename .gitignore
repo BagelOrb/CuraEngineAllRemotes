@@ -17,9 +17,12 @@ build/*
 *~
 NUL
 CuraEngine.layout
+CuraEngine.cbp
 .project
 .pydevproject
 .settings/
 .svn/
 ReadMe
 /.cproject
+CuraEngine.cbp
+
