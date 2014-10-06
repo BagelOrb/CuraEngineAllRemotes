@@ -294,7 +294,13 @@ void GCodeExport::writeMove(Point p, int speed, int lineWidth)
         	double y = INT2MM(p.Y - extruderOffset[extruderNr].Y);
         	double diff = sqrt(x*x+y*y);
         	double e = 1.5 * this->firstLineSection * diff;
-        	fprintf(f, " %c%0.5f",extruderCharacter[extruderNr], e);
+        	if(e <= 0.0)
+        	{
+        		fprintf(f, " %c%0.5f",extruderCharacter[extruderNr], 10.0);
+        	}else
+        	{
+        		fprintf(f, " %c%0.5f",extruderCharacter[extruderNr], e);
+        	}
         	firstline = 1;
         }
 		#endif
