@@ -19,6 +19,7 @@ class GCodeExport
 private:
     FILE* f;
     double extrusionAmount;
+    double extrusionAmountAtPreviousMove;
     double extrusionPerMM;
     double retractionAmount;
     double retractionAmountPrime;
@@ -89,7 +90,7 @@ public:
     
     void writeDelay(double timeAmount);
     
-    void writeMove(Point p, int speed, int lineWidth);
+    void writeMove(Point p, int speed, int lineWidth, const char* pathType);
     
     void writeRetraction(bool force=false);
     

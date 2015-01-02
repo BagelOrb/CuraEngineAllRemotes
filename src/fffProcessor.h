@@ -356,13 +356,14 @@ private:
             gcode.resetExtrusionValue();
             gcode.writeRetraction();
             gcode.setZ(maxObjectHeight + 5000);
-            gcode.writeMove(gcode.getPositionXY(), config.moveSpeed, 0);
-            gcode.writeMove(Point(storage.modelMin.x, storage.modelMin.y), config.moveSpeed, 0);
+            gcode.writeMove(gcode.getPositionXY(), config.moveSpeed, 0, "");
+            gcode.writeMove(Point(storage.modelMin.x, storage.modelMin.y), config.moveSpeed, 0, "");
         }
         fileNr++;
 
         unsigned int totalLayers = storage.volumes[0].layers.size();
-        gcode.writeComment("Layer count: %d", totalLayers);
+        if (gcode.getFlavor() != GCODE_FLAVOR_MAKERBOT_5TH_GEN)
+        	gcode.writeComment("Layer count: %d", totalLayers);
 
         if (config.raftBaseThickness > 0 && config.raftInterfaceThickness > 0)
         {
@@ -375,8 +376,10 @@ private:
             GCodePathConfig raftSurfaceConfig((config.raftSurfaceSpeed > 0) ? config.raftSurfaceSpeed : config.printSpeed, config.raftSurfaceLinewidth, "SUPPORT");
 
             {
-                gcode.writeComment("LAYER:-2");
-                gcode.writeComment("RAFT");
+            	if (gcode.getFlavor() != GCODE_FLAVOR_MAKERBOT_5TH_GEN) {
+            		gcode.writeComment("LAYER:-2");
+					gcode.writeComment("RAFT");
+            	}
                 GCodePlanner gcodeLayer(gcode, config.moveSpeed, config.retractionMinimalDistance);
                 if (config.supportExtruder > 0)
                     gcodeLayer.setExtruder(config.supportExtruder);
@@ -398,8 +401,10 @@ private:
             }
 
             {
-                gcode.writeComment("LAYER:-1");
-                gcode.writeComment("RAFT");
+            	if (gcode.getFlavor() != GCODE_FLAVOR_MAKERBOT_5TH_GEN) {
+					gcode.writeComment("LAYER:-1");
+					gcode.writeComment("RAFT");
+				}
                 GCodePlanner gcodeLayer(gcode, config.moveSpeed, config.retractionMinimalDistance);
                 gcode.setZ(config.raftBaseThickness + config.raftInterfaceThickness);
                 gcode.setExtrusion(config.raftInterfaceThickness, config.filamentDiameter, config.filamentFlow);
@@ -413,8 +418,10 @@ private:
 
             for (int raftSurfaceLayer=1; raftSurfaceLayer<=config.raftSurfaceLayers; raftSurfaceLayer++)
             {
-                gcode.writeComment("LAYER:-1");
-                gcode.writeComment("RAFT");
+            	if (gcode.getFlavor() != GCODE_FLAVOR_MAKERBOT_5TH_GEN) {
+					gcode.writeComment("LAYER:-1");
+					gcode.writeComment("RAFT");
+				}
                 GCodePlanner gcodeLayer(gcode, config.moveSpeed, config.retractionMinimalDistance);
                 gcode.setZ(config.raftBaseThickness + config.raftInterfaceThickness + config.raftSurfaceThickness*raftSurfaceLayer);
                 gcode.setExtrusion(config.raftSurfaceThickness, config.filamentDiameter, config.filamentFlow);
@@ -455,8 +462,8 @@ private:
                 skinConfig.setData(config.skinSpeed, extrusionWidth, "SKIN");
                 supportConfig.setData(config.printSpeed, extrusionWidth, "SUPPORT");
             }
-
-            gcode.writeComment("LAYER:%d", layerNr);
+            if (gcode.getFlavor() != GCODE_FLAVOR_MAKERBOT_5TH_GEN)
+            	gcode.writeComment("LAYER:%d", layerNr);
             if (layerNr == 0)
                 gcode.setExtrusion(config.initialLayerThickness, config.filamentDiameter, config.filamentFlow);
             else
@@ -517,6 +524,49 @@ private:
 
         //Store the object height for when we are printing multiple objects, as we need to clear every one of them when moving to the next position.
         maxObjectHeight = std::max(maxObjectHeight, storage.modelSize.z - config.objectSink);
+
+        if (gcode.getFlavor() == GCODE_FLAVOR_MAKERBOT_5TH_GEN)
+		{
+			FILE* f_meta = fopen("meta.json", "w+");
+			fprintf(f_meta,"{\n");
+			fprintf(f_meta,"  \"uuid\": \"0c6f778b-f4f6-4f6b-bcd8-d04ed42af403\",\n");
+			fprintf(f_meta,"  \"toolhead_0_temperature\": 215,\n");
+			fprintf(f_meta,"  \"toolhead_1_temperature\": 230,\n");
+			fprintf(f_meta,"  \"total_commands\": 4415,\n");
+			fprintf(f_meta,"  \"extrusion_distance_b_mm\": 0.0,\n");
+			fprintf(f_meta,"  \"printer_settings\": {\n");
+			fprintf(f_meta,"    \"default_raft_extruder\": 0,\n");
+			fprintf(f_meta,"    \"slicer\": \"CuraEngine\",\n");
+			fprintf(f_meta,"    \"platform_temperature\": 110,\n");
+			fprintf(f_meta,"    \"shells\": 2,\n");
+			fprintf(f_meta,"    \"default_support_extruder\": 0,\n");
+			fprintf(f_meta,"    \"support\": false,\n");
+			fprintf(f_meta,"    \"layer_height\": %0.1f,\n",config.layerThickness/100.0f);
+			fprintf(f_meta,"    \"travel_speed\": %d,\n",config.printSpeed);
+			fprintf(f_meta,"    \"extruder_temperatures\": [\n");
+			fprintf(f_meta,"      215,\n");
+			fprintf(f_meta,"      230\n");
+			fprintf(f_meta,"    ],\n");
+			fprintf(f_meta,"    \"materials\": [\n");
+			fprintf(f_meta,"      \"PLA\",\n");
+			fprintf(f_meta,"      \"PLA\"\n");
+			fprintf(f_meta,"    ],\n");
+			fprintf(f_meta,"    \"infill\": 0.1,\n");
+			fprintf(f_meta,"    \"heat_platform\": false,\n");
+			fprintf(f_meta,"    \"raft\": false,\n");
+			fprintf(f_meta,"    \"do_auto_support\": false,\n");
+			fprintf(f_meta,"    \"path\": null,\n");
+			fprintf(f_meta,"    \"print_speed\": 90,\n");
+			fprintf(f_meta,"    \"do_auto_raft\": false,\n");
+			fprintf(f_meta,"    \"extruder\": \"0\"\n");
+			fprintf(f_meta,"  },\n");
+			fprintf(f_meta,"  \"extrusion_mass_a_grams\": 1.822365954446167,\n");
+			fprintf(f_meta,"  \"duration_s\": %d,\n",int(gcode.getTotalPrintTime()));
+			fprintf(f_meta,"  \"extrusion_mass_b_grams\": 0.0,\n");
+			fprintf(f_meta,"  \"extrusion_distance_a_mm\": 597.2793418701775\n");
+			fprintf(f_meta,"}");
+			fclose(f_meta);
+		}
     }
 
     //Add a single layer from a single mesh-volume to the GCode

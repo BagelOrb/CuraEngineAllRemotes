@@ -14,6 +14,7 @@ GCodeExport::GCodeExport()
 : currentPosition(0,0,0), startPosition(INT32_MIN,INT32_MIN,0)
 {
     extrusionAmount = 0;
+    extrusionAmountAtPreviousMove = 0;
     extrusionPerMM = 0;
     retractionAmount = 4.5;
     minimalExtrusionBeforeRetraction = 0.0;
@@ -21,11 +22,11 @@ GCodeExport::GCodeExport()
     extruderSwitchRetraction = 14.5;
     extruderNr = 0;
     currentFanSpeed = -1;
-    
+
     totalPrintTime = 0.0;
     for(unsigned int e=0; e<MAX_EXTRUDERS; e++)
         totalFilament[e] = 0.0;
-    
+
     currentSpeed = 0;
     retractionSpeed = 45;
     isRetracted = false;
@@ -49,18 +50,18 @@ void GCodeExport::replaceTagInStart(const char* tag, const char* replaceValue)
     }
     fpos_t oldPos;
     fgetpos(f, &oldPos);
-    
+
     char buffer[1024];
     fseek(f, 0, SEEK_SET);
     fread(buffer, 1024, 1, f);
-    
+
     char* c = strstr(buffer, tag);
     memset(c, ' ', strlen(tag));
     if (c) memcpy(c, replaceValue, strlen(replaceValue));
-    
+
     fseek(f, 0, SEEK_SET);
     fwrite(buffer, 1024, 1, f);
-    
+
     fsetpos(f, &oldPos);
 }
 
@@ -195,7 +196,7 @@ void GCodeExport::writeLine(const char* line, ...)
 
 void GCodeExport::resetExtrusionValue()
 {
-    if (extrusionAmount != 0.0 && flavor != GCODE_FLAVOR_MAKERBOT && flavor != GCODE_FLAVOR_BFB)
+    if (extrusionAmount != 0.0 && flavor != GCODE_FLAVOR_MAKERBOT && flavor != GCODE_FLAVOR_BFB && flavor != GCODE_FLAVOR_MAKERBOT_5TH_GEN)
     {
         fprintf(f, "G92 %c0\n", extruderCharacter[extruderNr]);
         totalFilament[extruderNr] += extrusionAmount;
@@ -210,7 +211,7 @@ void GCodeExport::writeDelay(double timeAmount)
     totalPrintTime += timeAmount;
 }
 
-void GCodeExport::writeMove(Point p, int speed, int lineWidth)
+void GCodeExport::writeMove(Point p, int speed, int lineWidth, const char* pathType)
 {
     if (currentPosition.x == p.X && currentPosition.y == p.Y && currentPosition.z == zPos)
         return;
@@ -251,26 +252,176 @@ void GCodeExport::writeMove(Point p, int speed, int lineWidth)
             }
         }
         fprintf(f, "G1 X%0.3f Y%0.3f Z%0.3f F%0.1f\r\n", INT2MM(p.X - extruderOffset[extruderNr].X), INT2MM(p.Y - extruderOffset[extruderNr].Y), INT2MM(zPos), fspeed);
-    }else{
-        
+    } else if (flavor == GCODE_FLAVOR_MAKERBOT_5TH_GEN){
+    	//Normal E handling.
+    	bool controlledMove = false;
+		if (lineWidth != 0)
+		{
+			Point diff = p - getPositionXY();
+			if (isRetracted)
+			{
+				if (retractionZHop > 0) {
+					fprintf(f,
+							"  {\n"
+							"    \"command\": {\n"
+							"      \"function\": \"move\",\n"
+							"      \"parameters\": {\n"
+							"        \"x\": %0.5f,\n"
+							"        \"y\": %0.5f,\n"
+							"        \"z\": %0.5f,\n"
+							"        \"a\": %0.5f,\n"
+							"        \"feedrate\": %i\n"
+							"      },\n"
+							"      \"tags\": [\n"
+							"        \"Travel move\"\n"
+							"      ],\n"
+							"      \"metadata\": {\n"
+							"        \"relative\": {\n"
+							"          \"x\": false,\n"
+							"          \"y\": false,\n"
+							"          \"z\": false,\n"
+							"          \"a\": false\n"
+							"        }\n"
+							"      }\n"
+							"    }\n"
+							"  },\n"
+					, INT2MM(currentPosition.x - extruderOffset[extruderNr].X), INT2MM(currentPosition.y - extruderOffset[extruderNr].Y), INT2MM(currentPosition.z), extrusionAmount - retractionAmount, retractionSpeed/2);
+				}
+				extrusionAmount += retractionAmountPrime;
+				fprintf(f,
+					"  {\n"
+					"    \"command\": {\n"
+					"      \"function\": \"move\",\n"
+					"      \"parameters\": {\n"
+					"        \"x\": %0.5f,\n"
+					"        \"y\": %0.5f,\n"
+					"        \"z\": %0.5f,\n"
+					"        \"a\": %0.5f,\n"
+					"        \"feedrate\": %i\n"
+					"      },\n"
+					"      \"tags\": [\n"
+					"        \"Restart\"\n"
+					"      ],\n"
+					"      \"metadata\": {\n"
+					"        \"relative\": {\n"
+					"          \"x\": false,\n"
+					"          \"y\": false,\n"
+					"          \"z\": false,\n"
+					"          \"a\": false\n"
+					"        }\n"
+					"      }\n"
+					"    }\n"
+					"  },\n"
+				, INT2MM(currentPosition.x - extruderOffset[extruderNr].X), INT2MM(currentPosition.y - extruderOffset[extruderNr].Y), INT2MM(currentPosition.z), extrusionAmount, currentSpeed/5);
+				fprintf(f,
+						"  {\n"
+						"    \"command\": {\n"
+						"      \"function\": \"move\",\n"
+						"      \"parameters\": {\n"
+						"        \"x\": %0.5f,\n"
+						"        \"y\": %0.5f,\n"
+						"        \"z\": %0.5f,\n"
+						"        \"a\": %0.5f,\n"
+						"        \"feedrate\": %i\n"
+						"      },\n"
+						"      \"tags\": [\n"
+						"        \"Restart\"\n"
+						"      ],\n"
+						"      \"metadata\": {\n"
+						"        \"relative\": {\n"
+						"          \"x\": false,\n"
+						"          \"y\": false,\n"
+						"          \"z\": false,\n"
+						"          \"a\": false\n"
+						"        }\n"
+						"      }\n"
+						"    }\n"
+						"  },\n"
+				, INT2MM(currentPosition.x - extruderOffset[extruderNr].X), INT2MM(currentPosition.y - extruderOffset[extruderNr].Y), INT2MM(currentPosition.z), extrusionAmount, currentSpeed/5);
+				currentSpeed = retractionSpeed;
+				estimateCalculator.plan(TimeEstimateCalculator::Position(INT2MM(currentPosition.x), INT2MM(currentPosition.y), INT2MM(currentPosition.z), extrusionAmount), currentSpeed);
+				if (extrusionAmount > 10000.0 && flavor != GCODE_FLAVOR_MAKERBOT_5TH_GEN) //According to https://github.com/Ultimaker/CuraEngine/issues/14 having more then 21m of extrusion causes inaccuracies. So reset it every 10m, just to be sure.
+					resetExtrusionValue();
+				isRetracted = false;
+			}
+			extrusionAmount += extrusionPerMM * INT2MM(lineWidth) * vSizeMM(diff);
+			controlledMove = true;
+		}
+
+		currentSpeed = speed;
+		const char* moveType = "default";
+		if (strcmp(pathType,"travel")==0) {
+			moveType = "Travel move";
+			if (extrusionAmount-extrusionAmountAtPreviousMove == 0)
+				moveType = "Leaky travel move";
+		}
+		if (isRetracted)
+			moveType ="Travel move";
+		if (strcmp(pathType,"SKIRT")==0)
+			moveType = "Outline";
+		if (strcmp(pathType,"WALL-OUTER")==0)
+			moveType = "Outline";
+		if (strcmp(pathType,"WALL-INNER")==0)
+			moveType = "Inset";
+		if (strcmp(pathType,"SKIN")==0)
+			moveType = "Infill";
+		if (strcmp(pathType,"FILL")==0)
+			moveType = "Infill";
+		if (strcasecmp(moveType,"default")==0)
+			moveType = "Travel move";
+		double aamount = 0;
+		if (isRetracted) {
+			aamount = extrusionAmount-retractionAmount;
+		} else {
+			aamount = extrusionAmount;
+		}
+		//fprintf(f,"-->TYPE : %s | dA : %0.5f\n",pathType, extrusionAmount-extrusionAmountAtPreviousMove);
+		fprintf(f,
+				"  {\n"
+				"    \"command\": {\n"
+				"      \"function\": \"move\",\n"
+				"      \"parameters\": {\n"
+				"        \"x\": %0.5f,\n"
+				"        \"y\": %0.5f,\n"
+				"        \"z\": %0.5f,\n"
+				"        \"a\": %0.5f,\n"
+				"        \"feedrate\": %i\n"
+				"      },\n"
+				"      \"tags\": [\n"
+				"        \"%s\"\n"
+				"      ],\n"
+				"      \"metadata\": {\n"
+				"        \"relative\": {\n"
+				"          \"x\": false,\n"
+				"          \"y\": false,\n"
+				"          \"z\": false,\n"
+				"          \"a\": false\n"
+				"        }\n"
+				"      }\n"
+				"    }\n"
+				"  },\n"
+		, INT2MM(p.X - extruderOffset[extruderNr].X), INT2MM(p.Y - extruderOffset[extruderNr].Y), INT2MM(zPos), aamount, currentSpeed,moveType);
+		extrusionAmountAtPreviousMove = extrusionAmount;
+    } else {
         //Normal E handling.
         if (lineWidth != 0)
         {
             Point diff = p - getPositionXY();
             if (isRetracted)
             {
-                if (retractionZHop > 0)
+                if (retractionZHop > 0) {
                     fprintf(f, "G1 Z%0.3f\n", float(currentPosition.z)/1000);
+                }
                 if (flavor == GCODE_FLAVOR_ULTIGCODE || flavor == GCODE_FLAVOR_REPRAP_VOLUMATRIC)
                 {
                     fprintf(f, "G11\n");
-                }else{
+                } else {
                     extrusionAmount += retractionAmountPrime;
                     fprintf(f, "G1 F%i %c%0.5f\n", retractionSpeed * 60, extruderCharacter[extruderNr], extrusionAmount);
                     currentSpeed = retractionSpeed;
                     estimateCalculator.plan(TimeEstimateCalculator::Position(INT2MM(currentPosition.x), INT2MM(currentPosition.y), INT2MM(currentPosition.z), extrusionAmount), currentSpeed);
                 }
-                if (extrusionAmount > 10000.0) //According to https://github.com/Ultimaker/CuraEngine/issues/14 having more then 21m of extrusion causes inaccuracies. So reset it every 10m, just to be sure.
+                if (extrusionAmount > 10000.0 && flavor != GCODE_FLAVOR_MAKERBOT_5TH_GEN) //According to https://github.com/Ultimaker/CuraEngine/issues/14 having more then 21m of extrusion causes inaccuracies. So reset it every 10m, just to be sure.
                     resetExtrusionValue();
                 isRetracted = false;
             }
@@ -293,7 +444,7 @@ void GCodeExport::writeMove(Point p, int speed, int lineWidth)
             fprintf(f, " %c%0.5f", extruderCharacter[extruderNr], extrusionAmount);
         fprintf(f, "\n");
     }
-    
+
     currentPosition = Point3(p.X, p.Y, zPos);
     startPosition = currentPosition;
     estimateCalculator.plan(TimeEstimateCalculator::Position(INT2MM(currentPosition.x), INT2MM(currentPosition.y), INT2MM(currentPosition.z), extrusionAmount), speed);
@@ -303,19 +454,78 @@ void GCodeExport::writeRetraction(bool force)
 {
     if (flavor == GCODE_FLAVOR_BFB)//BitsFromBytes does automatic retraction.
         return;
-    
+
     if (retractionAmount > 0 && !isRetracted && (extrusionAmountAtPreviousRetraction + minimalExtrusionBeforeRetraction < extrusionAmount || force))
     {
         if (flavor == GCODE_FLAVOR_ULTIGCODE || flavor == GCODE_FLAVOR_REPRAP_VOLUMATRIC)
         {
             fprintf(f, "G10\n");
         }else{
-            fprintf(f, "G1 F%i %c%0.5f\n", retractionSpeed * 60, extruderCharacter[extruderNr], extrusionAmount - retractionAmount);
+        	if (flavor == GCODE_FLAVOR_MAKERBOT_5TH_GEN)
+			{
+				fprintf(f,
+						"  {\n"
+						"    \"command\": {\n"
+						"      \"function\": \"move\",\n"
+						"      \"parameters\": {\n"
+						"        \"x\": %0.5f,\n"
+						"        \"y\": %0.5f,\n"
+						"        \"z\": %0.5f,\n"
+						"        \"a\": %0.5f,\n"
+						"        \"feedrate\": %i\n"
+						"      },\n"
+						"      \"tags\": [\n"
+						"        \"Retract\"\n"
+						"      ],\n"
+						"      \"metadata\": {\n"
+						"        \"relative\": {\n"
+						"          \"x\": false,\n"
+						"          \"y\": false,\n"
+						"          \"z\": false,\n"
+						"          \"a\": false\n"
+						"        }\n"
+						"      }\n"
+						"    }\n"
+						"  },\n"
+				, INT2MM(currentPosition.x - extruderOffset[extruderNr].X), INT2MM(currentPosition.y - extruderOffset[extruderNr].Y), INT2MM(zPos), extrusionAmount - retractionAmount, retractionSpeed);
+			} else {
+				fprintf(f, "G1 F%i %c%0.5f\n", retractionSpeed * 60, extruderCharacter[extruderNr], extrusionAmount - retractionAmount);
+			}
             currentSpeed = retractionSpeed;
             estimateCalculator.plan(TimeEstimateCalculator::Position(INT2MM(currentPosition.x), INT2MM(currentPosition.y), INT2MM(currentPosition.z), extrusionAmount - retractionAmount), currentSpeed);
         }
-        if (retractionZHop > 0)
-            fprintf(f, "G1 Z%0.3f\n", INT2MM(currentPosition.z + retractionZHop));
+        if (retractionZHop > 0) {
+        	if (flavor == GCODE_FLAVOR_MAKERBOT_5TH_GEN)
+			{
+				fprintf(f,
+						"  {\n"
+						"    \"command\": {\n"
+						"      \"function\": \"move\",\n"
+						"      \"parameters\": {\n"
+						"        \"x\": %0.5f,\n"
+						"        \"y\": %0.5f,\n"
+						"        \"z\": %0.5f,\n"
+						"        \"a\": %0.5f,\n"
+						"        \"feedrate\": %i\n"
+						"      },\n"
+						"      \"tags\": [\n"
+						"        \"Travel move\"\n"
+						"      ],\n"
+						"      \"metadata\": {\n"
+						"        \"relative\": {\n"
+						"          \"x\": false,\n"
+						"          \"y\": false,\n"
+						"          \"z\": false,\n"
+						"          \"a\": false\n"
+						"        }\n"
+						"      }\n"
+						"    }\n"
+						"  },\n"
+				, INT2MM(currentPosition.x - extruderOffset[extruderNr].X), INT2MM(currentPosition.y - extruderOffset[extruderNr].Y), INT2MM(currentPosition.z + retractionZHop), extrusionAmount - retractionAmount, retractionSpeed/2);
+			} else {
+				fprintf(f, "G1 Z%0.3f\n", INT2MM(currentPosition.z + retractionZHop));
+			}
+        }
         extrusionAmountAtPreviousRetraction = extrusionAmount;
         isRetracted = true;
     }
@@ -332,7 +542,7 @@ void GCodeExport::switchExtruder(int newExtruder)
         isRetracted = true;
         return;
     }
-    
+
     resetExtrusionValue();
     if (flavor == GCODE_FLAVOR_ULTIGCODE || flavor == GCODE_FLAVOR_REPRAP_VOLUMATRIC)
     {
@@ -372,6 +582,33 @@ void GCodeExport::writeFanCommand(int speed)
     {
         if (flavor == GCODE_FLAVOR_MAKERBOT)
             fprintf(f, "M126 T0 ; value = %d\n", speed * 255 / 100);
+        else if (flavor == GCODE_FLAVOR_MAKERBOT_5TH_GEN)
+        {
+        	fprintf(f,
+        			"  {\n"
+        			"    \"command\": {\n"
+        			"      \"function\": \"toggle_fan\",\n"
+        			"      \"parameters\": {\n"
+        			"        \"value\": true\n"
+        			"      },\n"
+        			"      \"metadata\": {},\n"
+        			"      \"tags\": []\n"
+        			"    }\n"
+        			"  },\n"
+			);
+        	fprintf(f,
+        			"  {\n"
+        			"    \"command\": {\n"
+        			"      \"function\": \"fan_duty\",\n"
+        			"      \"parameters\": {\n"
+        			"        \"value\": %0.3f\n"
+        			"      },\n"
+        			"      \"metadata\": {},\n"
+        			"      \"tags\": []\n"
+        			"    }\n"
+        			"  },\n"
+			,speed/100.0f);
+        }
         else
             fprintf(f, "M106 S%d\n", speed * 255 / 100);
     }
@@ -379,6 +616,21 @@ void GCodeExport::writeFanCommand(int speed)
     {
         if (flavor == GCODE_FLAVOR_MAKERBOT)
             fprintf(f, "M127 T0\n");
+        else if (flavor == GCODE_FLAVOR_MAKERBOT_5TH_GEN)
+        {
+        	fprintf(f,
+        			"  {\n"
+        			"    \"command\": {\n"
+        			"      \"function\": \"toggle_fan\",\n"
+        			"      \"parameters\": {\n"
+        			"        \"value\": false\n"
+        			"      },\n"
+        			"      \"metadata\": {},\n"
+        			"      \"tags\": []\n"
+        			"    }\n"
+        			"  },\n"
+        	);
+        }
         else
             fprintf(f, "M107\n");
     }
@@ -405,12 +657,12 @@ void GCodeExport::finalize(int maxObjectHeight, int moveSpeed, const char* endCo
     writeFanCommand(0);
     writeRetraction();
     setZ(maxObjectHeight + 5000);
-    writeMove(getPositionXY(), moveSpeed, 0);
+    writeMove(getPositionXY(), moveSpeed, 0, "");
     writeCode(endCode);
     cura::log("Print time: %d\n", int(getTotalPrintTime()));
     cura::log("Filament: %d\n", int(getTotalFilamentUsed(0)));
     cura::log("Filament2: %d\n", int(getTotalFilamentUsed(1)));
-    
+
     if (getFlavor() == GCODE_FLAVOR_ULTIGCODE)
     {
         char numberString[16];
@@ -577,13 +829,13 @@ void GCodePlanner::forceMinimalLayerTime(double minTime, int minimalSpeed)
             if (speed < minimalSpeed)
                 factor = double(minimalSpeed) / double(path->config->speed);
         }
-        
+
         //Only slow down with the minimal time if that will be slower then a factor already set. First layer slowdown also sets the speed factor.
         if (factor * 100 < getExtrudeSpeedFactor())
             setExtrudeSpeedFactor(factor * 100);
         else
             factor = getExtrudeSpeedFactor() / 100.0;
-        
+
         if (minTime - (extrudeTime / factor) - travelTime > 0.1)
         {
             //TODO: Use up this extra time (circle around the print?)
@@ -613,16 +865,17 @@ void GCodePlanner::writeGCode(bool liftHeadIfNeeded, int layerThickness)
         }
         if (path->config != &travelConfig && lastConfig != path->config)
         {
-            gcode.writeComment("TYPE:%s", path->config->name);
+            if (gcode.getFlavor() != GCODE_FLAVOR_MAKERBOT_5TH_GEN)
+            	gcode.writeComment("TYPE:%s", path->config->name);
             lastConfig = path->config;
         }
         int speed = path->config->speed;
-        
+
         if (path->config->lineWidth != 0)// Only apply the extrudeSpeedFactor to extrusion moves
             speed = speed * extrudeSpeedFactor / 100;
         else
             speed = speed * travelSpeedFactor / 100;
-        
+
         if (path->points.size() == 1 && path->config != &travelConfig && shorterThen(gcode.getPositionXY() - path->points[0], path->config->lineWidth * 2))
         {
             //Check for lots of small moves and combine them into one large line
@@ -644,16 +897,16 @@ void GCodePlanner::writeGCode(bool liftHeadIfNeeded, int layerThickness)
                     Point newPoint = (paths[x].points[0] + paths[x+1].points[0]) / 2;
                     int64_t newLen = vSize(gcode.getPositionXY() - newPoint);
                     if (newLen > 0)
-                        gcode.writeMove(newPoint, speed, path->config->lineWidth * oldLen / newLen);
-                    
+                        gcode.writeMove(newPoint, speed, path->config->lineWidth * oldLen / newLen, path->config->name);
+
                     p0 = paths[x+1].points[0];
                 }
-                gcode.writeMove(paths[i-1].points[0], speed, path->config->lineWidth);
+                gcode.writeMove(paths[i-1].points[0], speed, path->config->lineWidth, path->config->name);
                 n = i - 1;
                 continue;
             }
         }
-        
+
         bool spiralize = path->config->spiralize;
         if (spiralize)
         {
@@ -676,7 +929,7 @@ void GCodePlanner::writeGCode(bool liftHeadIfNeeded, int layerThickness)
                 totalLength += vSizeMM(p0 - p1);
                 p0 = p1;
             }
-            
+
             float length = 0.0;
             p0 = gcode.getPositionXY();
             for(unsigned int i=0; i<path->points.size(); i++)
@@ -685,24 +938,25 @@ void GCodePlanner::writeGCode(bool liftHeadIfNeeded, int layerThickness)
                 length += vSizeMM(p0 - p1);
                 p0 = p1;
                 gcode.setZ(z + layerThickness * length / totalLength);
-                gcode.writeMove(path->points[i], speed, path->config->lineWidth);
+                gcode.writeMove(path->points[i], speed, path->config->lineWidth, path->config->name);
             }
         }else{
             for(unsigned int i=0; i<path->points.size(); i++)
             {
-                gcode.writeMove(path->points[i], speed, path->config->lineWidth);
+                gcode.writeMove(path->points[i], speed, path->config->lineWidth, path->config->name);
             }
         }
     }
-    
+
     gcode.updateTotalPrintTime();
     if (liftHeadIfNeeded && extraTime > 0.0)
     {
-        gcode.writeComment("Small layer, adding delay of %f", extraTime);
+    	if (gcode.getFlavor() != GCODE_FLAVOR_MAKERBOT_5TH_GEN)
+    		gcode.writeComment("Small layer, adding delay of %f", extraTime);
         gcode.writeRetraction(true);
         gcode.setZ(gcode.getPositionZ() + MM2INT(3.0));
-        gcode.writeMove(gcode.getPositionXY(), travelConfig.speed, 0);
-        gcode.writeMove(gcode.getPositionXY() - Point(-MM2INT(20.0), 0), travelConfig.speed, 0);
+        gcode.writeMove(gcode.getPositionXY(), travelConfig.speed, 0, "");
+        gcode.writeMove(gcode.getPositionXY() - Point(-MM2INT(20.0), 0), travelConfig.speed, 0, "");
         gcode.writeDelay(extraTime);
     }
 }

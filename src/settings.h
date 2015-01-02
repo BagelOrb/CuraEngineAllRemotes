@@ -86,6 +86,11 @@ enum GCode_Flavor
  *  M106 Sxxx and M107 are used to turn the fan on/off.
  **/
     GCODE_FLAVOR_REPRAP_VOLUMATRIC = 5,
+
+/**
+ * Makerbot 5th Gen JSON Toolpath.
+ **/
+    GCODE_FLAVOR_MAKERBOT_5TH_GEN = 6,
 };
 
 #define MAX_EXTRUDERS 16

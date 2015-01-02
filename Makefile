@@ -6,14 +6,14 @@ BUILD_DIR = build
 SRC_DIR = src
 LIBS_DIR = libs
 
-BUILD_TYPE = RELEASE
+BUILD_TYPE = DEBUG
 
-VERSION ?= DEV
+VERSION ?= 15.01-RC6-Makerbot
 CXX ?= g++
 CFLAGS += -c -Wall -Wextra -Wold-style-cast -Woverloaded-virtual -std=c++11 -DVERSION=\"$(VERSION)\" -isystem libs
 
 ifeq ($(BUILD_TYPE),DEBUG)
-	CFLAGS+=-ggdb -Og -g
+	CFLAGS+=-ggdb -g
 endif
 ifeq ($(BUILD_TYPE),PROFILE)
 	CFLAGS+= -pg
@@ -33,7 +33,7 @@ OBJECTS = $(addprefix $(BUILD_DIR)/,$(OBJECTS_RAW))
 
 DIRS = $(sort $(dir $(OBJECTS)))
 
-EXECUTABLE = $(BUILD_DIR)/CuraEngine
+EXECUTABLE = CuraEngine
 
 ifeq ($(OS),Windows_NT)
 	#For windows make it large address aware, which allows the process to use more then 2GB of memory.
