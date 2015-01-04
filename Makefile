@@ -10,7 +10,8 @@ BUILD_TYPE = DEBUG
 
 VERSION ?= 15.01-RC6-Makerbot
 CXX ?= g++
-CFLAGS += -c -Wall -Wextra -Wold-style-cast -Woverloaded-virtual -std=c++11 -DVERSION=\"$(VERSION)\" -isystem libs
+#-Wold-style-cast
+CFLAGS += -c -Wall -Wextra -Woverloaded-virtual -std=c++11 -DVERSION=\"$(VERSION)\" -isystem libs
 
 ifeq ($(BUILD_TYPE),DEBUG)
 	CFLAGS+=-ggdb -g

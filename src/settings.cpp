@@ -98,6 +98,12 @@ ConfigSettings::ConfigSettings()
     SETTING(simpleMode, 0);
     SETTING(gcodeFlavor, GCODE_FLAVOR_REPRAP);
 
+    SETTING(printTemperature, 230);
+    SETTING(printTemperature2, 210);
+    SETTING(printTemperature3, 0);
+    SETTING(printTemperature4, 0);
+    SETTING(printBedTemperature, 60);
+
     memset(extruderOffset, 0, sizeof(extruderOffset));
     SETTING(extruderOffset[0].X, 0); // No one says that extruder 0 can not have an offset!
     SETTING(extruderOffset[0].Y, 0);

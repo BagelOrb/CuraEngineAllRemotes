@@ -89,6 +89,12 @@ enum GCode_Flavor
 
 /**
  * Makerbot 5th Gen JSON Toolpath.
+ *  With the release of their 5th Generation printers (Makerbot Mini, Makerbot Z18 & Makerbot Replicator 5th Gen), the machine no longer uses gcode or x3g
+ *  but needs two JSON files : print.jsontoopath is an array of commands to print the object, meta.json contains various informations about the project.
+ *  Those 2 files are zipped along 3 PNG renders of the project in a file called <project>.makerbot.
+ *  CuraEngine generates the JSON toolpath and meta information and passes it to Cura as a single "file" via the socket.
+ *  Cura takes care of splitting the received data, writing it to the files, copying dummy renders from the resources folder and zipping everything.
+ *  This happens in Cura.cura (if used in command line mode with the --slice option) and Cura.gui.sceneView if using the GUI.
  **/
     GCODE_FLAVOR_MAKERBOT_5TH_GEN = 6,
 };
@@ -206,6 +212,13 @@ public:
     int spiralizeMode;
     int simpleMode;
     int gcodeFlavor;
+
+    //Added temperature settings
+    int printTemperature;
+    int printTemperature2;
+    int printTemperature3;
+    int printTemperature4;
+    int printBedTemperature;
 
     IntPoint extruderOffset[MAX_EXTRUDERS];
     std::string startCode;

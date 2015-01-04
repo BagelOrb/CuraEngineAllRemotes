@@ -93,6 +93,10 @@ int GCodeExport::getFlavor()
 
 void GCodeExport::setFilename(const char* filename)
 {
+    if (flavor == GCODE_FLAVOR_MAKERBOT_5TH_GEN) {
+        cura::increaseVerboseLevel();
+        cura::logError("filename : %s",filename);
+    }
     f = fopen(filename, "w+");
 }
 
@@ -531,6 +535,26 @@ void GCodeExport::writeRetraction(bool force)
     }
 }
 
+void GCodeExport::writeExtruderTemperature(int temp)
+{
+    if (flavor == GCODE_FLAVOR_MAKERBOT_5TH_GEN) {
+        fprintf(f,
+                "  {\n"
+                "    \"command\": {\n"
+                "      \"function\": \"set_toolhead_temperature\",\n"
+                "      \"parameters\": {\n"
+                "        \"temperature\": %d\n"
+                "      },\n"
+                "      \"metadata\": {},\n"
+                "      \"tags\": []\n"
+                "    }\n"
+                "  },\n"
+        ,temp);
+    } else {
+        return;
+    }
+}
+
 void GCodeExport::switchExtruder(int newExtruder)
 {
     if (extruderNr == newExtruder)
@@ -672,6 +696,59 @@ void GCodeExport::finalize(int maxObjectHeight, int moveSpeed, const char* endCo
         replaceTagInStart("<FILAMENT>", numberString);
         sprintf(numberString, "%d", int(getTotalFilamentUsed(1)));
         replaceTagInStart("<FILAMEN2>", numberString);
+    }
+
+    if (getFlavor() == GCODE_FLAVOR_MAKERBOT_5TH_GEN) {
+        ConfigSettings config;
+        //TODO: CHECK IF HAS SUPPORT WORKS
+        const char* hassupport = "true";
+        double density;
+        if (config.sparseInfillLineDistance == -1) {
+            density = 0;
+        } else {
+            density = double(config.extrusionWidth) / double(config.sparseInfillLineDistance);
+        }
+
+        if (config.supportType == 0) {
+            hassupport = "false";
+        }
+        fprintf(f,"{\n");
+        //fprintf(f,"  \"uuid\": \"0c6f778b-f4f6-4f6b-bcd8-d04ed42af403\",\n");
+        fprintf(f,"  \"toolhead_0_temperature\": %d,\n",config.printTemperature);
+        fprintf(f,"  \"toolhead_1_temperature\": %d,\n",config.printTemperature2);
+        //fprintf(f,"  \"total_commands\": 4415,\n");
+        fprintf(f,"  \"extrusion_distance_b_mm\": 0.0,\n");
+        fprintf(f,"  \"printer_settings\": {\n");
+        fprintf(f,"    \"default_raft_extruder\": 0,\n");
+        fprintf(f,"    \"slicer\": \"CURAENGINE-15.01-RC6-MAKERBOT\",\n");
+        fprintf(f,"    \"platform_temperature\": %d,\n",config.printBedTemperature);
+        fprintf(f,"    \"shells\": %d,\n",config.insetCount);
+        fprintf(f,"    \"default_support_extruder\": 0,\n");
+        fprintf(f,"    \"support\": %s,\n",hassupport);
+        fprintf(f,"    \"layer_height\": %0.1f,\n",config.layerThickness/100.0f);
+        fprintf(f,"    \"travel_speed\": %d,\n",config.printSpeed);
+        fprintf(f,"    \"extruder_temperatures\": [\n");
+        fprintf(f,"      %d,\n",config.printTemperature);
+        fprintf(f,"      %d\n",config.printTemperature2);
+        fprintf(f,"    ],\n");
+        fprintf(f,"    \"materials\": [\n");
+        fprintf(f,"      \"PLA\",\n");
+        fprintf(f,"      \"PLA\"\n");
+        fprintf(f,"    ],\n");
+        fprintf(f,"    \"infill\": %O.5f,\n",float(density));
+        fprintf(f,"    \"heat_platform\": false,\n");
+        //fprintf(f,"    \"raft\": false,\n");
+        fprintf(f,"    \"do_auto_support\": false,\n");
+        fprintf(f,"    \"path\": null,\n");
+        fprintf(f,"    \"print_speed\": %i,\n",config.printSpeed);
+        fprintf(f,"    \"do_auto_raft\": false,\n");
+        fprintf(f,"    \"extruder\": \"0\"\n");
+        fprintf(f,"  },\n");
+        fprintf(f,"  \"extrusion_mass_a_grams\": %0.5f,\n",getTotalFilamentUsed(0)*0.0030511116435737533); // 0.0030511116435737533 = PLA Density in g/mm
+        fprintf(f,"  \"duration_s\": %d,\n",int(getTotalPrintTime()));
+        fprintf(f,"  \"extrusion_mass_b_grams\": 0.0,\n");  // NO SECOND EXTRUDER
+        fprintf(f,"  \"extrusion_distance_a_mm\": %0.5f\n",getTotalFilamentUsed(0));
+        fprintf(f,"}");
     }
 }
 

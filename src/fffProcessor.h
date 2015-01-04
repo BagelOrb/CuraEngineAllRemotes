@@ -223,7 +223,7 @@ private:
     void processSliceData(SliceDataStorage& storage)
     {
         const unsigned int totalLayers = storage.volumes[0].layers.size();
-        
+
         //carveMultipleVolumes(storage.volumes);
         generateMultipleVolumesOverlap(storage.volumes, config.multiVolumeOverlap);
         //dumpLayerparts(storage, "c:/models/output.html");
@@ -346,6 +346,7 @@ private:
                 gcode.writeComment("MATERIAL2:<FILAMEN2>");
             }
             gcode.writeCode(config.startCode.c_str());
+            gcode.writeExtruderTemperature(config.printTemperature);
             if (gcode.getFlavor() == GCODE_FLAVOR_BFB)
             {
                 gcode.writeComment("enable auto-retraction");
@@ -524,49 +525,6 @@ private:
 
         //Store the object height for when we are printing multiple objects, as we need to clear every one of them when moving to the next position.
         maxObjectHeight = std::max(maxObjectHeight, storage.modelSize.z - config.objectSink);
-
-        if (gcode.getFlavor() == GCODE_FLAVOR_MAKERBOT_5TH_GEN)
-		{
-			FILE* f_meta = fopen("meta.json", "w+");
-			fprintf(f_meta,"{\n");
-			fprintf(f_meta,"  \"uuid\": \"0c6f778b-f4f6-4f6b-bcd8-d04ed42af403\",\n");
-			fprintf(f_meta,"  \"toolhead_0_temperature\": 215,\n");
-			fprintf(f_meta,"  \"toolhead_1_temperature\": 230,\n");
-			fprintf(f_meta,"  \"total_commands\": 4415,\n");
-			fprintf(f_meta,"  \"extrusion_distance_b_mm\": 0.0,\n");
-			fprintf(f_meta,"  \"printer_settings\": {\n");
-			fprintf(f_meta,"    \"default_raft_extruder\": 0,\n");
-			fprintf(f_meta,"    \"slicer\": \"CuraEngine\",\n");
-			fprintf(f_meta,"    \"platform_temperature\": 110,\n");
-			fprintf(f_meta,"    \"shells\": 2,\n");
-			fprintf(f_meta,"    \"default_support_extruder\": 0,\n");
-			fprintf(f_meta,"    \"support\": false,\n");
-			fprintf(f_meta,"    \"layer_height\": %0.1f,\n",config.layerThickness/100.0f);
-			fprintf(f_meta,"    \"travel_speed\": %d,\n",config.printSpeed);
-			fprintf(f_meta,"    \"extruder_temperatures\": [\n");
-			fprintf(f_meta,"      215,\n");
-			fprintf(f_meta,"      230\n");
-			fprintf(f_meta,"    ],\n");
-			fprintf(f_meta,"    \"materials\": [\n");
-			fprintf(f_meta,"      \"PLA\",\n");
-			fprintf(f_meta,"      \"PLA\"\n");
-			fprintf(f_meta,"    ],\n");
-			fprintf(f_meta,"    \"infill\": 0.1,\n");
-			fprintf(f_meta,"    \"heat_platform\": false,\n");
-			fprintf(f_meta,"    \"raft\": false,\n");
-			fprintf(f_meta,"    \"do_auto_support\": false,\n");
-			fprintf(f_meta,"    \"path\": null,\n");
-			fprintf(f_meta,"    \"print_speed\": 90,\n");
-			fprintf(f_meta,"    \"do_auto_raft\": false,\n");
-			fprintf(f_meta,"    \"extruder\": \"0\"\n");
-			fprintf(f_meta,"  },\n");
-			fprintf(f_meta,"  \"extrusion_mass_a_grams\": 1.822365954446167,\n");
-			fprintf(f_meta,"  \"duration_s\": %d,\n",int(gcode.getTotalPrintTime()));
-			fprintf(f_meta,"  \"extrusion_mass_b_grams\": 0.0,\n");
-			fprintf(f_meta,"  \"extrusion_distance_a_mm\": 597.2793418701775\n");
-			fprintf(f_meta,"}");
-			fclose(f_meta);
-		}
     }
 
     //Add a single layer from a single mesh-volume to the GCode
@@ -628,7 +586,7 @@ private:
             }
             if (config.spiralizeMode)
                 inset0Config.spiralize = true;
-            
+
             gcodeLayer.addPolygonsByOptimizer(polygons, &inset0Config);
             return;
         }
@@ -710,7 +668,7 @@ private:
                         gcodeLayer.addPolygonsByOptimizer(part->insets[insetNr], &insetXConfig);
                 }
             }
-            
+
             Polygons skinPolygons;
             for(Polygons outline : part->skinOutline.splitIntoParts())
             {
