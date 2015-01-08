@@ -697,57 +697,68 @@ void GCodeExport::finalize(int maxObjectHeight, int moveSpeed, const char* endCo
         sprintf(numberString, "%d", int(getTotalFilamentUsed(1)));
         replaceTagInStart("<FILAMEN2>", numberString);
     }
+}
+
+void GCodeExport::finalizeWithConfig(int maxObjectHeight, ConfigSettings* config)
+{
+    writeFanCommand(0);
+    writeRetraction();
+    setZ(maxObjectHeight + 5000);
+    writeMove(getPositionXY(), config->moveSpeed, 0, "");
+    writeCode(config->endCode.c_str());
+    cura::log("Print time: %d\n", int(getTotalPrintTime()));
+    cura::log("Filament: %d\n", int(getTotalFilamentUsed(0)));
+    cura::log("Filament2: %d\n", int(getTotalFilamentUsed(1)));
 
     if (getFlavor() == GCODE_FLAVOR_MAKERBOT_5TH_GEN) {
-        ConfigSettings config;
         //TODO: CHECK IF HAS SUPPORT WORKS
         const char* hassupport = "true";
         double density;
-        if (config.sparseInfillLineDistance == -1) {
+        if (config->sparseInfillLineDistance == -1) {
             density = 0;
         } else {
-            density = double(config.extrusionWidth) / double(config.sparseInfillLineDistance);
+            density = double(config->extrusionWidth) / double(config->sparseInfillLineDistance);
         }
 
-        if (config.supportType == 0) {
+        if (config->supportType == 0) {
             hassupport = "false";
         }
         fprintf(f,"{\n");
-        //fprintf(f,"  \"uuid\": \"0c6f778b-f4f6-4f6b-bcd8-d04ed42af403\",\n");
-        fprintf(f,"  \"toolhead_0_temperature\": %d,\n",config.printTemperature);
-        fprintf(f,"  \"toolhead_1_temperature\": %d,\n",config.printTemperature2);
-        //fprintf(f,"  \"total_commands\": 4415,\n");
-        fprintf(f,"  \"extrusion_distance_b_mm\": 0.0,\n");
+        fprintf(f,"  \"uuid\": \"0c6f778b-f4f6-4f6b-bcd8-d04ed42af403\",\n");       // Dummy uuid, generation routine needed
+        fprintf(f,"  \"duration_s\": %d,\n",int(getTotalPrintTime()));
+        fprintf(f,"  \"extrusion_distance_a_mm\": %.5f,\n",getTotalFilamentUsed(0));
+        fprintf(f,"  \"extrusion_mass_a_grams\": %.5f,\n",getTotalFilamentUsed(0)*0.003051); // 0.0030511116435737533 = PLA Density in g/mm
+        fprintf(f,"  \"extrusion_distance_b_mm\": 0.0,\n");                         // NO SECOND EXTRUDER
+        fprintf(f,"  \"extrusion_mass_b_grams\": 0.0,\n");                          // NO SECOND EXTRUDER
+        fprintf(f,"  \"total_commands\": 1000,\n");
+        fprintf(f,"  \"toolhead_0_temperature\": %d,\n",config->printTemperature);
+        fprintf(f,"  \"toolhead_1_temperature\": %d,\n",config->printTemperature2);
         fprintf(f,"  \"printer_settings\": {\n");
+        fprintf(f,"    \"slicer\": \"CURAENGINE\",\n");
+        fprintf(f,"    \"layer_height\": %.2f,\n",config->layerThickness/1000.0);
+        fprintf(f,"    \"shells\": %d,\n",config->insetCount);
+        fprintf(f,"    \"infill\": %.2f,\n",density);
+        fprintf(f,"    \"print_speed\": %i,\n",config->printSpeed);
+        fprintf(f,"    \"travel_speed\": %d,\n",config->moveSpeed);
+        fprintf(f,"    \"extruder\": \"0\",\n");
+        fprintf(f,"    \"raft\": false,\n");
+        fprintf(f,"    \"do_auto_raft\": false,\n");
         fprintf(f,"    \"default_raft_extruder\": 0,\n");
-        fprintf(f,"    \"slicer\": \"CURAENGINE-15.01-RC6-MAKERBOT\",\n");
-        fprintf(f,"    \"platform_temperature\": %d,\n",config.printBedTemperature);
-        fprintf(f,"    \"shells\": %d,\n",config.insetCount);
-        fprintf(f,"    \"default_support_extruder\": 0,\n");
         fprintf(f,"    \"support\": %s,\n",hassupport);
-        fprintf(f,"    \"layer_height\": %0.1f,\n",config.layerThickness/100.0f);
-        fprintf(f,"    \"travel_speed\": %d,\n",config.printSpeed);
-        fprintf(f,"    \"extruder_temperatures\": [\n");
-        fprintf(f,"      %d,\n",config.printTemperature);
-        fprintf(f,"      %d\n",config.printTemperature2);
-        fprintf(f,"    ],\n");
+        fprintf(f,"    \"do_auto_support\": false,\n");
+        fprintf(f,"    \"default_support_extruder\": 0,\n");
         fprintf(f,"    \"materials\": [\n");
         fprintf(f,"      \"PLA\",\n");
         fprintf(f,"      \"PLA\"\n");
         fprintf(f,"    ],\n");
-        fprintf(f,"    \"infill\": %O.5f,\n",float(density));
+        fprintf(f,"    \"extruder_temperatures\": [\n");
+        fprintf(f,"      %d,\n",config->printTemperature);
+        fprintf(f,"      %d\n",config->printTemperature2);
+        fprintf(f,"    ],\n");
         fprintf(f,"    \"heat_platform\": false,\n");
-        //fprintf(f,"    \"raft\": false,\n");
-        fprintf(f,"    \"do_auto_support\": false,\n");
-        fprintf(f,"    \"path\": null,\n");
-        fprintf(f,"    \"print_speed\": %i,\n",config.printSpeed);
-        fprintf(f,"    \"do_auto_raft\": false,\n");
-        fprintf(f,"    \"extruder\": \"0\"\n");
-        fprintf(f,"  },\n");
-        fprintf(f,"  \"extrusion_mass_a_grams\": %0.5f,\n",getTotalFilamentUsed(0)*0.0030511116435737533); // 0.0030511116435737533 = PLA Density in g/mm
-        fprintf(f,"  \"duration_s\": %d,\n",int(getTotalPrintTime()));
-        fprintf(f,"  \"extrusion_mass_b_grams\": 0.0,\n");  // NO SECOND EXTRUDER
-        fprintf(f,"  \"extrusion_distance_a_mm\": %0.5f\n",getTotalFilamentUsed(0));
+        fprintf(f,"    \"platform_temperature\": %d,\n",config->printBedTemperature);
+        fprintf(f,"    \"path\": null\n");
+        fprintf(f,"  }\n");
         fprintf(f,"}");
     }
 }

@@ -90,7 +90,12 @@ public:
     {
         if (!gcode.isOpened())
             return;
-        gcode.finalize(maxObjectHeight, config.moveSpeed, config.endCode.c_str());
+        if (gcode.getFlavor() != GCODE_FLAVOR_MAKERBOT_5TH_GEN)
+        {
+            gcode.finalize(maxObjectHeight, config.moveSpeed, config.endCode.c_str());
+        } else {
+            gcode.finalizeWithConfig(maxObjectHeight, &config);
+        }
     }
 
 private:
