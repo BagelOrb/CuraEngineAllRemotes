@@ -1,3 +1,7 @@
+WARNING ! THIS IS AN EXPERIMENTAL FORK
+==========
+This fork includes support for Makerbot 5th Gen printers. It has only been lightly tested on a Replicator 5th Gen, and the compilation was only made on OSX 10.10.
+
 CuraEngine
 ==========
 The CuraEngine is a C++ console application for 3D printing GCode generation. It has been made as a better and faster alternative to the old Skeinforge engine.

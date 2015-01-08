@@ -103,6 +103,7 @@ public:
     void writeFanCommand(int speed);
 
     void finalize(int maxObjectHeight, int moveSpeed, const char* endCode);
+    void finalizeWithConfig(int maxObjectHeight, ConfigSettings* config);
 
     int getFileSize();
     void tellFileSize();
