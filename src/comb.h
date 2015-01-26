@@ -3,6 +3,9 @@
 #define COMB_H
 
 #include "utils/polygon.h"
+#include "stdint.h"
+#define INT64_MIN        (__INT64_C(-9223372036854775807)-1)
+#define INT64_MAX        (__INT64_C(9223372036854775807))
 
 namespace cura {
 
