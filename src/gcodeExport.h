@@ -9,6 +9,8 @@
 #include "utils/intpoint.h"
 #include "utils/polygon.h"
 #include "timeEstimate.h"
+#define INT32_MIN	(-2147483647-1)
+#define INT32_MAX	(2147483647)
 
 namespace cura {
 
