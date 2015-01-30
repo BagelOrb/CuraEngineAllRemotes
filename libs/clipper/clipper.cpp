@@ -4568,7 +4568,7 @@ void OpenPathsFromPolyTree(PolyTree& polytree, Paths& paths)
 
 std::ostream& operator <<(std::ostream &s, const IntPoint &p)
 {
-  s << "(" << (long)(p.X) << "," << (long)(p.Y) << ")";
+  s << "(" << static_cast<long>(p.X) << "," << static_cast<long>(p.Y) << ")";
   return s;
 }
 //------------------------------------------------------------------------------
@@ -4578,8 +4578,8 @@ std::ostream& operator <<(std::ostream &s, const Path &p)
   if (p.empty()) return s;
   Path::size_type last = p.size() -1;
   for (Path::size_type i = 0; i < last; i++)
-    s << "(" << (long)(p[i].X) << "," << (long)(p[i].Y) << "), ";
-  s << "(" << (long)(p[last].X) << "," << (long)(p[last].Y) << ")\n";
+    s << "(" << static_cast<long>(p[i].X) << "," << static_cast<long>(p[i].Y) << "), ";
+  s << "(" << static_cast<long>(p[last].X) << "," << static_cast<long>(p[last].Y) << ")\n";
   return s;
 }
 //------------------------------------------------------------------------------

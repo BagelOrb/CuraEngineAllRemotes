@@ -53,7 +53,7 @@ void PathOrderOptimizer::optimize()
                 continue;
 
             float dist = vSize2f(polygons[i][0] - p0);
-            dist += abs(dot(incommingPerpundicularNormal, normal(polygons[i][1] - polygons[i][0], 1000))) * incommingPerpundicularNormalScale;
+            dist += abs(static_cast<float>(dot(incommingPerpundicularNormal, normal(polygons[i][1] - polygons[i][0], 1000)))) * incommingPerpundicularNormalScale;
             if (dist < bestDist)
             {
                 best = i;
@@ -61,7 +61,7 @@ void PathOrderOptimizer::optimize()
                 polyStart[i] = 0;
             }
             dist = vSize2f(polygons[i][1] - p0);
-            dist += abs(dot(incommingPerpundicularNormal, normal(polygons[i][0] - polygons[i][1], 1000))) * incommingPerpundicularNormalScale;
+            dist += abs(static_cast<float>(dot(incommingPerpundicularNormal, normal(polygons[i][0] - polygons[i][1], 1000)))) * incommingPerpundicularNormalScale;
             if (dist < bestDist)
             {
                 best = i;
@@ -79,7 +79,7 @@ void PathOrderOptimizer::optimize()
                 if (polygons[i].size() == 2)
                 {
                     float dist = vSize2f(polygons[i][0] - p0);
-                    dist += abs(dot(incommingPerpundicularNormal, normal(polygons[i][1] - polygons[i][0], 1000))) * incommingPerpundicularNormalScale;
+                    dist += abs(static_cast<float>(dot(incommingPerpundicularNormal, normal(polygons[i][1] - polygons[i][0], 1000)))) * incommingPerpundicularNormalScale;
                     if (dist < bestDist)
                     {
                         best = i;
@@ -87,7 +87,7 @@ void PathOrderOptimizer::optimize()
                         polyStart[i] = 0;
                     }
                     dist = vSize2f(polygons[i][1] - p0);
-                    dist += abs(dot(incommingPerpundicularNormal, normal(polygons[i][0] - polygons[i][1], 1000))) * incommingPerpundicularNormalScale;
+                    dist += abs(static_cast<float>(dot(incommingPerpundicularNormal, normal(polygons[i][0] - polygons[i][1], 1000)))) * incommingPerpundicularNormalScale;
                     if (dist < bestDist)
                     {
                         best = i;

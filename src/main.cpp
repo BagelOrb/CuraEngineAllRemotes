@@ -4,7 +4,7 @@
 #include <string.h>
 #include <sys/time.h>
 #include <signal.h>
-#if defined(__linux__) || (defined(__APPLE__) && defined(__MACH__))
+#if (defined(__linux__) && !defined(__ANDROID__)) || (defined(__APPLE__) && defined(__MACH__))
 #include <execinfo.h>
 #include <sys/resource.h>
 #endif
@@ -51,7 +51,7 @@ using namespace cura;
 
 int main(int argc, char **argv)
 {
-#if defined(__linux__) || (defined(__APPLE__) && defined(__MACH__))
+#if (defined(__linux__) && !defined(__ANDROID__)) || (defined(__APPLE__) && defined(__MACH__))
     //Lower the process priority on linux and mac. On windows this is done on process creation from the GUI.
     setpriority(PRIO_PROCESS, 0, 10);
 #endif

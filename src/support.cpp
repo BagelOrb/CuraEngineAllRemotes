@@ -88,7 +88,7 @@ void generateSupportGrid(SupportStorage& storage, OptimizedModel* om, int suppor
         for(int32_t y=0; y<storage.gridHeight; y++)
         {
             unsigned int n = x+y*storage.gridWidth;
-            qsort(storage.grid[n].data(), storage.grid[n].size(), sizeof(SupportPoint), cmp_SupportPoint);
+            qsort(&storage.grid[n].front(), storage.grid[n].size(), sizeof(SupportPoint), cmp_SupportPoint);
         }
     }
     storage.gridOffset.X += storage.gridScale / 2;

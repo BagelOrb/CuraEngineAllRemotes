@@ -68,7 +68,7 @@ public:
 
     int32_t vSize()
     {
-        return sqrt(vSize2());
+        return sqrt(static_cast<long double>(vSize2()));
     }
 
     Point3 cross(const Point3& p)
@@ -122,7 +122,7 @@ INLINE bool shorterThen(const Point& p0, int32_t len)
 
 INLINE int64_t vSize(const Point& p0)
 {
-    return sqrt(vSize2(p0));
+    return sqrt(static_cast<long double>(vSize2(p0)));
 }
 
 INLINE double vSizeMM(const Point& p0)
@@ -151,7 +151,7 @@ INLINE int64_t dot(const Point& p0, const Point& p1)
 
 INLINE int angle(const Point& p)
 {
-    double angle = std::atan2(p.X, p.Y) / M_PI * 180.0;
+    double angle = std::atan2(static_cast<long double>(p.X), static_cast<long double>(p.Y)) / M_PI * 180.0;
     if (angle < 0.0) angle += 360.0;
     return angle;
 }

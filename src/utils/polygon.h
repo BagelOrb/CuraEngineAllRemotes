@@ -45,7 +45,7 @@ public:
 
     void* data()
     {
-        return polygon->data();
+        return &polygon->front();
     }
 
     void add(const Point p)
