@@ -103,7 +103,7 @@ private:
         skinConfig.setData(config.skinSpeed, config.extrusionWidth, "FILL");
         supportConfig.setData(config.printSpeed, config.extrusionWidth, "SUPPORT");
 
-        for(unsigned int n=1; n<MAX_EXTRUDERS;n++)
+        for(unsigned int n=0; n<MAX_EXTRUDERS;n++)
             gcode.setExtruderOffset(n, config.extruderOffset[n].p());
         gcode.setSwitchExtruderCode(config.preSwitchExtruderCode, config.postSwitchExtruderCode);
         gcode.setFlavor(config.gcodeFlavor);
