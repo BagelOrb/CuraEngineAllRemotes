@@ -1,6 +1,7 @@
 /** Copyright (C) 2013 David Braam - Released under terms of the AGPLv3 License */
 #include <stdarg.h>
 #include <stdio.h>
+#include <algorithm>
 
 #include "gcodeExport.h"
 #include "pathOrderOptimizer.h"
@@ -19,6 +20,7 @@ GCodeExport::GCodeExport()
     minimalExtrusionBeforeRetraction = 0.0;
     extrusionAmountAtPreviousRetraction = -10000;
     extruderSwitchRetraction = 14.5;
+    extruderSwitchReturn = 0.0;
     extruderNr = 0;
     currentFanSpeed = -1;
     
@@ -109,12 +111,13 @@ void GCodeExport::setExtrusion(int layerThickness, int filamentDiameter, int flo
         extrusionPerMM = INT2MM(layerThickness) / filamentArea * double(flow) / 100.0;
 }
 
-void GCodeExport::setRetractionSettings(int retractionAmount, int retractionSpeed, int extruderSwitchRetraction, int minimalExtrusionBeforeRetraction, int zHop, int retractionAmountPrime)
+void GCodeExport::setRetractionSettings(int retractionAmount, int retractionSpeed, int extruderSwitchRetraction, int extruderSwitchReturn, int minimalExtrusionBeforeRetraction, int zHop, int retractionAmountPrime)
 {
     this->retractionAmount = INT2MM(retractionAmount);
     this->retractionAmountPrime = INT2MM(retractionAmountPrime);
     this->retractionSpeed = retractionSpeed;
     this->extruderSwitchRetraction = INT2MM(extruderSwitchRetraction);
+    this->extruderSwitchReturn = INT2MM(extruderSwitchReturn);
     this->minimalExtrusionBeforeRetraction = INT2MM(minimalExtrusionBeforeRetraction);
     this->retractionZHop = zHop;
 }
@@ -321,6 +324,27 @@ void GCodeExport::writeRetraction(bool force)
     }
 }
 
+void GCodeExport::writeReturnOfNotLastExtruders()
+{
+
+    if(extruderUsed.size() < 2 || extruderSwitchReturn <= 0.0)
+    {
+        return;
+    }
+    for(std::vector<int>::iterator it = extruderUsed.begin(); it < extruderUsed.end(); ++it)
+    {
+        if(extruderNr == *it)
+        {
+            continue;
+        }
+        resetExtrusionValue();
+        fprintf(f, "T%i\n", *it);
+        fprintf(f, "G1 F%i %c%0.5f\n", retractionSpeed * 60, extruderCharacter[*it], extruderSwitchReturn);
+    }
+
+    fprintf(f, "T%i\n", extruderNr);
+}
+
 void GCodeExport::switchExtruder(int newExtruder)
 {
     if (extruderNr == newExtruder)
@@ -332,8 +356,13 @@ void GCodeExport::switchExtruder(int newExtruder)
         isRetracted = true;
         return;
     }
+    std::vector<int>::iterator it = std::find(extruderUsed.begin(), extruderUsed.end(), extruderNr);
+    if (it == extruderUsed.end())
+    {
+        extruderUsed.push_back(extruderNr);
+    }
     
-    resetExtrusionValue();
+    //resetExtrusionValue();
     if (flavor == GCODE_FLAVOR_ULTIGCODE || flavor == GCODE_FLAVOR_REPRAP_VOLUMATRIC)
     {
         fprintf(f, "G10 S1\n");
@@ -343,6 +372,7 @@ void GCodeExport::switchExtruder(int newExtruder)
     }
     if (retractionZHop > 0)
         fprintf(f, "G1 Z%0.3f\n", INT2MM(currentPosition.z + retractionZHop));
+    resetExtrusionValue();
     extruderNr = newExtruder;
     if (flavor == GCODE_FLAVOR_MACH3)
         resetExtrusionValue();
@@ -352,6 +382,8 @@ void GCodeExport::switchExtruder(int newExtruder)
         fprintf(f, "M135 T%i\n", extruderNr);
     else
         fprintf(f, "T%i\n", extruderNr);
+    if (extruderSwitchReturn > 0.0)
+        extrusionAmount += extruderSwitchReturn;
     writeCode(postSwitchExtruderCode.c_str());
 }
 
@@ -410,6 +442,7 @@ void GCodeExport::finalize(int maxObjectHeight, int moveSpeed, const char* endCo
     writeRetraction();
     setZ(maxObjectHeight + 5000);
     writeMove(getPositionXY(), moveSpeed, 0);
+    writeReturnOfNotLastExtruders();
     writeCode(endCode);
     cura::log("Print time: %d\n", int(getTotalPrintTime()));
     cura::log("Filament: %d\n", int(getTotalFilamentUsed(0)));

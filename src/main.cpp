@@ -164,6 +164,9 @@ int main(int argc, char **argv)
                         exit(1);
                     }
                     break;
+                case 'e':
+                    processor.enableColoredStlSupport();
+                    break;
                 default:
                     cura::logError("Unknown option: %c\n", *str);
                     break;

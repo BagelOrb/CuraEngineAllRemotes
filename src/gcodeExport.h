@@ -24,6 +24,7 @@ private:
     double retractionAmountPrime;
     int retractionZHop;
     double extruderSwitchRetraction;
+    double extruderSwitchReturn;
     double minimalExtrusionBeforeRetraction;
     double extrusionAmountAtPreviousRetraction;
     Point3 currentPosition;
@@ -34,6 +35,7 @@ private:
     int zPos;
     bool isRetracted;
     int extruderNr;
+    vector<int> extruderUsed;
     int currentFanSpeed;
     int flavor;
     std::string preSwitchExtruderCode;
@@ -62,7 +64,7 @@ public:
     
     void setExtrusion(int layerThickness, int filamentDiameter, int flow);
     
-    void setRetractionSettings(int retractionAmount, int retractionSpeed, int extruderSwitchRetraction, int minimalExtrusionBeforeRetraction, int zHop, int retractionAmountPrime);
+    void setRetractionSettings(int retractionAmount, int retractionSpeed, int extruderSwitchRetraction, int extruderSwitchReturn, int minimalExtrusionBeforeRetraction, int zHop, int retractionAmountPrime);
     
     void setZ(int z);
     
@@ -92,6 +94,8 @@ public:
     void writeMove(Point p, int speed, int lineWidth);
     
     void writeRetraction(bool force=false);
+
+    void writeReturnOfNotLastExtruders();
     
     void switchExtruder(int newExtruder);
     

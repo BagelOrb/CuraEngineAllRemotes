@@ -17,6 +17,7 @@ class fffProcessor
 private:
     int maxObjectHeight;
     int fileNr;
+    bool coloredStlSupport = false;
     GCodeExport gcode;
     ConfigSettings& config;
     TimeKeeper timeKeeper;
@@ -86,6 +87,11 @@ public:
         return true;
     }
 
+    void enableColoredStlSupport()
+    {
+        coloredStlSupport = true;
+    }
+
     void finalize()
     {
         if (!gcode.isOpened())
@@ -107,7 +113,7 @@ private:
             gcode.setExtruderOffset(n, config.extruderOffset[n].p());
         gcode.setSwitchExtruderCode(config.preSwitchExtruderCode, config.postSwitchExtruderCode);
         gcode.setFlavor(config.gcodeFlavor);
-        gcode.setRetractionSettings(config.retractionAmount, config.retractionSpeed, config.retractionAmountExtruderSwitch, config.minimalExtrusionBeforeRetraction, config.retractionZHop, config.retractionAmountPrime);
+        gcode.setRetractionSettings(config.retractionAmount, config.retractionSpeed, config.retractionAmountExtruderSwitch, config.returnAmountExtruderSwitch, config.minimalExtrusionBeforeRetraction, config.retractionZHop, config.retractionAmountPrime);
     }
 
     bool prepareModel(SliceDataStorage& storage, const std::vector<std::string> &files)
@@ -149,7 +155,7 @@ private:
                     model->volumes.push_back(SimpleVolume());
                 else {
                     cura::log("Loading %s from disk...\n", files[i].c_str());
-                    SimpleModel *test = loadModelFromFile(model,files[i].c_str(), config.matrix);
+                    SimpleModel *test = loadModelFromFile(model,files[i].c_str(), config.matrix, coloredStlSupport);
                     if(test == nullptr) { // error while reading occurred
                         cura::logError("Failed to load model: %s\n", files[i].c_str());
                         return false;
