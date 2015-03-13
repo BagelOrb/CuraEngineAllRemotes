@@ -104,4 +104,26 @@ void generateLineInfill(const Polygons& in_outline, Polygons& result, int extrus
     }
 }
 
+
+void generateVoronoiInfill(const Polygons& in_outline, Polygons& result,
+                           int extrusionWidth, int lineSpacing, int infillOverlap)
+{
+    Polygons outline = in_outline.offset(extrusionWidth * infillOverlap / 100);
+    AABB boundary(outline);
+    
+    boundary.min.X = ((boundary.min.X / lineSpacing) - 1) * lineSpacing;
+    int lineCount = (boundary.max.X - boundary.min.X + (lineSpacing - 1)) / lineSpacing;
+
+    // HACK: read in points
+    // Calculate Voronoi
+    // Add the voronoi lines as infill
+
+    // TEST: just make a line crossing between boundary corners
+    PolygonRef p = result.newPoly();
+    p.add(Point(boundary.min.X, boundary.min.Y));
+    p.add(Point(boundary.max.X, boundary.max.Y));
+
+}
+
+
 }//namespace cura

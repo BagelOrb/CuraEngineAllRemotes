@@ -678,6 +678,16 @@ private:
                         part->sparseOutline, infillPolygons,
                         config.sparseInfillLineDistance);
                     break;
+
+                case INFILL_VORONOI:
+                    // TODO: pass the points to tesselate
+                    generateVoronoiInfill(
+                        part->sparseOutline, infillPolygons,
+                        extrusionWidth,
+                        config.sparseInfillLineDistance,
+                        config.infillOverlap);
+                    break;
+
             }
         }
 
