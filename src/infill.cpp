@@ -115,22 +115,14 @@ void generateVoronoiInfill2(const Polygons& in_outline, Polygons& result,
                            std::vector<Point3> inputPoints)
 {
     Polygons outline = in_outline.offset(extrusionWidth * infillOverlap / 100);
+
     AABB boundary(outline);
     
-    boundary.min.X = ((boundary.min.X / lineSpacing) - 1) * lineSpacing;
-    int lineCount = (boundary.max.X - boundary.min.X + (lineSpacing - 1)) / lineSpacing;
+//    boundary.min.X = ((boundary.min.X / lineSpacing) - 1) * lineSpacing;
 
-    std::cerr << "bounds: " << boundary.min << boundary.max << "\n";
+//    std::cerr << "bounds: " << boundary.min << boundary.max << "\n";
 
-#if 0
-    // TEST: just make a line crossing between boundary corners
-    PolygonRef p = result.newPoly();
-    p.add(Point(boundary.min.X, boundary.min.Y));
-    p.add(Point(boundary.max.X, boundary.max.Y));
-
-#else
-
-    std::cerr << "number of points " << inputPoints.size() << "\n";
+//    std::cerr << "number of points " << inputPoints.size() << "\n";
 
     // FIXME: code to do mesh intersect? OR let Cura handle it
     // Calculate Voronoi
@@ -138,22 +130,20 @@ void generateVoronoiInfill2(const Polygons& in_outline, Polygons& result,
     cv::Rect rect(boundary.min.X, boundary.min.Y,
                   boundary.max.X-boundary.min.X, boundary.max.Y-boundary.min.Y);
 
-    std::cerr << "rect " << rect << "\n";
+//    std::cerr << "rect " << rect << "\n";
 
     cv::Subdiv2D subdiv(rect);
-    for( int i = 0; i < inputPoints.size(); i++ )
+    for(int i = 0; i < inputPoints.size(); i++)
     {
         const Point3 ip = inputPoints.at(i);
         const bool isInside = outline.inside(Point(ip.x, ip.y));
         // std::cerr << "p " << ip.x << ", " << ip.y << " inside? " << isInside << "\n";
 
-        // Clip to bounds
         if (!isInside) {
             continue;
         }
 
         cv::Point2f fp(ip.x, ip.y);
-        // TODO: apply same transformation as cura did to original object, in case of scale/rot/translate
         try {
             subdiv.insert(fp);
         } catch (const std::exception &e) {
@@ -165,26 +155,21 @@ void generateVoronoiInfill2(const Polygons& in_outline, Polygons& result,
     std::vector<cv::Point2f> centers;
     subdiv.getVoronoiFacetList(std::vector<int>(), facets, centers);
 
-    std::cerr << "number of facets " << facets.size() << "\n";
+//    std::cerr << "number of facets " << facets.size() << "\n";
 
     // Add the voronoi lines as infill
     for( size_t i = 0; i < facets.size(); i++ )
     {
-        PolygonRef p = result.newPoly();
+        Polygons polygons;
+        PolygonRef p = polygons.newPoly();
         for( size_t j = 0; j < facets[i].size(); j++ ) {
             cv::Point2f ip = facets[i][j];
 
-            const bool isInside = outline.inside(Point(ip.x, ip.y));
             // std::cerr << "p " << ip.x << ", " << ip.y << " inside? " << isInside << "\n";
-
-            // Clip to bounds
-            if (!isInside) {
-                continue;
-            }
             p.add(Point(ip.x, ip.y));
         }
+        result.add(polygons.intersection(outline));
     }
-#endif
 }
 
 
