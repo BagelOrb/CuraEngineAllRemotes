@@ -5,11 +5,75 @@
 #include <vector>
 #include "utils/socket.h"
 
+// TEMP: voronoi
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
+#include <string>
+#include <iostream>
+#include <fstream>
+
 #define GUI_CMD_REQUEST_MESH 0x01
 #define GUI_CMD_SEND_POLYGONS 0x02
 #define GUI_CMD_FINISH_OBJECT 0x03
 
+
 namespace cura {
+
+namespace hack {
+
+std::vector<char> readFile(const char *path)
+{
+    std::ifstream file(path, std::ios::binary);
+    file.seekg(0, std::ios::end);
+    std::streamsize size = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    // cout << "size" << size;
+
+    std::vector<char> buffer(size);
+    if (!file.read(buffer.data(), size))
+    {
+        exit(2);
+    }
+    return buffer;
+}
+
+// Normalizes coordninates to be correct for a given model
+std::vector<Point3>
+parse_points(vector<char> file, Point3 pos)
+{
+    std::vector<Point3> input_points;
+    std::vector<std::string> lines;
+    boost::split(lines, file, boost::is_any_of("\r\n"));
+
+    // print_vector(lines);
+
+    for (int line_no=0; line_no < lines.size(); line_no++) {
+        const std::string line = lines[line_no];
+        // cout << line << "\n";
+        std::vector<std::string> tokens;
+        boost::split(tokens, line, boost::is_any_of(","));
+        // cout << "tokens: " << tokens.size() << "\n";
+        if (tokens.size() == 3) {
+            float a[3] = {0, 0, 0};
+            for (int i=0; i<2; i++) {
+                std::string tok = tokens[i];
+                boost::trim_if(tok, boost::is_any_of(" {}"));
+//                cout << "token: " << tok << "\n";
+                a[i] = boost::lexical_cast<float>(tok);
+//                cout << "out: " << a[i] << "\n";
+            }
+            Point3 p(MM2INT(a[0])+pos.x, MM2INT(a[1])+pos.y, MM2INT(a[2])+pos.z);
+            // cout << "adding point" << p;
+            input_points.push_back(p);
+        }
+    }
+
+    return input_points;
+
+} // namespace hack
+
+}
 
 //FusedFilamentFabrication processor.
 class fffProcessor
@@ -28,6 +92,7 @@ private:
     GCodePathConfig infillConfig;
     GCodePathConfig skinConfig;
     GCodePathConfig supportConfig;
+    std::vector<Point3> infillPoints; // HACK
 public:
     fffProcessor(ConfigSettings& config)
     : config(config)
@@ -181,6 +246,12 @@ private:
         delete model;
         cura::log("Optimize model %5.3fs \n", timeKeeper.restart());
         //om->saveDebugSTL("c:\\models\\output.stl");
+
+        // HACK: should be passed cleanly down from UI.
+        // Alternatively use a convention where it looks for .something in same place as the .stl
+        const char * meshPath = "/home/jon/projects/configurable-flexibility/voronoi-input-test1.txt";
+        Point3 center(config.objectPosition.X, config.objectPosition.Y, -config.objectSink);
+        infillPoints = hack::parse_points(hack::readFile(meshPath), center);
 
         cura::log("Slicing model...\n");
         vector<Slicer*> slicerList;
@@ -681,11 +752,12 @@ private:
 
                 case INFILL_VORONOI:
                     // TODO: pass the points to tesselate
-                    generateVoronoiInfill(
+                    generateVoronoiInfill2(
                         part->sparseOutline, infillPolygons,
                         extrusionWidth,
                         config.sparseInfillLineDistance,
-                        config.infillOverlap);
+                        config.infillOverlap,
+                        this->infillPoints);
                     break;
 
             }

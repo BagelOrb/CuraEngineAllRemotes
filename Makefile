@@ -35,6 +35,11 @@ DIRS = $(sort $(dir $(OBJECTS)))
 
 EXECUTABLE = $(BUILD_DIR)/CuraEngine
 
+# Voronoi
+# TODO: don't require OpenCV
+CFLAGS+=$(shell pkg-config --cflags opencv)
+LDFLAGS+=/usr/lib/libopencv_core.so /usr/lib/libopencv_imgproc.so /usr/lib/libopencv_highgui.so
+
 ifeq ($(OS),Windows_NT)
 	#For windows make it large address aware, which allows the process to use more then 2GB of memory.
 	EXECUTABLE := $(EXECUTABLE).exe
@@ -47,10 +52,10 @@ else
 	ifeq ($(UNAME), Linux)
 		OPEN_HTML=firefox
 		ifeq ($(BUILD_TYPE),DEBUG)
-			LDFLAGS += --static
+			# LDFLAGS += --static
 		else
-			CFLAGS += -flto
-			LDFLAGS += --static -flto
+			# CFLAGS += -flto
+			# LDFLAGS += --static -flto
 		endif
 	endif
 	ifeq ($(UNAME), OpenBSD)
