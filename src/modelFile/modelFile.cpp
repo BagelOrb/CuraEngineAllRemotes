@@ -1,6 +1,5 @@
 /** Copyright (C) 2013 David Braam - Released under terms of the AGPLv3 License */
 #include <string.h>
-#include <strings.h>
 #include <stdio.h>
 
 #include "modelFile.h"

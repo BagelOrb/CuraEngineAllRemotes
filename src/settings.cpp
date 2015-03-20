@@ -1,5 +1,7 @@
 #include <cctype>
 #include <fstream>
+#include <iostream>
+#include <sstream>
 #include <stdio.h>
 #include "utils/logoutput.h"
 #include "utils/string.h"
@@ -192,6 +194,8 @@ bool ConfigSettings::setSetting(const char* key, const char* value)
 bool ConfigSettings::readSettings(void) {
     return readSettings(DEFAULT_CONFIG_PATH);
 }
+
+
 
 bool ConfigSettings::readSettings(const char* path) {
     std::ifstream config(path);

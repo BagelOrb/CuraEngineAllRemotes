@@ -4,6 +4,8 @@
 
 #ifdef __WIN32
 #include <windows.h>
+#undef min
+#undef max
 #else
 #include <sys/time.h>
 #include <stddef.h>

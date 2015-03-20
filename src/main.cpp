@@ -2,7 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef __WIN32
+#include <windows.h>
+#undef min
+#undef max
+#else
 #include <sys/time.h>
+#endif
 #include <signal.h>
 #if defined(__linux__) || (defined(__APPLE__) && defined(__MACH__))
 #include <execinfo.h>

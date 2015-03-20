@@ -18,3 +18,12 @@ build/*
 NUL
 CuraEngine.layout
 CuraEngine.cbp
+
+debug
+release
+*.suo
+*.user
+*.vcxproj.filters
+*.opensdf
+debug.log
+release.log
