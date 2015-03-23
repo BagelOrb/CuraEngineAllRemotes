@@ -6,7 +6,7 @@
 
 namespace cura {
 
-static int verbose_level;
+static int verbose_level = 1;
 static bool progressLogging;
 
 void increaseVerboseLevel()

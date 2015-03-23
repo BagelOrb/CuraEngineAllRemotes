@@ -131,6 +131,10 @@ ConfigSettings::ConfigSettings()
     SETTING(extruderOffset[14].Y, 0);
     SETTING(extruderOffset[15].X, 0);
     SETTING(extruderOffset[15].Y, 0);
+    
+
+    // TYPEA extended list
+    SETTING(perimeterBeforeInfill, 0);
 
     // //Ultimaker
     // startCode =
@@ -196,6 +200,7 @@ ConfigSettings::ConfigSettings()
 
 bool ConfigSettings::setSetting(const char* key, const char* value)
 {
+    cura::log("Setting %s to %s\n", key, value);
     for(unsigned int n=0; n < _index.size(); n++)
     {
         if (stringcasecompare(key, _index[n].key) == 0)
@@ -228,10 +233,12 @@ bool ConfigSettings::setSetting(const char* key, const char* value)
 }
 
 bool ConfigSettings::readSettings(void) {
+    cura::log("Reading settings...\n");
     return readSettings(DEFAULT_CONFIG_PATH);
 }
 
 bool ConfigSettings::readSettings(const char* path) {
+    cura::log("Reading settings...\n");
     std::ifstream config(path);
     std::string line;
     size_t line_number = 0;
@@ -308,6 +315,7 @@ bool ConfigSettings::readSettings(const char* path) {
         // Set a config setting for the current K=V
         if(!setSetting(key.c_str(), val.c_str())) {
             cura::logError("Config(%s):L%zd: Failed to set '%s' to '%s'\n", path, line_number, key.c_str(), val.c_str());
+            // cura::logError("No bueno");
             return false;
         }
     }
