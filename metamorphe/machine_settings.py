@@ -30,18 +30,27 @@ def main():
 
 def load_profile(src, output):
 	print "Load preferences from ", src
-	profile.loadPreferences(src)
-
+	profile.loadProfile(src)
+	print profile.getProfileSettingFloat("print_speed");
 	e_settings = _engineSettings(profile, 1)
 
 	file_ = open(output, 'w')
+
+	settings_dict = {}
 	for k in e_settings:
-		file_.write(str(k) + " = " + str(e_settings[k]) + "\n")
+		# print k, e_settings[k]
+		settings_dict[k] = e_settings[k]
+	
+	for k in sorted(settings_dict):
+		print k, settings_dict[k]
+		file_.write(str(k) + " = " + str(settings_dict[k]) + "\n")
 	file_.close()
 	print "Successfully written to", output
 
 
 def _engineSettings(profile, extruderCount):
+	print profile.getProfileSettingFloat("bottom_thickness");
+	print profile.getProfileSettingFloat("print_speed");
 	settings = {
 		'layerThickness': int(profile.getProfileSettingFloat('layer_height') * 1000),
 		'initialLayerThickness': int(profile.getProfileSettingFloat('bottom_thickness') * 1000) if profile.getProfileSettingFloat('bottom_thickness') > 0.0 else int(profile.getProfileSettingFloat('layer_height') * 1000),

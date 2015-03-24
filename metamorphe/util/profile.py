@@ -711,9 +711,13 @@ def loadProfile(filename, allMachines = False):
 	"""
 	global settingsList
 	profileParser = ConfigParser.ConfigParser()
+
 	try:
 		profileParser.read(filename)
+		print profileParser
+		print "Parsing success"
 	except ConfigParser.ParsingError:
+		print "Parsing error :("
 		return
 	if allMachines:
 		n = 0
@@ -952,15 +956,18 @@ def loadPreferences(filename):
 	except ConfigParser.ParsingError:
 		return
 
+
 	for set in settingsList:
 		if set.isPreference():
 			if profileParser.has_option('preference', set.getName()):
+				print "preference", set.getName()
 				set.setValue(unicode(profileParser.get('preference', set.getName()), 'utf-8', 'replace'))
 
 	n = 0
 	while profileParser.has_section('machine_%d' % (n)):
 		for set in settingsList:
 			if set.isMachineSetting():
+				print "machine_", set.getName()
 				if profileParser.has_option('machine_%d' % (n), set.getName()):
 					set.setValue(unicode(profileParser.get('machine_%d' % (n), set.getName()), 'utf-8', 'replace'), n)
 		n += 1
