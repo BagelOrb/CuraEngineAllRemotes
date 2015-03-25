@@ -55,7 +55,7 @@ int main(int argc, char **argv)
     //Lower the process priority on linux and mac. On windows this is done on process creation from the GUI.
     setpriority(PRIO_PROCESS, 0, 10);
 #endif
-
+	printf("study curaEngine!\n");
     //Register the exception handling for arithmic exceptions, this prevents the "something went wrong" dialog on windows to pop up on a division by zero.
     signal(SIGFPE, signal_FPE);
 
@@ -88,8 +88,10 @@ int main(int argc, char **argv)
     for(int argn = 1; argn < argc; argn++)
     {
         char* str = argv[argn];
+		user_debug("[slc_debug:] argv[%d]=%s\n",argn,str);
         if (str[0] == '-')
         {
+        	user_debug("[slc_debug:] str[0] == '-'\n");
             for(str++; *str; str++)
             {
                 switch(*str)
@@ -172,6 +174,7 @@ int main(int argc, char **argv)
         }else{
             if (argv[argn][0] == '$')
             {
+            	user_debug("[slc_debug:] argv[argn][0] == '$'\n");
                 try {
                     //Catch all exceptions, this prevents the "something went wrong" dialog on windows to pop up on a thrown exception.
                     // Only ClipperLib currently throws exceptions. And only in case that it makes an internal error.
@@ -183,6 +186,7 @@ int main(int argc, char **argv)
                     exit(1);
                 }
             }else{
+            	user_debug("[slc_debug:]  files.push_back\n");
                 files.push_back(argv[argn]);
             }
         }

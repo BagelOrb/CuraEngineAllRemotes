@@ -27,6 +27,14 @@ void logError(const char* fmt, ...)
     va_end(args);
     fflush(stderr);
 }
+void user_debug(const char* fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    vfprintf(stderr, fmt, args);
+    va_end(args);
+    fflush(stdout);
+}
 
 void log(const char* fmt, ...)
 {
