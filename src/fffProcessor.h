@@ -67,9 +67,10 @@ public:
 
     bool processFile(const std::vector<std::string> &files)
     {
+    	user_debug("[slc_debug:] processFile\n");
         if (!gcode.isOpened())
             return false;
-
+		
         TimeKeeper timeKeeperTotal;
         SliceDataStorage storage;
         preSetup();

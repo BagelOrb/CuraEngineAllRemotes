@@ -192,10 +192,11 @@ int main(int argc, char **argv)
         }
     }
     try {
+		user_debug("[slc_debug:] In line 195\n");
         //Catch all exceptions, this prevents the "something went wrong" dialog on windows to pop up on a thrown exception.
         // Only ClipperLib currently throws exceptions. And only in case that it makes an internal error.
         if (files.size() > 0)
-            processor.processFile(files);
+            processor.processFile(files); 
     }catch(...){
         cura::logError("Unknown exception\n");
         exit(1);
