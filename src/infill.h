@@ -3,9 +3,12 @@
 #define INFILL_H
 
 #include "utils/polygon.h"
+#include "utils/logoutput.h"
+
 
 namespace cura {
 
+void generateDoubleConcentricInfill(Polygons outline, Polygons& result, int extrusionWidth, int inset_value);
 void generateConcentricInfill(Polygons outline, Polygons& result, int inset_value);
 void generateAutomaticInfill(const Polygons& in_outline, Polygons& result, int extrusionWidth, int lineSpacing, int infillOverlap, double rotation);
 void generateGridInfill(const Polygons& in_outline, Polygons& result, int extrusionWidth, int lineSpacing, int infillOverlap, double rotation);

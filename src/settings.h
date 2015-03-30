@@ -99,6 +99,7 @@ enum Infill_Pattern
     INFILL_GRID = 1,
     INFILL_LINES = 2,
     INFILL_CONCENTRIC = 3,
+    INFILL_DOUBLE_CONCENTRIC = 4
 };
 
 /**

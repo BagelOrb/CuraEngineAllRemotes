@@ -63,21 +63,21 @@ int main(int argc, char **argv)
     fffProcessor processor(config);
     std::vector<std::string> files;
 
-    cura::logError("Cura_SteamEngine version %s\n", VERSION);
-    cura::logError("Copyright (C) 2014 David Braam\n");
-    cura::logError("\n");
-    cura::logError("This program is free software: you can redistribute it and/or modify\n");
-    cura::logError("it under the terms of the GNU Affero General Public License as published by\n");
-    cura::logError("the Free Software Foundation, either version 3 of the License, or\n");
-    cura::logError("(at your option) any later version.\n");
-    cura::logError("\n");
-    cura::logError("This program is distributed in the hope that it will be useful,\n");
-    cura::logError("but WITHOUT ANY WARRANTY; without even the implied warranty of\n");
-    cura::logError("MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n");
-    cura::logError("GNU Affero General Public License for more details.\n");
-    cura::logError("\n");
-    cura::logError("You should have received a copy of the GNU Affero General Public License\n");
-    cura::logError("along with this program.  If not, see <http://www.gnu.org/licenses/>.\n");
+    cura::log("Cura_SteamEngine version %s\n", VERSION);
+    cura::log("Copyright (C) 2014 David Braam\n");
+    cura::log("\n");
+    cura::log("This program is free software: you can redistribute it and/or modify\n");
+    cura::log("it under the terms of the GNU Affero General Public License as published by\n");
+    cura::log("the Free Software Foundation, either version 3 of the License, or\n");
+    cura::log("(at your option) any later version.\n");
+    cura::log("\n");
+    cura::log("This program is distributed in the hope that it will be useful,\n");
+    cura::log("but WITHOUT ANY WARRANTY; without even the implied warranty of\n");
+    cura::log("MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n");
+    cura::log("GNU Affero General Public License for more details.\n");
+    cura::log("\n");
+    cura::log("You should have received a copy of the GNU Affero General Public License\n");
+    cura::log("along with this program.  If not, see <http://www.gnu.org/licenses/>.\n");
 
     if(!config.readSettings()) {
         cura::logError("Default config '%s' not used\n", DEFAULT_CONFIG_PATH);

@@ -641,6 +641,10 @@ private:
                             part->sparseOutline, infillPolygons,
                             config.sparseInfillLineDistance);
                         break;
+                    case INFILL_DOUBLE_CONCENTRIC:
+                        generateDoubleConcentricInfill(
+                            part->sparseOutline, infillPolygons,
+                            extrusionWidth, config.sparseInfillLineDistance);
                 }
             }
 

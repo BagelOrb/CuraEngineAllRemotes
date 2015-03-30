@@ -2,9 +2,33 @@
 #include "infill.h"
 
 namespace cura {
-
+// CUSTOM G-CODE - SINTARE PROJECT
+void generateDoubleConcentricInfill(Polygons outline, Polygons& result, int extrusionWidth, int inset_value)
+{
+    int doubleGap = extrusionWidth * 3;
+    
+    while(outline.size() > 0)
+    {
+        // First Wall
+        for (unsigned int polyNr = 0; polyNr < outline.size(); polyNr++)
+        {
+            PolygonRef r = outline[polyNr];
+            result.add(r);
+        }
+        // Second Wall
+        outline = outline.offset(-doubleGap);
+        if(outline.size() <= 0) break;
+        for (unsigned int polyNr = 0; polyNr < outline.size(); polyNr++)
+        {
+            PolygonRef r = outline[polyNr];
+            result.add(r);
+        }
+        outline = outline.offset(-inset_value);
+    }
+}
 void generateConcentricInfill(Polygons outline, Polygons& result, int inset_value)
 {
+
     while(outline.size() > 0)
     {
         for (unsigned int polyNr = 0; polyNr < outline.size(); polyNr++)
