@@ -27,15 +27,10 @@ void generateAutomaticInfill(const Polygons& in_outline, Polygons& result,
                              int extrusionWidth, int lineSpacing,
                              int infillOverlap, double rotation, int posZ)
 {
-    if (lineSpacing > extrusionWidth * 6)
+    if (lineSpacing > extrusionWidth * 4)
     {
         generateTroctInfill(in_outline, result, extrusionWidth, lineSpacing,
                            infillOverlap, rotation, posZ);
-    }
-    if (lineSpacing > extrusionWidth * 4)
-    {
-        generateGridInfill(in_outline, result, extrusionWidth, lineSpacing,
-                           infillOverlap, rotation);
     }
     else
     {
