@@ -1,6 +1,7 @@
 /** Copyright (C) 2013 David Braam - Released under terms of the AGPLv3 License */
 #include "infill.h"
 #include <clipper/clipper.hpp>
+#include <algorithm>
 
 // sqrt(2) helpers for truncated octahedron calculations
 #define SQRT2MUL(x) ((30547*(x))/21600)
@@ -53,14 +54,6 @@ void generateGridInfill(const Polygons& in_outline, Polygons& result,
                        infillOverlap, rotation + 90);
 }
 
-int compare_int64_t(const void* a, const void* b)
-{
-    int64_t n = (*(int64_t*)a) - (*(int64_t*)b);
-    if (n < 0) return -1;
-    if (n > 0) return 1;
-    return 0;
-}
-
 void generateLineInfill(const Polygons& in_outline, Polygons& result, int extrusionWidth, int lineSpacing, int infillOverlap, double rotation)
 {
     Polygons outline = in_outline.offset(extrusionWidth * infillOverlap / 100);
@@ -102,7 +95,7 @@ void generateLineInfill(const Polygons& in_outline, Polygons& result, int extrus
     int idx = 0;
     for(int64_t x = boundary.min.X + lineSpacing / 2; x < boundary.max.X; x += lineSpacing)
     {
-        qsort(cutList[idx].data(), cutList[idx].size(), sizeof(int64_t), compare_int64_t);
+        std::sort(cutList[idx].begin(), cutList[idx].end());
         for(unsigned int i = 0; i + 1 < cutList[idx].size(); i+=2)
         {
             if (cutList[idx][i+1] - cutList[idx][i] < extrusionWidth / 5)
