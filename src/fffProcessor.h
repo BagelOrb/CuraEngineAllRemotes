@@ -510,14 +510,18 @@ private:
                 // Given a layerNr, find the appropriate fill pattern from carpals.
                 int n = (int) carpals.size();
                 int forceFill = config.infillPattern;
+                int forceSparseInfillLineDistance = config.sparseInfillLineDistance;
                 for(int i = 0; i < n; i++){
                     if(carpals[i].inside(layerNr)){
                         forceFill = carpals[i].fillpattern;
-                        return;
+                        forceSparseInfillLineDistance = (int) (100 * extrusionWidth / carpals[i].density / 100);
+
+                        // float fillDensity = 100 * extrusionWidth / forceSparseInfillLineDistance;
+                        break;
                     }
                 }
                 // END FILL PATTERN FIND
-                addVolumeLayerToGCode(storage, gcodeLayer, volumeIdx, layerNr, forceFill);
+                addVolumeLayerToGCode(storage, gcodeLayer, volumeIdx, layerNr, forceFill, forceSparseInfillLineDistance);
             }
             if (!printSupportFirst)
                 addSupportToGCode(storage, gcodeLayer, layerNr);
@@ -556,7 +560,7 @@ private:
 
 
     //Add a single layer from a single mesh-volume to the GCode
-    void addVolumeLayerToGCode(SliceDataStorage& storage, GCodePlanner& gcodeLayer, int volumeIdx, int layerNr, int forceFillPattern)
+    void addVolumeLayerToGCode(SliceDataStorage& storage, GCodePlanner& gcodeLayer, int volumeIdx, int layerNr, int forceFillPattern, int forceSparseInfillLineDistance)
     {
 
         
@@ -668,10 +672,11 @@ private:
            
             // forceFillPattern = config.infillPattern;
             // HALFD CODE
+            // float fillDensity = 100 * 1000 * extrusionWidth / config.sparseInfillLineDistance; 
+            float fillDensity = 100 * extrusionWidth / forceSparseInfillLineDistance;
+            printf("Layer %d, Infill pattern #%d, Fill Angle: %2.2f, Density: %2.2f FillDistance: %d, extrusionWidth: %2.2d\n",  layerNr, forceFillPattern, fillAngle, fillDensity, forceSparseInfillLineDistance, extrusionWidth);
 
-            printf("Layer %d, Infill pattern #%d, Fill Angle: %2.2f\n", layerNr, forceFillPattern, fillAngle);
-
-            if (config.sparseInfillLineDistance > 0)
+            if (forceSparseInfillLineDistance > 0)
             {
                 // switch (config.infillPattern)
                 switch (forceFillPattern)
@@ -679,37 +684,37 @@ private:
                     case INFILL_AUTOMATIC:
                         generateAutomaticInfill(
                             part->sparseOutline, infillPolygons, extrusionWidth,
-                            config.sparseInfillLineDistance,
+                            forceSparseInfillLineDistance,
                             config.infillOverlap, fillAngle);
                         break;
 
                     case INFILL_GRID:
                         generateGridInfill(part->sparseOutline, infillPolygons,
                                            extrusionWidth,
-                                           config.sparseInfillLineDistance,
+                                           forceSparseInfillLineDistance,
                                            config.infillOverlap, fillAngle);
                         break;
 
                     case INFILL_LINES:
                         generateLineInfill(part->sparseOutline, infillPolygons,
                                            extrusionWidth,
-                                           config.sparseInfillLineDistance,
+                                           forceSparseInfillLineDistance,
                                            config.infillOverlap, fillAngle);
                         break;
 
                     case INFILL_CONCENTRIC:
                         generateConcentricInfill(
                             part->sparseOutline, infillPolygons,
-                            config.sparseInfillLineDistance);
+                            forceSparseInfillLineDistance);
                         break;
                     case INFILL_DOUBLE_CONCENTRIC:
                         generateDoubleConcentricInfill(
                             part->sparseOutline, infillPolygons,
-                            extrusionWidth, config.sparseInfillLineDistance);
+                            extrusionWidth, forceSparseInfillLineDistance);
                         break;
                     case INFILL_CHAMBERED:
                         generateChamberedInfill( part->sparseOutline, infillPolygons,
-                            extrusionWidth, config.sparseInfillLineDistance, layerNr);
+                            extrusionWidth, forceSparseInfillLineDistance, layerNr);
 
                         break;
                 }

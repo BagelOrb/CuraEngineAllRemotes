@@ -18,13 +18,12 @@ class Carpal{
     	void toString();
     	bool inside(int);
     	// [1, 25, 3, 0.58]
-    	
+        double density;
+
     	int fillpattern;
     private: 
     	int id;
-    	int layerID;
-		double density;
-    
+    	int layerID;    
 };
 
 
