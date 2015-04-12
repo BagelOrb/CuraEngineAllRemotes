@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <vector>
 #include "utils/socket.h"
+#include "carpal.h"
 
 #define GUI_CMD_REQUEST_MESH 0x01
 #define GUI_CMD_SEND_POLYGONS 0x02
@@ -334,8 +335,27 @@ private:
         sendPolygonsToGui("skirt", 0, config.initialLayerThickness, storage.skirt);
     }
 
+    std::vector<Carpal> getCarpals(std::vector <std::vector <std::string> > v){
+                // std::vector<std::vector<std::string> v; csv_read("tests/csvs/example.csv");
+        std::vector<Carpal> result; 
+        
+        for(int i = 0; i < (int)v.size(); i++ ){
+            Carpal c(v[i]);
+            result.push_back(c);
+        }   
+        
+        return result;
+    }
+
     void writeGCode(SliceDataStorage& storage)
     {
+
+        std::vector<Carpal> carpals = getCarpals(csv_read("tests/csvs/carpal.csv"));
+        for(int i = 0; i < (int) carpals.size(); i++){
+            // carpals[i].toString();
+        }
+
+
         if (fileNr == 1)
         {
             if (gcode.getFlavor() == GCODE_FLAVOR_ULTIGCODE)
@@ -485,7 +505,19 @@ private:
             {
                 if (volumeCnt > 0)
                     volumeIdx = (volumeIdx + 1) % storage.volumes.size();
-                addVolumeLayerToGCode(storage, gcodeLayer, volumeIdx, layerNr);
+
+                // FIND THE RIGHT PATTERN FROM FILL FILE
+                // Given a layerNr, find the appropriate fill pattern from carpals.
+                int n = (int) carpals.size();
+                int forceFill = config.infillPattern;
+                for(int i = 0; i < n; i++){
+                    if(carpals[i].inside(layerNr)){
+                        forceFill = carpals[i].fillpattern;
+                        return;
+                    }
+                }
+                // END FILL PATTERN FIND
+                addVolumeLayerToGCode(storage, gcodeLayer, volumeIdx, layerNr, forceFill);
             }
             if (!printSupportFirst)
                 addSupportToGCode(storage, gcodeLayer, layerNr);
@@ -519,9 +551,15 @@ private:
         maxObjectHeight = std::max(maxObjectHeight, storage.modelSize.z - config.objectSink);
     }
 
+
+
+
+
     //Add a single layer from a single mesh-volume to the GCode
-    void addVolumeLayerToGCode(SliceDataStorage& storage, GCodePlanner& gcodeLayer, int volumeIdx, int layerNr)
+    void addVolumeLayerToGCode(SliceDataStorage& storage, GCodePlanner& gcodeLayer, int volumeIdx, int layerNr, int forceFillPattern)
     {
+
+        
         int prevExtruder = gcodeLayer.getExtruder();
         bool extruderChanged = gcodeLayer.setExtruder(volumeIdx);
         if (layerNr == 0 && volumeIdx == 0 && !(config.raftBaseThickness > 0 && config.raftInterfaceThickness > 0))
@@ -605,15 +643,38 @@ private:
             }
 
             Polygons infillPolygons;
-            int fillAngle = 45;
-            if (layerNr & 1)
+            // int fillAngle = 90;
+            double fillAngle = layerNr/3.0;
+            // fillAngle ++;
+
+
+
+            if (layerNr & 1){
+                // printf("Layer %d has fill changed\n", layerNr );
+                // fillAngle += 180;
                 fillAngle += 90;
+            }
+
             int extrusionWidth = config.extrusionWidth;
             if (layerNr == 0)
                 extrusionWidth = config.layer0extrusionWidth;
+
+            // HALFD CODE
+            // int forceFillPattern = INFILL_GRID;
+
+            // if(layerNr > 250){
+                // forceFillPattern = INFILL_LINES; 
+            // }
+           
+            // forceFillPattern = config.infillPattern;
+            // HALFD CODE
+
+            printf("Layer %d, Infill pattern #%d, Fill Angle: %2.2f\n", layerNr, forceFillPattern, fillAngle);
+
             if (config.sparseInfillLineDistance > 0)
             {
-                switch (config.infillPattern)
+                // switch (config.infillPattern)
+                switch (forceFillPattern)
                 {
                     case INFILL_AUTOMATIC:
                         generateAutomaticInfill(
@@ -645,6 +706,12 @@ private:
                         generateDoubleConcentricInfill(
                             part->sparseOutline, infillPolygons,
                             extrusionWidth, config.sparseInfillLineDistance);
+                        break;
+                    case INFILL_CHAMBERED:
+                        generateChamberedInfill( part->sparseOutline, infillPolygons,
+                            extrusionWidth, config.sparseInfillLineDistance, layerNr);
+
+                        break;
                 }
             }
 

@@ -200,7 +200,7 @@ ConfigSettings::ConfigSettings()
 
 bool ConfigSettings::setSetting(const char* key, const char* value)
 {
-    cura::log("Setting %s to %s\n", key, value);
+    // cura::log("Setting %s to %s\n", key, value);
     for(unsigned int n=0; n < _index.size(); n++)
     {
         if (stringcasecompare(key, _index[n].key) == 0)

@@ -1,1 +1,3 @@
-./build/CuraEngine -s infillPattern=4 -v -o tests/gcodes/cube.gcode tests/stls/cube.stl
+rm build/main.o 
+make
+./build/CuraEngine -s infillPattern=2 -v -o tests/gcodes/sphere.gcode tests/stls/unit_sphere.stl

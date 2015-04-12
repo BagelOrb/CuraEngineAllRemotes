@@ -1,7 +1,35 @@
 /** Copyright (C) 2013 David Braam - Released under terms of the AGPLv3 License */
 #include "infill.h"
-
+// #include "rapidjson/include/reader.h"
 namespace cura {
+
+void generateChamberedInfill(Polygons outline, Polygons& result, int extrusionWidth, int inset_value, int layerNr){
+    cura::logError("Layer %d\n", layerNr);
+    // int doubleGap = extrusionWidth * 3;
+    // int chamberSize = extrusionWidth * 3;
+    
+
+    // // CALCULATE FILL DISTANCE
+    // if(outline.size() > 0){
+    //     PolygonRef r = outline[0];
+    //     Point com = r.centerOfMass();
+    //     Point cp = r.closestPointTo(com);  
+    //     Point distance = vSize(com - cp)/ 1000;  
+    //     cura::logError("Dist: %dmm, COM (%d, %d); CP(%d, %d)\n", distance, com.X, com.Y, cp.X, cp.Y); 
+             
+    // }
+  
+
+    while(outline.size() > 0)
+    {
+        for (unsigned int polyNr = 0; polyNr < outline.size(); polyNr++)
+        {
+            PolygonRef r = outline[polyNr];
+            result.add(r);
+        }
+        outline = outline.offset(-inset_value);
+    }
+}
 // CUSTOM G-CODE - SINTARE PROJECT
 void generateDoubleConcentricInfill(Polygons outline, Polygons& result, int extrusionWidth, int inset_value)
 {
