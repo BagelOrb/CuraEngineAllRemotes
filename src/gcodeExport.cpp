@@ -358,7 +358,7 @@ void GCodeExport::writeRetractOfLastExtruder()
         return;
     }
     resetExtrusionValue();
-    fprintf(f, "G1 F%i %c%0.5f\n", retractionSpeed * 60, extruderCharacter[*it], extruderSwitchRetraction);
+    fprintf(f, "G1 F%i %c%0.5f\n", retractionSpeed * 60, extruderCharacter[extruderNr], -extruderSwitchRetraction);
 }
 
 void GCodeExport::switchExtruder(int newExtruder)

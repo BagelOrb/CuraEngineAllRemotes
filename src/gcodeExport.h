@@ -40,6 +40,7 @@ private:
     int flavor;
     std::string preSwitchExtruderCode;
     std::string postSwitchExtruderCode;
+    int singleNozzle;
     
     double totalFilament[MAX_EXTRUDERS];
     double totalPrintTime;
@@ -63,6 +64,8 @@ public:
     bool isOpened();
     
     void setExtrusion(int layerThickness, int filamentDiameter, int flow);
+
+    void setNozzleSettings(int singleNozzle);
     
     void setRetractionSettings(int retractionAmount, int retractionSpeed, int extruderSwitchRetraction, int extruderSwitchReturn, int minimalExtrusionBeforeRetraction, int zHop, int retractionAmountPrime);
     
@@ -96,6 +99,8 @@ public:
     void writeRetraction(bool force=false);
 
     void writeReturnOfNotLastExtruders();
+
+    void writeRetractOfLastExtruder();
     
     void switchExtruder(int newExtruder);
     
