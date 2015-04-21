@@ -148,6 +148,7 @@ public:
     int retractionMinimalDistance;
     int minimalExtrusionBeforeRetraction;
     int retractionZHop;
+    int signleNozzle;
 
     int enableCombing;
     int enableOozeShield;

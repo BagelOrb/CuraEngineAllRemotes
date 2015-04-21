@@ -23,6 +23,7 @@ GCodeExport::GCodeExport()
     extruderSwitchReturn = 0.0;
     extruderNr = 0;
     currentFanSpeed = -1;
+    singleNozzle = 0;
     
     totalPrintTime = 0.0;
     for(unsigned int e=0; e<MAX_EXTRUDERS; e++)
@@ -120,6 +121,11 @@ void GCodeExport::setRetractionSettings(int retractionAmount, int retractionSpee
     this->extruderSwitchReturn = INT2MM(extruderSwitchReturn);
     this->minimalExtrusionBeforeRetraction = INT2MM(minimalExtrusionBeforeRetraction);
     this->retractionZHop = zHop;
+}
+
+void GCodeExport::setNozzleSettings(int singleNozzle)
+{
+    this->singleNozzle = singleNozzle;
 }
 
 void GCodeExport::setZ(int z)
@@ -345,6 +351,16 @@ void GCodeExport::writeReturnOfNotLastExtruders()
     fprintf(f, "T%i\n", extruderNr);
 }
 
+void GCodeExport::writeRetractOfLastExtruder()
+{
+    if(extruderSwitchRetraction <= 0.0)
+    {
+        return;
+    }
+    resetExtrusionValue();
+    fprintf(f, "G1 F%i %c%0.5f\n", retractionSpeed * 60, extruderCharacter[*it], extruderSwitchRetraction);
+}
+
 void GCodeExport::switchExtruder(int newExtruder)
 {
     if (extruderNr == newExtruder)
@@ -442,7 +458,11 @@ void GCodeExport::finalize(int maxObjectHeight, int moveSpeed, const char* endCo
     writeRetraction();
     setZ(maxObjectHeight + 5000);
     writeMove(getPositionXY(), moveSpeed, 0);
-    writeReturnOfNotLastExtruders();
+    if(singleNozzle == 0) {
+        writeReturnOfNotLastExtruders();
+    } else {
+        writeRetractOfLastExtruder();
+    }
     writeCode(endCode);
     cura::log("Print time: %d\n", int(getTotalPrintTime()));
     cura::log("Filament: %d\n", int(getTotalFilamentUsed(0)));

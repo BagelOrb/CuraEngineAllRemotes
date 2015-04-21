@@ -61,6 +61,7 @@ ConfigSettings::ConfigSettings()
     SETTING(retractionMinimalDistance, 1500);
     SETTING(minimalExtrusionBeforeRetraction, 100);
     SETTING(retractionZHop, 0);
+    SETTING(singleNozzle, 0);
 
     SETTING(enableCombing, COMBING_ALL);
     SETTING(enableOozeShield, 0);
