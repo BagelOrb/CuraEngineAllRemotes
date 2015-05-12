@@ -26,7 +26,6 @@ set(engine_SRCS
     src/infill.cpp
     src/inset.cpp
     src/layerPart.cpp
-    src/main.cpp
     src/mesh.cpp
     src/multiVolumes.cpp
     src/pathOrderOptimizer.cpp
@@ -50,10 +49,17 @@ set(engine_SRCS
     src/utils/polygon.cpp
 )
 
+set(app_SRCS
+     src/main.cpp
+)
+
 protobuf_generate_cpp(engine_PB_SRCS engine_PB_HEADERS Cura.proto)
 
-add_executable(CuraEngine ${engine_SRCS} ${engine_PB_SRCS})
+add_executable(CuraEngine ${app_SRCS} ${engine_SRCS} ${engine_PB_SRCS})
 target_link_libraries(CuraEngine clipper Arcus)
+
+add_library(libCuraEngine SHARED EXCLUDE_FROM_ALL  ${engine_SRCS} ${engine_PB_SRCS})
+
 
 if (UNIX)
     target_link_libraries(CuraEngine pthread)
