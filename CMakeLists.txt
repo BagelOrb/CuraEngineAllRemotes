@@ -15,7 +15,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR} libs)
 
-add_library(clipper STATIC libs/clipper/clipper.cpp)
+#add_library(clipper STATIC libs/clipper/clipper.cpp)
 
 set(engine_SRCS
     src/bridge.cpp
@@ -47,6 +47,7 @@ set(engine_SRCS
     src/utils/logoutput.cpp
     src/utils/polygonUtils.cpp
     src/utils/polygon.cpp
+    libs/clipper/clipper.cpp
 )
 
 set(app_SRCS
@@ -56,7 +57,7 @@ set(app_SRCS
 protobuf_generate_cpp(engine_PB_SRCS engine_PB_HEADERS Cura.proto)
 
 add_executable(CuraEngine ${app_SRCS} ${engine_SRCS} ${engine_PB_SRCS})
-target_link_libraries(CuraEngine clipper Arcus)
+target_link_libraries(CuraEngine Arcus)
 
 add_library(libCuraEngine SHARED EXCLUDE_FROM_ALL  ${engine_SRCS} ${engine_PB_SRCS})
 
@@ -70,7 +71,8 @@ set(test_SRCS
     src/test.cpp
     src/utils/polygonUtils.cpp
     src/utils/gettime.cpp
+    libs/clipper/clipper.cpp
 )
 
 add_executable(Test ${test_SRCS})
-target_link_libraries(Test clipper Arcus)
+target_link_libraries(Test Arcus)
