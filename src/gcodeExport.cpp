@@ -461,7 +461,7 @@ void GCodeExport::finalize(int maxObjectHeight, int moveSpeed, const char* endCo
     if(singleNozzle == 0) {
         writeReturnOfNotLastExtruders();
     } else {
-        writeRetractOfLastExtruder();
+        //writeRetractOfLastExtruder();
     }
     writeCode(endCode);
     cura::log("Print time: %d\n", int(getTotalPrintTime()));
