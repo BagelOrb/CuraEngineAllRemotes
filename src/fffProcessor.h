@@ -612,7 +612,7 @@ private:
             }
 
             Polygons infillPolygons;
-            int fillAngle = 45;
+            int fillAngle = config.infillAngle;
             if (layerNr & 1)
                 fillAngle += 90;
             int extrusionWidth = config.extrusionWidth;
