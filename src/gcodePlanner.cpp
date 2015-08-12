@@ -233,7 +233,7 @@ void GCodePlanner::getTimes(double& travelTime, double& extrudeTime)
     }
 }
 
-void GCodePlanner::writeGCode(bool liftHeadIfNeeded, int layerThickness)
+void GCodePlanner::writeGCode(bool liftHeadIfNeeded, int layerThickness, bool skip)
 {
     GCodePathConfig* lastConfig = nullptr;
     int extruder = gcode.getExtruderNr();
@@ -249,6 +249,7 @@ void GCodePlanner::writeGCode(bool liftHeadIfNeeded, int layerThickness)
         {
             gcode.writeRetraction(path->config->retraction_config);
         }
+
         if (path->config != &travelConfig && lastConfig != path->config)
         {
             gcode.writeTypeComment(path->config->name);
@@ -310,6 +311,7 @@ void GCodePlanner::writeGCode(bool liftHeadIfNeeded, int layerThickness)
         }
         if (spiralize)
         {
+            gcode.writeComment("SPIRALIZE"); // DEBUG
             //If we need to spiralize then raise the head slowly by 1 layer as this path progresses.
             float totalLength = 0.0;
             int z = gcode.getPositionZ();
@@ -337,17 +339,22 @@ void GCodePlanner::writeGCode(bool liftHeadIfNeeded, int layerThickness)
             bool coasting = coasting_config.coasting_enable; 
             if (coasting)
             {
+                gcode.writeComment("COASTING ON"); // DEBUG
                 coasting = writePathWithCoasting(path_idx, layerThickness
                             , coasting_config.coasting_volume_move, coasting_config.coasting_speed_move, coasting_config.coasting_min_volume_move
                             , coasting_config.coasting_volume_retract, coasting_config.coasting_speed_retract, coasting_config.coasting_min_volume_retract);
             }
-            if (! coasting) // not same as 'else', cause we might have changed coasting in the line above...
+            if (!coasting) // not same as 'else', cause we might have changed coasting in the line above...
             { // normal path to gcode algorithm
                 for(unsigned int point_idx = 0; point_idx < path->points.size(); point_idx++)
                 {
                     gcode.writeMove(path->points[point_idx], speed, path->config->getExtrusionPerMM(is_volumatric));
                 }
             }
+        }
+        if (skip)
+        {
+            gcode.setZPos2NextZPos ();
         }
     }
 

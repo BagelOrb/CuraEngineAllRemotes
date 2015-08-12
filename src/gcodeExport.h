@@ -143,13 +143,13 @@ private:
     EGCodeFlavor flavor;
     std::string preSwitchExtruderCode[MAX_EXTRUDERS];
     std::string postSwitchExtruderCode[MAX_EXTRUDERS];
-    
+
     double totalFilament[MAX_EXTRUDERS];
     double totalPrintTime;
     TimeEstimateCalculator estimateCalculator;
 public:
     
-    GCodeExport();
+    GCodeExport(); 
     ~GCodeExport();
     
     void setOutputStream(std::ostream* stream);
@@ -234,6 +234,16 @@ public:
     }
     void finalize(int maxObjectHeight, int moveSpeed, const char* endCode);
     
+    int nextZPos;
+    
+    void setZPos2NextZPos ()
+    {
+        if (nextZPos == -9999)
+        {
+            std::cout << "ERROR: nextZPos was not set" << std::endl;
+        }
+        zPos = nextZPos;
+    }
 };
 
 }

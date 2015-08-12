@@ -8,7 +8,7 @@
 namespace cura {
 
 GCodeExport::GCodeExport()
-: output_stream(&std::cout), currentPosition(0,0,0), startPosition(INT32_MIN,INT32_MIN,0)
+: output_stream(&std::cout), currentPosition(0,0,0), startPosition(INT32_MIN,INT32_MIN,0), nextZPos(-9999)
 {
     extrusion_amount = 0;
     retraction_extrusion_window = 0.0;

@@ -38,7 +38,7 @@
 
 void print_usage()
 {
-    cura::logError("usage: CuraEngine [-h] [-v] [--connect <host>[:<port>]] [-j <settings.json>] [-p] [-s <settingkey>=<value>] -o <output.gcode> <model.stl>\n");
+    cura::logError("usage: CuraEngine [-h] [-v] [--connect <host>[:<port>]] [-j <settings.json>] [-p] [-s <settingkey>=<value>] [-S] [-M] -o <output.gcode> <model.stl>\n");
 }
 
 //Signal handler for a "floating point exception", which can also be integer division by zero errors.
@@ -165,6 +165,18 @@ int main(int argc, char **argv)
                                 processor.setSetting(argv[argn], valuePtr);
                             }
                         }
+                        break;
+                    case 'M': // Print Meshes Individually
+                        processor.setSetting("PrintMeshesSeperatly", "true");
+                        break;
+                    case 'S': // Print Layer Parts Individually
+                        processor.setSetting("StackLayerParts", "true");
+			            break;
+                    case 'g': // Backwards compatibitily to talk to gui
+                        commandSocket = new CommandSocket(&processor);
+                        ip = "127.0.0.1";
+                        port = std::atoi(argv[argn + 1]);
+                        argn += 1;
                         break;
                     default:
                         cura::logError("Unknown option: %c\n", *str);

@@ -29,20 +29,51 @@ void FffGcodeWriter::writeGCode(SliceDataStorage& storage, TimeKeeper& timeKeepe
     }
     fileNr++;
 
+    // Reoder storage so as to print all layer parts individually 
+    if (hasSetting ("StackLayerParts") && getSettingBoolean("StackLayerParts"))
+    {   
+        isStackLayerParts = true;
+        stackLayerParts2 (storage);
+    }
+
+    // Reorder storage so as to print all meshes individually
+    if (hasSetting ("PrintMeshesSeperatly") && getSettingBoolean("PrintMeshesSeperatly"))
+    {
+        isMergeMeshes = true;
+        mergeMeshes (storage);
+    }
+
+    // Check make sure 
+    if (isMergeMeshes || isStackLayerParts)
+    {
+        int nozzleSize = getSettingInMicrons("machine_nozzle_gantry_distance");
+        int maxSize = storage.model_max.z;
+        if (nozzleSize < maxSize)
+        {
+            std::cout << "ERROR: MAX POINT OF OBJECT (" << maxSize << ") IS LARGER THAN "
+                         "MACHINE NOZZLE SIZE (" << nozzleSize << ")" << std::endl;
+            exit(0);
+        }
+    }
+
     unsigned int totalLayers = storage.meshes[0].layers.size();
+
     //gcode.writeComment("Layer count: %d", totalLayers);
 
     bool has_raft = getSettingAsPlatformAdhesion("adhesion_type") == Adhesion_Raft;
+
     if (has_raft)
     {
         processRaft(storage, totalLayers);
     }
-    
+
+    layerCount = 0;
+
     for(unsigned int layer_nr=0; layer_nr<totalLayers; layer_nr++)
     {
         processLayer(storage, layer_nr, totalLayers, has_raft);
     }
-    
+
     gcode.writeRetraction(&storage.retraction_config, true);
 
     Progress::messageProgressStage(Progress::Stage::FINISH, &timeKeeper, commandSocket);
@@ -269,8 +300,6 @@ void FffGcodeWriter::processLayer(SliceDataStorage& storage, unsigned int layer_
         layer_thickness = getSettingInMicrons("layer_height_0");
     }
     
-    
-
     setConfigSkirt(storage, layer_thickness);
 
     setConfigSupport(storage, layer_thickness);
@@ -291,16 +320,17 @@ void FffGcodeWriter::processLayer(SliceDataStorage& storage, unsigned int layer_
     if (!getSettingBoolean("retraction_combing")) 
         gcodeLayer.setAlwaysRetract(true);
 
-    processLayerStartPos(layer_nr, has_raft);
-    
+    processLayerStartPos(storage, layer_nr, has_raft);
+
     processSkirt(storage, gcodeLayer, layer_nr);
 
     bool printSupportFirst = (storage.support.generated && getSettingAsIndex("support_extruder_nr") > 0 && getSettingAsIndex("support_extruder_nr") == gcodeLayer.getExtruder());
+
+
     if (printSupportFirst)
         addSupportToGCode(storage, gcodeLayer, layer_nr);
 
     processOozeShield(storage, gcodeLayer, layer_nr);
-
     //Figure out in which order to print the meshes, do this by looking at the current extruder and preferer the meshes that use that extruder.
     std::vector<SliceMeshStorage*> mesh_order = calculateMeshOrder(storage, gcodeLayer.getExtruder());
     for(SliceMeshStorage* mesh : mesh_order)
@@ -314,12 +344,21 @@ void FffGcodeWriter::processLayer(SliceDataStorage& storage, unsigned int layer_
             addMeshLayerToGCode(storage, mesh, gcodeLayer, layer_nr);
         }
     }
+
     if (!printSupportFirst)
         addSupportToGCode(storage, gcodeLayer, layer_nr);
 
     processFanSpeedAndMinimalLayerTime(storage, gcodeLayer, layer_nr);
-    
-    gcodeLayer.writeGCode(getSettingBoolean("cool_lift_head"), layer_nr > 0 ? getSettingInMicrons("layer_height") : getSettingInMicrons("layer_height_0"));
+   
+    bool isNewLayer = false;
+    if (layer_nr > 0)
+            isNewLayer = storage.meshes[0].layers[layer_nr-1].isNewLayer;
+
+    gcode.writeComment("NEW LAYER: " + std::to_string(isNewLayer));
+
+    gcodeLayer.writeGCode(getSettingBoolean("cool_lift_head"), layer_nr > 0 ? getSettingInMicrons("layer_height") : getSettingInMicrons("layer_height_0"), isNewLayer);
+
+
     if (commandSocket)
         commandSocket->sendGCodeLayer();
 }
@@ -344,9 +383,27 @@ void FffGcodeWriter::processInitialLayersSpeedup(SliceDataStorage& storage, unsi
     }
 }
 
-void FffGcodeWriter::processLayerStartPos(unsigned int layer_nr, bool has_raft)
+void FffGcodeWriter::processLayerStartPos(SliceDataStorage &storage, unsigned int layer_nr, bool has_raft)
 {
-    int32_t z = getSettingInMicrons("layer_height_0") + layer_nr * getSettingInMicrons("layer_height");
+    // FIXME: If -S is set but -M isn't then this will only take
+    // the values from the first mesh, not the second mesh
+    bool isNewLayer = storage.meshes[0].layers[layer_nr].isNewLayer;
+
+    // FIXME: FIGURE OUT WHY THE SECOND LAYER NEEDS TO BE TRUE AS WELL
+    if (!isNewLayer && layer_nr > 0 && storage.meshes[0].layers[layer_nr-1].isNewLayer)
+    {
+        isNewLayer = true;
+    }
+
+    if (isNewLayer)
+    {
+        layerCount = 0;
+    }
+
+    layerCount++;
+
+    int32_t z = getSettingInMicrons("layer_height_0") + layerCount * getSettingInMicrons("layer_height");
+
     if (has_raft)
     {
         z += getSettingInMicrons("raft_base_thickness") + getSettingInMicrons("raft_interface_thickness") + getSettingAsCount("raft_surface_layers")*getSettingInMicrons("raft_surface_thickness");
@@ -357,8 +414,28 @@ void FffGcodeWriter::processLayerStartPos(unsigned int layer_nr, bool has_raft)
             z += getSettingInMicrons("raft_airgap");
         }
     }
-    gcode.setZ(z);
-    gcode.resetStartPosition();
+
+    if ((isMergeMeshes || isStackLayerParts) && isNewLayer)
+    {
+        /*retractHeadSaftly();
+        Point p = gcode.getPositionXY();
+        Point3 first_point;
+
+        first_point.x = p.X;
+        first_point.y = p.Y;
+        first_point.z = getSettingInMicrons("machine_height");
+
+        gcode.writeMove(first_point, getSettingInMillimetersPerSecond("retraction_retract_speed"), 0); 
+        gcode.writeComment("GOT TO HERE");*/
+
+        gcode.nextZPos = z;
+        gcode.setZ(gcode.getPositionZ() + 10000);
+    }
+    else
+    {
+        gcode.resetStartPosition();
+        gcode.setZ(z);
+    }
 }
 
 void FffGcodeWriter::processSkirt(SliceDataStorage& storage, GCodePlanner& gcodeLayer, unsigned int layer_nr)
@@ -487,14 +564,24 @@ void FffGcodeWriter::addMeshLayerToGCode(SliceDataStorage& storage, SliceMeshSto
         int sparse_infill_line_distance = getSettingInMicrons("infill_line_distance");
         double infill_overlap = getSettingInPercentage("fill_overlap");
         
+        gcode.writeComment("GOT TO HERE Y");
+        if (!storage.meshes[0].layers[layer_nr].isNewLayer) {
+
         processMultiLayerInfill(gcodeLayer, mesh, part, sparse_infill_line_distance, infill_overlap, fillAngle, extrusionWidth);
         processSingleLayerInfill(gcodeLayer, mesh, part, sparse_infill_line_distance, infill_overlap, fillAngle, extrusionWidth);
 
         processInsets(gcodeLayer, mesh, part, layer_nr);
 
+        
+
         if (skin_alternate_rotation && ( layer_nr / 2 ) & 1)
             fillAngle -= 45;
-        processSkin(gcodeLayer, mesh, part, layer_nr, infill_overlap, fillAngle, extrusionWidth);    
+        processSkin(gcodeLayer, mesh, part, layer_nr, infill_overlap, fillAngle, extrusionWidth);
+
+    
+        }
+        gcode.writeComment("GOT TO HERE YE");
+
     }
 }
 
@@ -670,10 +757,14 @@ void FffGcodeWriter::addSupportToGCode(SliceDataStorage& storage, GCodePlanner& 
         if (gcodeLayer.setExtruder(getSettingAsIndex("support_extruder_nr")))
             addWipeTower(storage, gcodeLayer, layer_nr, prevExtruder);
     }
+
     Polygons support;
-    if (storage.support.generated) 
+
+    if (storage.support.generated)
+    {
         support = storage.support.supportAreasPerLayer[layer_nr];
-    
+    }
+
     std::vector<PolygonsPart> supportIslands = support.splitIntoParts();
 
     PathOrderOptimizer islandOrderOptimizer(gcode.getPositionXY());
@@ -807,5 +898,119 @@ void FffGcodeWriter::finalize()
         gcode.writeTemperatureCommand(e, 0, false);
 }
 
+void FffGcodeWriter::retractHeadSaftly ()
+{
+    gcode.writeComment("RETRACTING THE HEAD");
+
+    Point p = gcode.getPositionXY();
+    Point3 first_point;
+
+    first_point.x = p.X;
+    first_point.y = p.Y;
+    first_point.z = getSettingInMicrons("machine_height");
+
+    gcode.writeMove(first_point, getSettingInMillimetersPerSecond("retraction_retract_speed"), 0);
+    gcode.writeComment("GOT TO HERE");
+}
+
+void FffGcodeWriter::stackLayerParts2 (SliceDataStorage &storage)
+{
+    for (unsigned int mesh_index=0; mesh_index < storage.meshes.size(); mesh_index++)
+    {
+        std::vector<std::vector<SliceLayer> > storageContainer;
+
+        for (std::vector<SliceLayer>::iterator layer = storage.meshes[mesh_index].layers.begin();
+             layer != storage.meshes[mesh_index].layers.end(); layer++)
+        {
+            for (std::vector<SliceLayerPart>::iterator part = layer->parts.begin();
+                part != layer->parts.end(); part++)
+            {
+                unsigned int index = part - layer->parts.begin();
+
+                if (index == storageContainer.size())
+                {
+                    storageContainer.push_back(std::vector<SliceLayer>());
+                }
+
+                SliceLayer newLayer = *layer;
+                newLayer.parts.clear();
+                newLayer.parts.push_back(*part);
+                storageContainer[index].push_back (newLayer);
+            } 
+        }
+
+        storage.meshes[mesh_index].layers.clear();
+
+        // ADD SUPPORT
+        std::vector<Polygons> supports = storage.support.supportAreasPerLayer;
+        for (unsigned int i = 1; i < storageContainer.size(); i++)
+        {
+            storage.support.supportAreasPerLayer.insert(storage.support.supportAreasPerLayer.end(),
+                                                        supports.begin(), supports.end());
+        }
+
+        for (std::vector<std::vector<SliceLayer> >::reverse_iterator stack = storageContainer.rbegin();
+            stack != storageContainer.rend(); stack++)
+        {
+            for (std::vector<SliceLayer>::iterator layer = stack->begin(); layer != stack->end(); layer++)
+            {
+                if (layer == stack->begin() && stack != storageContainer.rbegin())
+                {
+                    layer->isNewLayer = true;
+                }
+
+                storage.meshes[mesh_index].layers.push_back (*layer);
+            }
+        }
+    }
+}
+
+void FffGcodeWriter::mergeMeshes(SliceDataStorage &storage)
+{
+    unsigned int meshCount = storage.meshes.size();
+    
+    if (meshCount == 1)
+    {
+            std::cout << "WARNING: -S flag detected but only 1 model loaded" << std::endl;
+            return;
+    }
+
+    std::vector<SliceLayer> layers;
+
+    for (std::vector<SliceMeshStorage>::iterator mesh = storage.meshes.begin();
+         mesh != storage.meshes.end(); mesh++)
+    {
+        for (std::vector<SliceLayer>::iterator layer = mesh->layers.begin();
+             layer != mesh->layers.end(); layer++)
+        {
+            SliceLayer newLayer = *layer;
+        
+            if ((layer == mesh->layers.begin() && mesh != storage.meshes.begin()) || newLayer.isNewLayer)
+            {
+                newLayer.isNewLayer = true;
+            }
+            
+            layers.push_back (newLayer);
+        }
+    }
+
+    std::vector<Polygons> supports = storage.support.supportAreasPerLayer;
+
+    while (storage.meshes.size() > 1)
+    {
+        storage.meshes.pop_back();
+
+        storage.support.supportAreasPerLayer.insert(storage.support.supportAreasPerLayer.end(),
+                                                    supports.begin(), supports.end());
+    }
+
+    storage.meshes[0].layers.clear();
+
+    for (std::vector<SliceLayer>::iterator layer = layers.begin();
+         layer != layers.end(); layer++)
+    {
+        storage.meshes[0].layers.push_back (*layer);
+    }    
+}
 
 } // namespace cura

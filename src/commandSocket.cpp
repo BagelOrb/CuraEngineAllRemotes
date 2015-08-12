@@ -57,6 +57,7 @@ CommandSocket::CommandSocket(fffProcessor* processor)
 
 void CommandSocket::connect(const std::string& ip, int port)
 {
+    std::cout << "DEBUG: Connect" << std::endl;
     d->socket = new Arcus::Socket();
     d->socket->registerMessageType(1, &Cura::ObjectList::default_instance());
     d->socket->registerMessageType(2, &Cura::SlicedObjectList::default_instance());
@@ -152,12 +153,13 @@ void CommandSocket::handleSettingList(Cura::SettingList* list)
 
 void CommandSocket::sendLayerInfo(int layer_nr, int32_t z, int32_t height)
 {
-//     socket.sendInt32(CMD_LAYER_INFO);
-//     socket.sendInt32(4 * 4);
-//     socket.sendInt32(current_object_number);
-//     socket.sendInt32(layer_nr);
-//     socket.sendInt32(z);
-//     socket.sendInt32(height);
+     std::cout << "GOT TO HERE: " << layer_nr << std::endl;
+     //d->socket->sendInt32(CMD_LAYER_INFO);
+     //d->socket->sendInt32(4 * 4);
+     //d->socket->sendInt32(current_object_number);
+     //d->socket->sendInt32(layer_nr);
+     //d->socket->sendInt32(z);
+     //d->socket->sendInt32(height);
 }
 
 void CommandSocket::sendPolygons(PolygonType type, int layer_nr, Polygons& polygons)
@@ -180,6 +182,7 @@ void CommandSocket::sendPolygons(PolygonType type, int layer_nr, Polygons& polyg
 
 void CommandSocket::sendProgress(float amount)
 {
+    std::cout << "DEBUG: sendProgress" << std::endl;
     auto message = std::make_shared<Cura::Progress>();
     message->set_amount(amount);
     d->socket->sendMessage(message);
@@ -192,6 +195,7 @@ void CommandSocket::sendProgressStage(Progress::Stage stage)
 
 void CommandSocket::sendPrintTime()
 {
+    std::cout << "DEBUG: sendPrintTime" << std::endl;
     auto message = std::make_shared<Cura::ObjectPrintTime>();
     message->set_time(d->processor->getTotalPrintTime());
     message->set_material_amount(d->processor->getTotalFilamentUsed(0));
@@ -200,11 +204,11 @@ void CommandSocket::sendPrintTime()
 
 void CommandSocket::sendPrintMaterialForObject(int index, int extruder_nr, float print_time)
 {
-//     socket.sendInt32(CMD_OBJECT_PRINT_MATERIAL);
-//     socket.sendInt32(12);
-//     socket.sendInt32(index);
-//     socket.sendInt32(extruder_nr);
-//     socket.sendFloat32(print_time);
+     //socket.sendInt32(CMD_OBJECT_PRINT_MATERIAL);
+     //socket.sendInt32(12);
+     //socket.sendInt32(index);
+     //socket.sendInt32(extruder_nr);
+     //socket.sendFloat32(print_time);
 }
 
 void CommandSocket::beginSendSlicedObject()
@@ -220,6 +224,7 @@ void CommandSocket::beginSendSlicedObject()
 
 void CommandSocket::endSendSlicedObject()
 {
+    std::cout << "DEBUG: endSliceObject" << std::endl;
     d->slicedObjects++;
     if(d->slicedObjects >= d->object_count)
     {
@@ -237,6 +242,7 @@ void CommandSocket::beginGCode()
 
 void CommandSocket::sendGCodeLayer()
 {
+    std::cout << "DEBUG: sendGCodeLayer" << std::endl;
     auto message = std::make_shared<Cura::GCodeLayer>();
     message->set_id(d->objectIds[0]);
     message->set_data(d->gcode_output_stream.str());

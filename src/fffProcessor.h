@@ -29,7 +29,7 @@ public:
     {
         commandSocket = NULL;
     }
-    
+
     void resetFileNumber()
     {
         gcodeWriter.resetFileNumber();

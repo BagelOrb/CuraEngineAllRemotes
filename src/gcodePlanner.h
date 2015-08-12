@@ -146,7 +146,11 @@ public:
      */
     bool writePathWithCoasting(GCodePath& path, GCodePath& path_next, int64_t layerThickness, double coasting_volume, double coasting_speed, double coasting_min_volume);
     
-    void writeGCode(bool liftHeadIfNeeded, int layerThickness);
+    void writeGCode(bool liftHeadIfNeeded, int layerThickness, bool skip);
+
+    void writeGCode(bool liftHeadIfNeeded, int layerThickness) {
+            writeGCode(liftHeadIfNeeded, layerThickness, false);
+    }
 };
 
 }//namespace cura

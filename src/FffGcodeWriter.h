@@ -42,6 +42,8 @@ public:
         fileNr = 1;
         maxObjectHeight = 0;
         commandSocket = NULL;
+        isStackLayerParts = false;
+        isMergeMeshes = false;
     }
     void resetFileNumber()
     {
@@ -139,7 +141,7 @@ private:
      * \param layer_nr The index of the layer to write the gcode of.
      * \param has_raft Whether a raft is used for this print.
      */
-    void processLayerStartPos(unsigned int layer_nr, bool has_raft);
+    void processLayerStartPos(SliceDataStorage &storage, unsigned int layer_nr, bool has_raft);
     
     /*!
      * Add the skirt to the gcode.
@@ -158,7 +160,8 @@ private:
     void processOozeShield(SliceDataStorage& storage, GCodePlanner& gcodeLayer, unsigned int layer_nr);
     
     /*!
-     * Calculate in which order to print the meshes.
+     * Calculate in which o:$
+     * rder to print the meshes.
      * \param storage Input: where the slice data is stored.
      * \param current_extruder The current extruder with which we last printed
      * \return A vector of meshes ordered on print order.
@@ -256,7 +259,26 @@ private:
      * \param layer_nr The index of the layer to write the gcode of.
      */
     void processFanSpeedAndMinimalLayerTime(SliceDataStorage& storage, GCodePlanner& gcodeLayer, unsigned int layer_nr);
-    
+
+    /*  This function strips away all the layers and add one unique layer with one unique
+     *  layerpart.
+     */
+    void clearAndAdd (SliceMeshStorage &mesh, std::vector<SliceLayer>::iterator layer,
+                    std::vector<SliceLayerPart>::iterator part);
+
+    /*!
+     * This function will reorder the data in the stroage object so that they will be printed
+     * in order of layer parts instead of in order of layer.
+     */ 
+    void stackLayerParts (SliceDataStorage &stroage);
+    void stackLayerParts2 (SliceDataStorage &stroage);
+    bool isStackLayerParts;
+    unsigned int layerCount;
+    bool isMergeMeshes;
+    void mergeMeshes(SliceDataStorage &storage);
+    void retractHeadSaftly();
+    Point3 lastPoint;
+
     /*!
      * Add the end gcode and set all temperatures to zero.
      */
