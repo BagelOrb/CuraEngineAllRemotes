@@ -24,6 +24,7 @@ GCodeExport::GCodeExport()
     extruderNr = 0;
     currentFanSpeed = -1;
     singleNozzle = 0;
+    zPos = 0;
     
     totalPrintTime = 0.0;
     for(unsigned int e=0; e<MAX_EXTRUDERS; e++)
