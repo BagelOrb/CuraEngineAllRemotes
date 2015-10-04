@@ -195,6 +195,8 @@ EGCodeFlavor SettingsBaseVirtual::getSettingAsGCodeFlavor(std::string key)
         return EGCodeFlavor::MACH3;
     else if (value == "RepRap (Volumatric)")
         return EGCodeFlavor::REPRAP_VOLUMATRIC;
+    else if (value == "TinyG")
+        return EGCodeFlavor::TINYG;
     return EGCodeFlavor::REPRAP;
 }
 

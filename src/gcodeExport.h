@@ -157,6 +157,7 @@ private:
     double retractionPrimeSpeed;
     int current_extruder;
     int currentFanSpeed;
+    bool fanRunning;
     EGCodeFlavor flavor;
 
     double totalPrintTime;

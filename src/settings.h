@@ -73,6 +73,12 @@ enum class EGCodeFlavor
  *  M106 Sxxx and M107 are used to turn the fan on/off.
  **/
     REPRAP_VOLUMATRIC = 5,
+    
+/**
+* TinyG is a CNC control board.
+*  
+**/
+    TINYG = 6,
 };
 
 /*!

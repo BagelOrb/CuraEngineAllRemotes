@@ -57,6 +57,12 @@ void GCodeExport::setFlavor(EGCodeFlavor flavor)
     if (flavor == EGCodeFlavor::MACH3)
         for(int n=0; n<MAX_EXTRUDERS; n++)
             extruder_attr[n].extruderCharacter = 'A' + n;
+    else if (flavor == EGCodeFlavor::TINYG)
+    {
+        extruder_attr[0].extruderCharacter = 'A';
+        extruder_attr[1].extruderCharacter = 'B';
+        extruder_attr[2].extruderCharacter = 'C';
+    }
     else
         for(int n=0; n<MAX_EXTRUDERS; n++)
             extruder_attr[n].extruderCharacter = 'E';
@@ -198,6 +204,7 @@ void GCodeExport::resetExtrusionValue()
 {
     if (extrusion_amount != 0.0 && flavor != EGCodeFlavor::MAKERBOT && flavor != EGCodeFlavor::BFB)
     {
+        // TinyG G92: set origin offsets
         *output_stream << "G92 " << extruder_attr[current_extruder].extruderCharacter << "0\n";
         extruder_attr[current_extruder].totalFilament += getExtrusionAmountMM3(current_extruder);
         for (unsigned int i = 0; i < extrusion_amount_at_previous_n_retractions.size(); i++)
@@ -208,6 +215,7 @@ void GCodeExport::resetExtrusionValue()
 
 void GCodeExport::writeDelay(double timeAmount)
 {
+    // TinyG G4: Pause for P seconds
     *output_stream << "G4 P" << int(timeAmount * 1000) << "\n";
     totalPrintTime += timeAmount;
 }
@@ -293,6 +301,7 @@ void GCodeExport::writeMove(int x, int y, int z, double speed, double extrusion_
             Point3 diff = Point3(x,y,z) - getPosition();
             if (isZHopped > 0)
             {
+                // TinyG G1: Straight feed
                 *output_stream << std::setprecision(3) << "G1 Z" << INT2MM(currentPosition.z) << "\n";
                 isZHopped = 0;
             }
@@ -301,7 +310,7 @@ void GCodeExport::writeMove(int x, int y, int z, double speed, double extrusion_
             {
                 if (flavor == EGCodeFlavor::ULTIGCODE || flavor == EGCodeFlavor::REPRAP_VOLUMATRIC)
                 {
-                    *output_stream << "G11\n";
+                    *output_stream << "G11\n"; //TODO try this code and see what happens
                     //Assume default UM2 retraction settings.
                     if (last_coasted_amount_mm3 > 0)
                     {
@@ -309,6 +318,7 @@ void GCodeExport::writeMove(int x, int y, int z, double speed, double extrusion_
                     }
                     estimateCalculator.plan(TimeEstimateCalculator::Position(INT2MM(currentPosition.x), INT2MM(currentPosition.y), INT2MM(currentPosition.z), extrusion_amount), 25.0);
                 }else{
+                    // TinyG checked
                     *output_stream << "G1 F" << (retractionPrimeSpeed * 60) << " " << extruder_attr[current_extruder].extruderCharacter << std::setprecision(5) << extrusion_amount << "\n";
                     currentSpeed = retractionPrimeSpeed;
                     estimateCalculator.plan(TimeEstimateCalculator::Position(INT2MM(currentPosition.x), INT2MM(currentPosition.y), INT2MM(currentPosition.z), extrusion_amount), currentSpeed);
@@ -327,6 +337,7 @@ void GCodeExport::writeMove(int x, int y, int z, double speed, double extrusion_
             }
             last_coasted_amount_mm3 = 0;
             extrusion_amount += extrusion_per_mm * diff.vSizeMM();
+            // TinyG TODO: add one axis
             *output_stream << "G1";
         }else{
             *output_stream << "G0";
@@ -447,6 +458,7 @@ void GCodeExport::switchExtruder(int new_extruder)
     if (flavor == EGCodeFlavor::MAKERBOT)
         *output_stream << "M135 T" << current_extruder << "\n";
     else
+        // TinyG TODO: find out what a T code does
         *output_stream << "T" << current_extruder << "\n";
     writeCode(extruder_attr[new_extruder].start_code.c_str());
     
@@ -471,6 +483,17 @@ void GCodeExport::writeFanCommand(double speed)
     {
         if (flavor == EGCodeFlavor::MAKERBOT)
             *output_stream << "M126 T0\n"; //value = speed * 255 / 100 // Makerbot cannot set fan speed...;
+        else if (flavor == EGCodeFlavor::TINYG)
+        {
+            // TinyG has only one coolant pin with no speed control. M7, M8, and M9 all toggle this pin
+            if (fanRunning)
+                return;
+            else
+            {
+                *output_stream << "M7\n";
+                fanRunning = true;
+            }
+        }
         else
             *output_stream << "M106 S" << (speed * 255 / 100) << "\n";
     }
@@ -478,6 +501,16 @@ void GCodeExport::writeFanCommand(double speed)
     {
         if (flavor == EGCodeFlavor::MAKERBOT)
             *output_stream << "M127 T0\n";
+        else if (flavor == EGCodeFlavor::TINYG)
+        {
+            
+            if (fanRunning) {
+                *output_stream << "M7\n";
+                fanRunning = false;
+            }
+            else
+                return;
+        }
         else
             *output_stream << "M107\n";
     }
