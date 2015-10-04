@@ -195,6 +195,11 @@ void GCodeExport::writeLayerComment(int layer_nr)
     *output_stream << ";LAYER:" << layer_nr << "\n";
 }
 
+void GCodeExport::writeLayerCountComment(int layer_count)
+{
+    *output_stream << ";LAYER_COUNT:" << layer_count << "\n";
+}
+
 void GCodeExport::writeLine(const char* line)
 {
     *output_stream << line << "\n";
@@ -235,7 +240,7 @@ void GCodeExport::writeMove(int x, int y, int z, double speed, double extrusion_
     if (currentPosition.x == x && currentPosition.y == y && currentPosition.z == z)
         return;
     
-    assert(speed*60 < 10000 && speed*60 > 100); // normal F values occurring in UM2 gcode (this code should not be compiled for release)
+    assert(speed < 200 && speed > 1); // normal F values occurring in UM2 gcode (this code should not be compiled for release)
     assert((Point3(x,y,z) - currentPosition).vSize() < MM2INT(300)); // no crazy positions (this code should not be compiled for release)
     
     if (extrusion_mm3_per_mm < 0)

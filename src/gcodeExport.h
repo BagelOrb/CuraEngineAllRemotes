@@ -100,6 +100,11 @@ public:
         return line_width;
     }
 
+    int getLayerHeight()
+    {
+        return layer_thickness;
+    }
+    
 private:
     void calculateExtrusion()
     {
@@ -217,6 +222,7 @@ public:
     void writeComment(std::string comment);
     void writeTypeComment(const char* type);
     void writeLayerComment(int layer_nr);
+    void writeLayerCountComment(int layer_count);
     
     void writeLine(const char* line);
     

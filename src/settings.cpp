@@ -231,7 +231,7 @@ ESupportType SettingsBaseVirtual::getSettingAsSupportType(std::string key)
     std::string value = getSettingString(key);
     if (value == "everywhere")
         return ESupportType::EVERYWHERE;
-    if (value == "touching_buildplate")
+    if (value == "buildplate")
         return ESupportType::PLATFORM_ONLY;
     return ESupportType::NONE;
 }
@@ -260,5 +260,22 @@ ESurfaceMode SettingsBaseVirtual::getSettingAsSurfaceMode(std::string key)
     return ESurfaceMode::NORMAL;
 }
 
+FillPerimeterGapMode SettingsBaseVirtual::getSettingAsFillPerimeterGapMode(std::string key)
+{
+    std::string value = getSettingString(key);
+    if (value == "nowhere")
+    {
+        return FillPerimeterGapMode::NOWHERE;
+    }
+    if (value == "everywhere")
+    {
+        return FillPerimeterGapMode::EVERYWHERE;
+    }
+    if (value == "skin")
+    {
+        return FillPerimeterGapMode::SKIN;
+    }
+    return FillPerimeterGapMode::NOWHERE;
+}
 
 }//namespace cura

@@ -130,6 +130,13 @@ enum class ESurfaceMode
     BOTH
 };
 
+enum class FillPerimeterGapMode
+{
+    NOWHERE,
+    EVERYWHERE,
+    SKIN
+};
+
 #define MAX_EXTRUDERS 16
 
 //Maximum number of infill layers that can be combined into a single infill extrusion area.
@@ -177,6 +184,7 @@ public:
     ESupportType getSettingAsSupportType(std::string key);
     EZSeamType getSettingAsZSeamType(std::string key);
     ESurfaceMode getSettingAsSurfaceMode(std::string key);
+    FillPerimeterGapMode getSettingAsFillPerimeterGapMode(std::string key);
 };
 
 /*!
