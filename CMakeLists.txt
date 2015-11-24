@@ -4,6 +4,10 @@ cmake_minimum_required(VERSION 2.8.12)
 
 find_package(Arcus REQUIRED)
 
+if(CYGWIN)
+    add_definitions(-D_GLIBCXX_USE_C99=1) # proper to_string definition.
+endif(CYGWIN)
+
 if(NOT ${CMAKE_VERSION} VERSION_LESS 3.1)
     set(CMAKE_CXX_STANDARD 11)
 else()
