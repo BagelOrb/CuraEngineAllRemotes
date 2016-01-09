@@ -223,11 +223,20 @@ void GCodeExport::writeTypeComment(PrintFeatureType type)
 void GCodeExport::writeLayerComment(int layer_nr)
 {
     *output_stream << ";LAYER:" << layer_nr << "\n";
+    if (flavor == EGCodeFlavor::MAKERBOT || flavor == EGCodeFlavor::ULTIGCODE)
+    {
+		*output_stream << "M70 LAYER " << (layer_nr + 1) << "/" << total_layers << "\n";
+	}
+    if (flavor == EGCodeFlavor::REPRAP || flavor == EGCodeFlavor::REPRAP_VOLUMATRIC)
+    {
+		*output_stream << "M117 LAYER " << (layer_nr + 1)<< "/" << total_layers << "\n";
+	}
 }
 
 void GCodeExport::writeLayerCountComment(int layer_count)
 {
     *output_stream << ";LAYER_COUNT:" << layer_count << "\n";
+	total_layers = layer_count;
 }
 
 void GCodeExport::writeLine(const char* line)
