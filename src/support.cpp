@@ -1,6 +1,7 @@
 /** Copyright (C) 2013 David Braam - Released under terms of the AGPLv3 License */
 #include "support.h"
-
+#include <stdio.h>
+#include <stdlib.h>
 namespace cura {
 
 template<typename T> inline void swap(T& p0, T& p1)
@@ -15,7 +16,7 @@ int cmp_SupportPoint(const void* a, const void* b)
     return ((SupportPoint*)a)->z - ((SupportPoint*)b)->z;
 }
 
-void generateSupportGrid(SupportStorage& storage, OptimizedModel* om, int supportAngle, bool supportEverywhere, int supportXYDistance, int supportZDistance)
+void generateSupportGrid(SupportStorage& storage, OptimizedModel* om, int supportAngle, bool supportEverywhere, int supportXYDistance, int supportZDistance, int extraSupportArea)
 {
     storage.generated = false;
     if (supportAngle < 0)
@@ -31,6 +32,7 @@ void generateSupportGrid(SupportStorage& storage, OptimizedModel* om, int suppor
     storage.angle = supportAngle;
     storage.everywhere = supportEverywhere;
     storage.XYDistance = supportXYDistance;
+    storage.extraSupportAmount = extraSupportArea;
     storage.ZDistance = supportZDistance;
 
     for(unsigned int volumeIdx = 0; volumeIdx < om->volumes.size(); volumeIdx++)
@@ -152,6 +154,7 @@ void SupportPolyGenerator::lazyFill(Point startPoint)
             {
                 poly.add(tmpPoly[tmpPoly.size()-n-1]);
             }
+            
             polygons.add(poly);
             return;
         }
@@ -183,8 +186,21 @@ SupportPolyGenerator::SupportPolyGenerator(SupportStorage& storage, int32_t z)
     }
 
     delete[] done;
-    
-    polygons = polygons.offset(storage.XYDistance);
+    polygons = polygons.offset(storage.XYDistance + storage.extraSupportAmount);
+
 }
 
 }//namespace cura
+
+
+//        double minAreaSize = 3.0;//(2 * M_PI * INT2MM(config.extrusionWidth) * INT2MM(config.extrusionWidth)) * 3;
+//        for(unsigned int i=0; i<result.size(); i++)
+//        {
+//            double area = INT2MM(INT2MM(fabs(result[i].area())));
+//            if (area < minAreaSize) /* Only create an up/down skin if the area is large enough. So you do not create tiny blobs of "trying to fill" */
+//            {
+//                result.remove(i);
+//                i -= 1;
+//            }
+//        }
+

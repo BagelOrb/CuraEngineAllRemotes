@@ -21,6 +21,7 @@ private:
     double extrusionAmount;
     double extrusionPerMM;
     double retractionAmount;
+    double relativeExtrusionValue;
     double retractionAmountPrime;
     int retractionZHop;
     double extruderSwitchRetraction;

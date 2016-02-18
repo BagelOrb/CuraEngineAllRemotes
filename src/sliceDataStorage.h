@@ -53,6 +53,7 @@ public:
     bool everywhere;
     int XYDistance;
     int ZDistance;
+    int extraSupportAmount;
     
     Point gridOffset;
     int32_t gridScale;

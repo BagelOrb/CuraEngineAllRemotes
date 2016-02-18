@@ -132,6 +132,7 @@ public:
     int filamentDiameter;
     int filamentFlow;
     int layer0extrusionWidth;
+    int supportExtrusionWidth;
     int extrusionWidth;
     int insetCount;
     int downSkinCount;
@@ -177,6 +178,7 @@ public:
     int supportLineDistance;
     int supportXYDistance;
     int supportZDistance;
+    int extraSupportAmount;
     int supportExtruder;
 
     //Cool settings

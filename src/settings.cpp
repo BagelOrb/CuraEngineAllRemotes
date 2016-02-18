@@ -24,6 +24,7 @@ ConfigSettings::ConfigSettings()
     SETTING(filamentDiameter, 2890);
     SETTING(filamentFlow, 100);
     SETTING(layer0extrusionWidth, 600);
+    SETTING(supportExtrusionWidth, 250);
     SETTING(extrusionWidth, 400);
     SETTING(insetCount, 2);
     SETTING(downSkinCount, 6);
@@ -53,6 +54,7 @@ ConfigSettings::ConfigSettings()
     SETTING(supportLineDistance, sparseInfillLineDistance);
     SETTING(supportXYDistance, 700);
     SETTING(supportZDistance, 150);
+    SETTING(extraSupportAmount, 0);
     SETTING(supportExtruder, -1);
 
     SETTING(retractionAmount, 4500);

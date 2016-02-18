@@ -7,7 +7,7 @@
 
 namespace cura {
 
-void generateSupportGrid(SupportStorage& storage, OptimizedModel* om, int supportAngle, bool supportEverywhere, int supportXYDistance, int supportZDistance);
+void generateSupportGrid(SupportStorage& storage, OptimizedModel* om, int supportAngle, bool supportEverywhere, int supportXYDistance, int supportZDistance, int extraSupportArea);
 
 class SupportPolyGenerator
 {

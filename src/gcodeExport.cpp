@@ -14,6 +14,7 @@ GCodeExport::GCodeExport()
 : currentPosition(0,0,0), startPosition(INT32_MIN,INT32_MIN,0)
 {
     extrusionAmount = 0;
+    relativeExtrusionValue = 0;
     extrusionPerMM = 0;
     retractionAmount = 4.5;
     minimalExtrusionBeforeRetraction = 0.0;
@@ -242,6 +243,7 @@ void GCodeExport::writeMove(Point p, int speed, int lineWidth)
             //Increase the extrusion amount to calculate the amount of filament used.
             Point diff = p - getPositionXY();
             extrusionAmount += extrusionPerMM * INT2MM(lineWidth) * vSizeMM(diff);
+            
         }else{
             //If we are not extruding, check if we still need to disable the extruder. This causes a retraction due to auto-retraction.
             if (!isRetracted)
@@ -267,6 +269,7 @@ void GCodeExport::writeMove(Point p, int speed, int lineWidth)
                 }else{
                     extrusionAmount += retractionAmountPrime;
                     fprintf(f, "G1 F%i %c%0.5f\n", retractionSpeed * 60, extruderCharacter[extruderNr], extrusionAmount);
+                    //fprintf(f, "G1 F%i %c%0.5f\n", retractionSpeed * 60, extruderCharacter[extruderNr], retractionAmount);
                     currentSpeed = retractionSpeed;
                     estimateCalculator.plan(TimeEstimateCalculator::Position(INT2MM(currentPosition.x), INT2MM(currentPosition.y), INT2MM(currentPosition.z), extrusionAmount), currentSpeed);
                 }
@@ -275,6 +278,7 @@ void GCodeExport::writeMove(Point p, int speed, int lineWidth)
                 isRetracted = false;
             }
             extrusionAmount += extrusionPerMM * INT2MM(lineWidth) * vSizeMM(diff);
+            relativeExtrusionValue = extrusionPerMM * INT2MM(lineWidth) * vSizeMM(diff);
             fprintf(f, "G1");
         }else{
             fprintf(f, "G0");
@@ -291,6 +295,7 @@ void GCodeExport::writeMove(Point p, int speed, int lineWidth)
             fprintf(f, " Z%0.3f", INT2MM(zPos));
         if (lineWidth != 0)
             fprintf(f, " %c%0.5f", extruderCharacter[extruderNr], extrusionAmount);
+            //fprintf(f, " %c%0.5f", extruderCharacter[extruderNr], relativeExtrusionValue);
         fprintf(f, "\n");
     }
     
@@ -311,6 +316,7 @@ void GCodeExport::writeRetraction(bool force)
             fprintf(f, "G10\n");
         }else{
             fprintf(f, "G1 F%i %c%0.5f\n", retractionSpeed * 60, extruderCharacter[extruderNr], extrusionAmount - retractionAmount);
+            //fprintf(f, "G1 F%i %c%0.5f\n", retractionSpeed * 60, extruderCharacter[extruderNr], -retractionAmount);
             currentSpeed = retractionSpeed;
             estimateCalculator.plan(TimeEstimateCalculator::Position(INT2MM(currentPosition.x), INT2MM(currentPosition.y), INT2MM(currentPosition.z), extrusionAmount - retractionAmount), currentSpeed);
         }

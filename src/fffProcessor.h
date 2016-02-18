@@ -101,7 +101,7 @@ private:
         insetXConfig.setData(config.insetXSpeed, config.extrusionWidth, "WALL-INNER");
         infillConfig.setData(config.infillSpeed, config.extrusionWidth, "FILL");
         skinConfig.setData(config.skinSpeed, config.extrusionWidth, "FILL");
-        supportConfig.setData(config.printSpeed, config.extrusionWidth, "SUPPORT");
+        supportConfig.setData(config.printSpeed, config.supportExtrusionWidth, "SUPPORT");
 
         for(unsigned int n=1; n<MAX_EXTRUDERS;n++)
             gcode.setExtruderOffset(n, config.extruderOffset[n].p());
@@ -198,7 +198,7 @@ private:
         cura::log("Sliced model in %5.3fs\n", timeKeeper.restart());
 
         cura::log("Generating support map...\n");
-        generateSupportGrid(storage.support, optimizedModel, config.supportAngle, config.supportEverywhere > 0, config.supportXYDistance, config.supportZDistance);
+        generateSupportGrid(storage.support, optimizedModel, config.supportAngle, config.supportEverywhere > 0, config.supportXYDistance, config.supportZDistance, config.extraSupportAmount);
 
         storage.modelSize = optimizedModel->modelSize;
         storage.modelMin = optimizedModel->vMin;
@@ -447,7 +447,7 @@ private:
                 insetXConfig.setData(SPEED_SMOOTH(config.insetXSpeed), extrusionWidth, "WALL-INNER");
                 infillConfig.setData(SPEED_SMOOTH(config.infillSpeed), extrusionWidth,  "FILL");
                 skinConfig.setData(SPEED_SMOOTH(config.skinSpeed), extrusionWidth,  "SKIN");
-                supportConfig.setData(SPEED_SMOOTH(config.printSpeed), extrusionWidth, "SUPPORT");
+                supportConfig.setData(SPEED_SMOOTH(config.printSpeed), config.supportExtrusionWidth, "SUPPORT");
 #undef SPEED_SMOOTH
             }else{
                 skirtConfig.setData(config.printSpeed, extrusionWidth, "SKIRT");
@@ -455,7 +455,7 @@ private:
                 insetXConfig.setData(config.insetXSpeed, extrusionWidth, "WALL-INNER");
                 infillConfig.setData(config.infillSpeed, extrusionWidth, "FILL");
                 skinConfig.setData(config.skinSpeed, extrusionWidth, "SKIN");
-                supportConfig.setData(config.printSpeed, extrusionWidth, "SUPPORT");
+                supportConfig.setData(config.printSpeed, config.supportExtrusionWidth, "SUPPORT");
             }
 
             gcode.writeComment("LAYER:%d", layerNr);
@@ -528,6 +528,7 @@ private:
         bool extruderChanged = gcodeLayer.setExtruder(volumeIdx);
         if (layerNr == 0 && volumeIdx == 0 && !(config.raftBaseThickness > 0 && config.raftInterfaceThickness > 0))
         {
+            gcodeLayer.setAlwaysRetract(true);
             if (storage.skirt.size() > 0)
                 gcodeLayer.addTravel(storage.skirt[storage.skirt.size()-1].closestPointTo(gcode.getPositionXY()));
             gcodeLayer.addPolygonsByOptimizer(storage.skirt, &skirtConfig);
@@ -606,7 +607,7 @@ private:
                 gcodeLayer.setAlwaysRetract(false);
             }
 
-            int fillAngle = 45;
+            int fillAngle = 0;
             if (layerNr & 1)
                 fillAngle += 90;
             int extrusionWidth = config.extrusionWidth;
@@ -630,7 +631,7 @@ private:
                 int bridge = -1;
                 if (layerNr > 0)
                     bridge = bridgeAngle(outline, &storage.volumes[volumeIdx].layers[layerNr-1]);
-                generateLineInfill(outline, skinPolygons, extrusionWidth, extrusionWidth, config.infillOverlap, (bridge > -1) ? bridge : fillAngle);
+                generateLineInfillForSkin(outline, skinPolygons, extrusionWidth, extrusionWidth, config.infillOverlap, (bridge > -1) ? bridge : fillAngle);
             }
             if (config.enableCombing == COMBING_NOSKIN)
             {
@@ -736,6 +737,7 @@ private:
         //Contract and expand the suppory polygons so small sections are removed and the final polygon is smoothed a bit.
         supportGenerator.polygons = supportGenerator.polygons.offset(-config.extrusionWidth * 3);
         supportGenerator.polygons = supportGenerator.polygons.offset(config.extrusionWidth * 3);
+        
         sendPolygonsToGui("support", layerNr, z, supportGenerator.polygons);
 
         vector<Polygons> supportIslands = supportGenerator.polygons.splitIntoParts();
@@ -762,7 +764,7 @@ private:
                         generateLineInfill(island, supportLines, config.extrusionWidth, config.supportLineDistance*2, config.infillOverlap, 0);
                         generateLineInfill(island, supportLines, config.extrusionWidth, config.supportLineDistance*2, config.infillOverlap, 90);
                     }else{
-                        generateLineInfill(island, supportLines, config.extrusionWidth, config.supportLineDistance, config.infillOverlap, (layerNr & 1) ? 0 : 90);
+                        generateLineInfill(island, supportLines, config.extrusionWidth, config.supportLineDistance, config.infillOverlap, (layerNr & 1) ? 45 : 90);
                     }
                     break;
                 case SUPPORT_TYPE_LINES:

@@ -11,15 +11,17 @@ void generateSkins(int layerNr, SliceVolumeStorage& storage, int extrusionWidth,
     {
         SliceLayerPart* part = &layer->parts[partNr];
         
-        Polygons upskin = part->insets[part->insets.size() - 1].offset(-extrusionWidth/2);
+        //Polygons upskin = part->insets[part->insets.size() - 1].offset(-extrusionWidth/1.7);
+        Polygons upskin = part->insets[part->insets.size() - 1].offset(-extrusionWidth/1.6);
         Polygons downskin = upskin;
         
         if (part->insets.size() > 1)
         {
             //Add thin wall filling by taking the area between the insets.
-            Polygons thinWalls = part->insets[0].offset(-extrusionWidth / 2 - extrusionWidth * infillOverlap / 100).difference(part->insets[1].offset(extrusionWidth * 6 / 10));
-            upskin.add(thinWalls);
-            downskin.add(thinWalls);
+            //Polygons thinWalls = part->insets[0].offset(-extrusionWidth / 2 - extrusionWidth * infillOverlap / 100).difference(part->insets[1].offset(extrusionWidth * 6 / 10));
+            //Polygons thinWalls = part->insets[0].offset(-extrusionWidth / 2 - extrusionWidth * -15 / 100).difference(part->insets[1].offset(extrusionWidth * 6 / 10));
+            //upskin.add(thinWalls);
+            //downskin.add(thinWalls);
         }
         if (static_cast<int>(layerNr - downSkinCount) >= 0)
         {
@@ -42,7 +44,8 @@ void generateSkins(int layerNr, SliceVolumeStorage& storage, int extrusionWidth,
         
         part->skinOutline = upskin.unionPolygons(downskin);
 
-        double minAreaSize = (2 * M_PI * INT2MM(extrusionWidth) * INT2MM(extrusionWidth)) * 0.3;
+        //double minAreaSize = (2 * M_PI * INT2MM(extrusionWidth) * INT2MM(extrusionWidth)) * 0.3;
+        double minAreaSize = (2 * M_PI * INT2MM(extrusionWidth) * INT2MM(extrusionWidth)) * 5;
         for(unsigned int i=0; i<part->skinOutline.size(); i++)
         {
             double area = INT2MM(INT2MM(fabs(part->skinOutline[i].area())));
