@@ -109,7 +109,7 @@ public:
      * \param layer_plan_idx The index into @p layers in which to find the extruder plan
      * \param extruder_plan_idx The index of the extruder plan in the layer corresponding to @p layer_plan_idx for which to find the preheat time needed
      */
-    void insertPreheatCommand_multiExtrusion(std::vector<GCodePlanner*>& layers, unsigned int layer_plan_idx, unsigned int extruder_plan_idx);
+    void insertPreheatCommand_multiExtrusion(std::vector<GCodePlanner*>& layers, unsigned int layer_plan_idx, unsigned int extruder_plan_idx, double timeOffset = 0.0);
     
     /*!
      * Insert the preheat command for the extruder plan corersponding to @p extruder_plan_idx of the layer corresponding to @p layer_plan_idx.

@@ -148,7 +148,7 @@ public:
      * \param window_time The time window within which the cooldown and heat up must take place.
      * \param extruder The extruder used
      * \param temp The temperature to which to heat
-     * \return The time before the end of the @p time_window to insert the preheat command
+     * \return The temperature at which time before the end of the @p time_window to insert the preheat command
      */
     double tempBeforeEndToInsertPreheatCommand_coolDownWarmUp(double time_window, unsigned int extruder, double temp)
     {
