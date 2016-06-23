@@ -136,6 +136,42 @@ public:
         }
     }
     /*!
+     * Returns the temperature at which decide when to start warming up again after starting to cool down towards the standby temperature.
+     * Two cases are considered:
+     * the case where the standby temperature is reached  \__/    .
+     * and the case where it isn't  \/    .
+     *
+     * IT is assumed that the printer is not printing during this cool down and warm up time.
+     *
+     * Assumes from_temp is approximately the same as @p temp
+     *
+     * \param window_time The time window within which the cooldown and heat up must take place.
+     * \param extruder The extruder used
+     * \param temp The temperature to which to heat
+     * \return The time before the end of the @p time_window to insert the preheat command
+     */
+    double tempBeforeEndToInsertPreheatCommand_coolDownWarmUp(double time_window, unsigned int extruder, double temp)
+    {
+        if (time_window <= 0.0)
+        {
+            return config_per_extruder[extruder].standby_temp;
+        }
+
+        const double time_ratio_cooldown_heatup (config_per_extruder[extruder].time_to_cooldown_1_degree / config_per_extruder[extruder].time_to_heatup_1_degree);
+        const double time_to_heat_from_standby_to_print_temp (timeToHeatFromStandbyToPrintTemp(extruder, temp));
+
+        const double time_needed_to_reach_standby_temp (time_to_heat_from_standby_to_print_temp * (1.0 + time_ratio_cooldown_heatup));
+
+        if (time_needed_to_reach_standby_temp < time_window)
+        {
+            return config_per_extruder[extruder].standby_temp;
+        }
+        else
+        {
+            return temp - time_window / (config_per_extruder[extruder].time_to_cooldown_1_degree + config_per_extruder[extruder].time_to_heatup_1_degree);
+        }
+    }
+    /*!
      * Calculate time needed to warm up the nozzle from a given temp to a given temp.
      * If the printer is printing in the mean time the warming up will take longer.
      * 

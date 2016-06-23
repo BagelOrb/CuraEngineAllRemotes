@@ -126,10 +126,10 @@ void LayerPlanBuffer::insertPreheatCommand_multiExtrusion(std::vector<GCodePlann
         }
         first_it = false;
     }
-    
+
     // time_before_extruder_plan_to_insert falls before all plans in the buffer
     ExtruderPlan& first_extruder_plan = layers[0]->extruder_plans[0];
-    first_extruder_plan.insertCommand(0, extruder, required_temp, false); // insert preheat command at verfy beginning of buffer
+    first_extruder_plan.insertCommand(0, extruder, required_temp, false); // insert preheat command at very beginning of buffer
 }
 
 void LayerPlanBuffer::insertPreheatCommand(std::vector<GCodePlanner*>& layers, unsigned int layer_plan_idx, unsigned int extruder_plan_idx)
@@ -185,10 +185,17 @@ void LayerPlanBuffer::insertPreheatCommand(std::vector<GCodePlanner*>& layers, u
     int prev_extruder = prev_extruder_plan->extruder;
     
     if (prev_extruder != extruder)
-    { // set previous extruder to standby temperature
-        prev_extruder_plan->insertCommand(prev_extruder_plan->paths.size(), prev_extruder, preheat_config.getStandbyTemp(prev_extruder), false);
+    { // set previous extruder to standby temperature or mid temperature is time is not enough to reach standby
+        prev_extruder_plan->insertCommand ( prev_extruder_plan->paths.size()
+                                          , prev_extruder
+                                          , preheat_config.tempBeforeEndToInsertPreheatCommand_coolDownWarmUp ( extruder_plan.estimates.getTotalTime()
+                                                                                                              , prev_extruder
+                                                                                                              , prev_extruder_plan->required_temp
+                                                                                                              )
+                                          , false
+                                          );
     }
-    
+
     if (prev_extruder == extruder)
     {
         if (preheat_config.usesFlowDependentTemp(extruder))
@@ -200,7 +207,6 @@ void LayerPlanBuffer::insertPreheatCommand(std::vector<GCodePlanner*>& layers, u
     {
         insertPreheatCommand_multiExtrusion(layers, layer_plan_idx, extruder_plan_idx);
     }
-    
 }
 
 void LayerPlanBuffer::insertPreheatCommands()
