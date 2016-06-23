@@ -186,14 +186,8 @@ void LayerPlanBuffer::insertPreheatCommand(std::vector<GCodePlanner*>& layers, u
     
     if (prev_extruder != extruder)
     { // set previous extruder to standby temperature or mid temperature is time is not enough to reach standby
-        prev_extruder_plan->insertCommand ( prev_extruder_plan->paths.size()
-                                          , prev_extruder
-                                          , preheat_config.tempBeforeEndToInsertPreheatCommand_coolDownWarmUp ( extruder_plan.estimates.getTotalTime()
-                                                                                                              , prev_extruder
-                                                                                                              , prev_extruder_plan->required_temp
-                                                                                                              )
-                                          , false
-                                          );
+        const double dTempBeforeEndToInsertPreheatCommand_coolDownWarmUp (preheat_config.tempBeforeEndToInsertPreheatCommand_coolDownWarmUp(extruder_plan.estimates.getTotalTime(), prev_extruder, prev_extruder_plan->required_temp));
+        prev_extruder_plan->insertCommand(prev_extruder_plan->paths.size(), prev_extruder, dTempBeforeEndToInsertPreheatCommand_coolDownWarmUp, false);
     }
 
     if (prev_extruder == extruder)
