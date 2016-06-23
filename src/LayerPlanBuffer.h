@@ -77,7 +77,7 @@ public:
     void insertPreheatCommand(ExtruderPlan& extruder_plan_before, double time_after_extruder_plan_start, int extruder, double temp);
     
     /*!
-     * Compute the time needed to preheat, based either on the time the extruder has been on standby 
+     * Compute the time needed to preheat (with 1 second plus margin), based either on the time the extruder has been on standby
      * or based on the temp of the previous extruder plan which has the same extruder nr.
      * 
      * \param layers The layers in the buffer, moved to a vector
@@ -109,7 +109,7 @@ public:
      * \param layer_plan_idx The index into @p layers in which to find the extruder plan
      * \param extruder_plan_idx The index of the extruder plan in the layer corresponding to @p layer_plan_idx for which to find the preheat time needed
      */
-    void insertPreheatCommand_multiExtrusion(std::vector<GCodePlanner*>& layers, unsigned int layer_plan_idx, unsigned int extruder_plan_idx, double timeOffset = 0.0);
+    void insertPreheatCommand_multiExtrusion(std::vector<GCodePlanner*>& layers, unsigned int layer_plan_idx, unsigned int extruder_plan_idx);
     
     /*!
      * Insert the preheat command for the extruder plan corersponding to @p extruder_plan_idx of the layer corresponding to @p layer_plan_idx.

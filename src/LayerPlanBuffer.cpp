@@ -74,7 +74,7 @@ double LayerPlanBuffer::timeBeforeExtruderPlanToInsert(std::vector<GCodePlanner*
     }
     // The last extruder plan with the same extruder falls outside of the buffer
     // assume the nozzle has cooled down to strandby temperature already.
-    return preheat_config.timeBeforeEndToInsertPreheatCommand_warmUp(preheat_config.getStandbyTemp(extruder), extruder, required_temp, false);
+    return preheat_config.timeBeforeEndToInsertPreheatCommand_warmUp(preheat_config.getStandbyTemp(extruder), extruder, required_temp, false) + 1.0;
     
 }
 
@@ -91,7 +91,7 @@ void LayerPlanBuffer::insertPreheatCommand_singleExtrusion(ExtruderPlan& prev_ex
     insertPreheatCommand(prev_extruder_plan, time_after_extruder_plan_start, extruder, required_temp);
 }
 
-void LayerPlanBuffer::insertPreheatCommand_multiExtrusion(std::vector<GCodePlanner*>& layers, unsigned int layer_plan_idx, unsigned int extruder_plan_idx, double timeOffset)
+void LayerPlanBuffer::insertPreheatCommand_multiExtrusion(std::vector<GCodePlanner*>& layers, unsigned int layer_plan_idx, unsigned int extruder_plan_idx)
 {
     ExtruderPlan& extruder_plan = layers[layer_plan_idx]->extruder_plans[extruder_plan_idx];
     int extruder = extruder_plan.extruder;
@@ -118,7 +118,7 @@ void LayerPlanBuffer::insertPreheatCommand_multiExtrusion(std::vector<GCodePlann
             double time_here = extruder_plan_before.estimates.getTotalTime();
             if (time_here >= time_before_extruder_plan_to_insert)
             {
-                insertPreheatCommand(extruder_plan_before, std::max(0.0, time_here - time_before_extruder_plan_to_insert - timeOffset), extruder, required_temp);
+                insertPreheatCommand(extruder_plan_before, time_here - time_before_extruder_plan_to_insert, extruder, required_temp);
                 return;
             }
             time_before_extruder_plan_to_insert -= time_here;
@@ -199,7 +199,7 @@ void LayerPlanBuffer::insertPreheatCommand(std::vector<GCodePlanner*>& layers, u
     }
     else 
     {
-        insertPreheatCommand_multiExtrusion(layers, layer_plan_idx, extruder_plan_idx, 1.0);
+        insertPreheatCommand_multiExtrusion(layers, layer_plan_idx, extruder_plan_idx);
     }
 }
 
