@@ -92,6 +92,25 @@ private:
     {
         return (temp - config_per_extruder[extruder].standby_temp) * config_per_extruder[extruder].time_to_heatup_1_degree; 
     }
+    /*!
+     * Returns the time needed to reach the stand by temperature.
+     * Two cases are considered:
+     * the case where the standby temperature is reached  \__/    .
+     * and the case where it isn't  \/    .
+     *
+     * IT is assumed that the printer is not printing during this cool down and warm up time.
+     *
+     * Assumes from_temp is approximately the same as @p temp
+     *
+     * \param extruder The extruder used
+     * \param time_to_heat_from_standby_to_print_temp time to heat up from standby temperature to a given temperature.
+     */
+    double timeNeededToReachStandbyTemp_coolDownWarmUp(unsigned int extruder, double time_to_heat_from_standby_to_print_temp)
+    {
+        const double time_ratio_cooldown_heatup (config_per_extruder[extruder].time_to_cooldown_1_degree / config_per_extruder[extruder].time_to_heatup_1_degree);
+
+        return time_to_heat_from_standby_to_print_temp * (1.0 + time_ratio_cooldown_heatup);
+    }
 
 public:
     
@@ -105,7 +124,45 @@ public:
     {
         return config_per_extruder[extruder].flow_temp_graph.getTemp(flow, config_per_extruder[extruder].material_print_temperature, config_per_extruder[extruder].flow_dependent_temperature);
     }
-    
+    /*!
+     * Returns the temperature and the time at which decide when to start warming up again after starting to cool down towards the standby temperature.
+     * Two cases are considered:
+     * the case where the standby temperature is reached  \__/    .
+     * and the case where it isn't  \/    .
+     *
+     * IT is assumed that the printer is not printing during this cool down and warm up time.
+     *
+     * Assumes from_temp is approximately the same as @p temp
+     *
+     * \param window_time The time window within which the cooldown and heat up must take place.
+     * \param extruder The extruder used
+     * \param temp The temperature to which to heat
+     * \return tempBeforeEndToInsertPreheatCommand_coolDownWarmUp The temperature at which decide when to start warming up again after starting to cool down towards the standby temperature.
+     * \return timeBeforeEndToInsertPreheatCommand_coolDownWarmUp The time at which decide when to start warming up again after starting to cool down towards the standby temperature.
+     */
+    void tempTimeBeforeEndToInsertPreheatCommand_coolDownWarmUp(double time_window, unsigned int extruder, double temp, double& tempBeforeEndToInsertPreheatCommand_coolDownWarmUp, double& timeBeforeEndToInsertPreheatCommand_coolDownWarmUp)
+    {
+        const double time_to_heat_from_standby_to_print_temp (timeToHeatFromStandbyToPrintTemp(extruder, temp));
+
+        if (time_window <= 0.0)
+        {
+            tempBeforeEndToInsertPreheatCommand_coolDownWarmUp = config_per_extruder[extruder].standby_temp;
+            timeBeforeEndToInsertPreheatCommand_coolDownWarmUp = time_to_heat_from_standby_to_print_temp;
+        }
+
+        if (timeNeededToReachStandbyTemp_coolDownWarmUp(extruder, time_to_heat_from_standby_to_print_temp) < time_window)
+        {
+            tempBeforeEndToInsertPreheatCommand_coolDownWarmUp = config_per_extruder[extruder].standby_temp;
+            timeBeforeEndToInsertPreheatCommand_coolDownWarmUp = time_to_heat_from_standby_to_print_temp;
+        }
+        else
+        {
+            const double dTempTimeRatio (time_window / (config_per_extruder[extruder].time_to_cooldown_1_degree + config_per_extruder[extruder].time_to_heatup_1_degree));
+
+            tempBeforeEndToInsertPreheatCommand_coolDownWarmUp = temp - dTempTimeRatio;
+            timeBeforeEndToInsertPreheatCommand_coolDownWarmUp = config_per_extruder[extruder].time_to_heatup_1_degree * dTempTimeRatio;
+        }
+    }
     /*!
      * Decide when to start warming up again after starting to cool down towards the standby temperature.
      * Two cases are considered: 
@@ -123,10 +180,9 @@ public:
      */
     double timeBeforeEndToInsertPreheatCommand_coolDownWarmUp(double time_window, unsigned int extruder, double temp)
     {
-        double time_ratio_cooldown_heatup = config_per_extruder[extruder].time_to_cooldown_1_degree / config_per_extruder[extruder].time_to_heatup_1_degree;
-        double time_to_heat_from_standby_to_print_temp = timeToHeatFromStandbyToPrintTemp(extruder, temp);
-        double time_needed_to_reach_standby_temp = time_to_heat_from_standby_to_print_temp * (1.0 + time_ratio_cooldown_heatup);
-        if (time_needed_to_reach_standby_temp < time_window)
+        const double time_to_heat_from_standby_to_print_temp (timeToHeatFromStandbyToPrintTemp(extruder, temp));
+
+        if (timeNeededToReachStandbyTemp_coolDownWarmUp(extruder, time_to_heat_from_standby_to_print_temp) < time_window)
         {
             return time_to_heat_from_standby_to_print_temp;
         }
@@ -157,14 +213,11 @@ public:
             return config_per_extruder[extruder].standby_temp;
         }
 
-        const double time_ratio_cooldown_heatup (config_per_extruder[extruder].time_to_cooldown_1_degree / config_per_extruder[extruder].time_to_heatup_1_degree);
         const double time_to_heat_from_standby_to_print_temp (timeToHeatFromStandbyToPrintTemp(extruder, temp));
 
-        const double time_needed_to_reach_standby_temp (time_to_heat_from_standby_to_print_temp * (1.0 + time_ratio_cooldown_heatup));
-
-        if (time_needed_to_reach_standby_temp < time_window)
+        if (timeNeededToReachStandbyTemp_coolDownWarmUp(extruder, time_to_heat_from_standby_to_print_temp) < time_window)
         {
-            return config_per_extruder[extruder].standby_temp;
+            return time_to_heat_from_standby_to_print_temp;
         }
         else
         {
