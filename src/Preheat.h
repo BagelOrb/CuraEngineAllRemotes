@@ -160,7 +160,8 @@ public:
             const double dTempTimeRatio (time_window / (config_per_extruder[extruder].time_to_cooldown_1_degree + config_per_extruder[extruder].time_to_heatup_1_degree));
 
             tempBeforeEndToInsertPreheatCommand_coolDownWarmUp = temp - dTempTimeRatio;
-            timeBeforeEndToInsertPreheatCommand_coolDownWarmUp = config_per_extruder[extruder].time_to_heatup_1_degree * dTempTimeRatio;
+            // +1: because we need to be extra sure the temperature is reached in time.
+            timeBeforeEndToInsertPreheatCommand_coolDownWarmUp = 1.0 + config_per_extruder[extruder].time_to_heatup_1_degree * dTempTimeRatio;
         }
     }
     /*!
@@ -188,7 +189,8 @@ public:
         }
         else 
         {
-            return time_window * config_per_extruder[extruder].time_to_heatup_1_degree / (config_per_extruder[extruder].time_to_cooldown_1_degree + config_per_extruder[extruder].time_to_heatup_1_degree);
+            // +1: because we need to be extra sure the temperature is reached in time.
+            return 1.0 + time_window * config_per_extruder[extruder].time_to_heatup_1_degree / (config_per_extruder[extruder].time_to_cooldown_1_degree + config_per_extruder[extruder].time_to_heatup_1_degree);
         }
     }
     /*!

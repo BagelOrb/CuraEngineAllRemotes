@@ -66,7 +66,7 @@ double LayerPlanBuffer::timeBeforeExtruderPlanToInsert(std::vector<GCodePlanner*
             ExtruderPlan& extruder_plan = layer.extruder_plans[extruder_plan_before_idx];
             if (extruder_plan.extruder == extruder)
             {
-                return preheat_config.timeBeforeEndToInsertPreheatCommand_coolDownWarmUp(in_between_time, extruder, required_temp) + 1.0;
+                return preheat_config.timeBeforeEndToInsertPreheatCommand_coolDownWarmUp(in_between_time, extruder, required_temp);
             }
             in_between_time += extruder_plan.estimates.getTotalTime();
         }
