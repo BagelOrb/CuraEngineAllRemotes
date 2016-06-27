@@ -66,7 +66,7 @@ double LayerPlanBuffer::timeBeforeExtruderPlanToInsert(std::vector<GCodePlanner*
             ExtruderPlan& extruder_plan = layer.extruder_plans[extruder_plan_before_idx];
             if (extruder_plan.extruder == extruder)
             {
-                return preheat_config.timeBeforeEndToInsertPreheatCommand_coolDownWarmUp(in_between_time, extruder, required_temp);
+                return preheat_config.timeToInsertPreheatCoolDownWarmUp(in_between_time, extruder, required_temp);
             }
             in_between_time += extruder_plan.estimates.getTotalTime();
         }
@@ -74,14 +74,14 @@ double LayerPlanBuffer::timeBeforeExtruderPlanToInsert(std::vector<GCodePlanner*
     }
     // The last extruder plan with the same extruder falls outside of the buffer
     // assume the nozzle has cooled down to strandby temperature already.
-    return preheat_config.timeBeforeEndToInsertPreheatCommand_warmUp(preheat_config.getStandbyTemp(extruder), extruder, required_temp, false);
+    return preheat_config.timeToInsertPreheatWarmUp(preheat_config.getStandbyTemp(extruder), extruder, required_temp, false);
     
 }
 
 void LayerPlanBuffer::insertPreheatCommand_singleExtrusion(ExtruderPlan& prev_extruder_plan, int extruder, double required_temp)
 {
     // time_before_extruder_plan_end is halved, so that at the layer change the temperature will be half way betewen the two requested temperatures
-    double time_before_extruder_plan_end = 0.5 * preheat_config.timeBeforeEndToInsertPreheatCommand_warmUp(prev_extruder_plan.required_temp, extruder, required_temp, true);
+    double time_before_extruder_plan_end = 0.5 * preheat_config.timeToInsertPreheatWarmUp(prev_extruder_plan.required_temp, extruder, required_temp, true);
     double time_after_extruder_plan_start = prev_extruder_plan.estimates.getTotalTime() - time_before_extruder_plan_end;
     if (time_after_extruder_plan_start < 0)
     {
@@ -186,8 +186,8 @@ void LayerPlanBuffer::insertPreheatCommand(std::vector<GCodePlanner*>& layers, u
     
     if (prev_extruder != extruder)
     { // set previous extruder to standby temperature or mid temperature is time is not enough to reach standby
-        const double dTempBeforeEndToInsertPreheatCommand_coolDownWarmUp (preheat_config.tempBeforeEndToInsertPreheatCommand_coolDownWarmUp(extruder_plan.estimates.getTotalTime(), prev_extruder, prev_extruder_plan->required_temp));
-        prev_extruder_plan->insertCommand(prev_extruder_plan->paths.size(), prev_extruder, dTempBeforeEndToInsertPreheatCommand_coolDownWarmUp, false);
+        const double dTempBeforeEndToInsertPreheatCoolDownWarmUp (preheat_config.tempToInsertPreheatCoolDownWarmUp(extruder_plan.estimates.getTotalTime(), prev_extruder, prev_extruder_plan->required_temp));
+        prev_extruder_plan->insertCommand(prev_extruder_plan->paths.size(), prev_extruder, dTempBeforeEndToInsertPreheatCoolDownWarmUp, false);
     }
 
     if (prev_extruder == extruder)

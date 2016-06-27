@@ -105,7 +105,7 @@ private:
      * \param extruder The extruder used
      * \param time_to_heat_from_standby_to_print_temp time to heat up from standby temperature to a given temperature.
      */
-    double timeNeededToReachStandbyTemp_coolDownWarmUp(unsigned int extruder, double time_to_heat_from_standby_to_print_temp)
+    double timeToStandbyTempCoolDownWarmUp(unsigned int extruder, double time_to_heat_from_standby_to_print_temp)
     {
         const double time_ratio_cooldown_heatup (config_per_extruder[extruder].time_to_cooldown_1_degree / config_per_extruder[extruder].time_to_heatup_1_degree);
 
@@ -140,7 +140,7 @@ public:
      * \return tempBeforeEndToInsertPreheatCommand_coolDownWarmUp The temperature at which decide when to start warming up again after starting to cool down towards the standby temperature.
      * \return timeBeforeEndToInsertPreheatCommand_coolDownWarmUp The time at which decide when to start warming up again after starting to cool down towards the standby temperature.
      */
-    void tempTimeBeforeEndToInsertPreheatCommand_coolDownWarmUp(double time_window, unsigned int extruder, double temp, double& tempBeforeEndToInsertPreheatCommand_coolDownWarmUp, double& timeBeforeEndToInsertPreheatCommand_coolDownWarmUp)
+    void tempAndTimeToInsertPreheatCoolDownWarmUp(double time_window, unsigned int extruder, double temp, double& tempBeforeEndToInsertPreheatCommand_coolDownWarmUp, double& timeBeforeEndToInsertPreheatCommand_coolDownWarmUp)
     {
         const double time_to_heat_from_standby_to_print_temp (timeToHeatFromStandbyToPrintTemp(extruder, temp));
 
@@ -150,7 +150,7 @@ public:
             timeBeforeEndToInsertPreheatCommand_coolDownWarmUp = time_to_heat_from_standby_to_print_temp;
         }
 
-        if (timeNeededToReachStandbyTemp_coolDownWarmUp(extruder, time_to_heat_from_standby_to_print_temp) < time_window)
+        if (timeToStandbyTempCoolDownWarmUp(extruder, time_to_heat_from_standby_to_print_temp) < time_window)
         {
             tempBeforeEndToInsertPreheatCommand_coolDownWarmUp = config_per_extruder[extruder].standby_temp;
             timeBeforeEndToInsertPreheatCommand_coolDownWarmUp = time_to_heat_from_standby_to_print_temp;
@@ -179,11 +179,11 @@ public:
      * \param temp The temperature to which to heat
      * \return The time before the end of the @p time_window to insert the preheat command
      */
-    double timeBeforeEndToInsertPreheatCommand_coolDownWarmUp(double time_window, unsigned int extruder, double temp)
+    double timeToInsertPreheatCoolDownWarmUp(double time_window, unsigned int extruder, double temp)
     {
         const double time_to_heat_from_standby_to_print_temp (timeToHeatFromStandbyToPrintTemp(extruder, temp));
 
-        if (timeNeededToReachStandbyTemp_coolDownWarmUp(extruder, time_to_heat_from_standby_to_print_temp) < time_window)
+        if (timeToStandbyTempCoolDownWarmUp(extruder, time_to_heat_from_standby_to_print_temp) < time_window)
         {
             return time_to_heat_from_standby_to_print_temp;
         }
@@ -208,7 +208,7 @@ public:
      * \param temp The temperature to which to heat
      * \return The temperature at which time before the end of the @p time_window to insert the preheat command
      */
-    double tempBeforeEndToInsertPreheatCommand_coolDownWarmUp(double time_window, unsigned int extruder, double temp)
+    double tempToInsertPreheatCoolDownWarmUp(double time_window, unsigned int extruder, double temp)
     {
         if (time_window <= 0.0)
         {
@@ -217,7 +217,7 @@ public:
 
         const double time_to_heat_from_standby_to_print_temp (timeToHeatFromStandbyToPrintTemp(extruder, temp));
 
-        if (timeNeededToReachStandbyTemp_coolDownWarmUp(extruder, time_to_heat_from_standby_to_print_temp) < time_window)
+        if (timeToStandbyTempCoolDownWarmUp(extruder, time_to_heat_from_standby_to_print_temp) < time_window)
         {
             return time_to_heat_from_standby_to_print_temp;
         }
@@ -237,7 +237,7 @@ public:
      * \param printing Whether the printer is printing in the time to heat up the nozzle
      * \return The time needed to reach the desired temperature (@p temp)
      */
-    double timeBeforeEndToInsertPreheatCommand_warmUp(double from_temp, unsigned int extruder, double temp, bool printing)
+    double timeToInsertPreheatWarmUp(double from_temp, unsigned int extruder, double temp, bool printing)
     {
         if (temp > from_temp)
         {
