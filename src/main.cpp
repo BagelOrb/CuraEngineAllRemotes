@@ -383,7 +383,7 @@ int main(int argc, char **argv)
             cura::logError("\n");
             cura::logError("usage:\n");
             cura::logError("CuraEngine analyse <fdmPrinter.def.json> <output.gv> <engine_settings_list> -[p|i|e|w]\n");
-            cura::logError("\tGenerate a grpah to visualize the setting inheritance structure.\n");
+            cura::logError("\tGenerate a graph to visualize the setting inheritance structure.\n");
             cura::logError("\t<fdmPrinter.def.json>\n\tThe base seting definitions file.\n");
             cura::logError("\t<output.gv>\n\tThe output file.\n");
             cura::logError("\t<engine_settings_list>\n\tA text file with all setting keys used in the engine, separated by newlines.\n");
