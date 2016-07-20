@@ -535,10 +535,14 @@ private:
         if (extruderChanged)
             addWipeTower(storage, gcodeLayer, layerNr, prevExtruder);
 
-        if (storage.oozeShield.size() > 0 && storage.volumes.size() > 1)
+        if ( storage.oozeShield.size() > 0 && storage.volumes.size() > 1)
         {
+
             gcodeLayer.setAlwaysRetract(true);
-            gcodeLayer.addPolygonsByOptimizer(storage.oozeShield[layerNr], &skirtConfig);
+//storage.oozeShield[layerNr]= storage.oozeShield[layerNr].unionPolygons(storage.oozeShield[layerNr].offset(MM2INT(0.5)))
+Polygons temp= storage.oozeShield[layerNr].unionPolygons(storage.oozeShield[layerNr].offset(MM2INT(0.5*volumeIdx)));
+//            gcodeLayer.addPolygonsByOptimizer(storage.oozeShield[layerNr], &skirtConfig);
+    gcodeLayer.addPolygonsByOptimizer( temp, &skirtConfig);
             sendPolygonsToGui("oozeshield", layerNr, layer->printZ, storage.oozeShield[layerNr]);
             gcodeLayer.setAlwaysRetract(config.enableCombing == COMBING_OFF);
         }
@@ -789,10 +793,22 @@ private:
     {
         if (config.wipeTowerSize < 1)
             return;
+int extru=gcodeLayer.getExtruder();
+Polygons aa;
+PolygonRef p = aa.newPoly();
+            p.add(Point(storage.modelMin.x - 300-extru*10000, storage.modelMax.y + 300));
+            p.add(Point(storage.modelMin.x - 300-extru*10000, storage.modelMax.y + 300 + config.wipeTowerSize));
+            p.add(Point(storage.modelMin.x - 300 -extru*10000- config.wipeTowerSize, storage.modelMax.y + 300 + config.wipeTowerSize));
+            p.add(Point(storage.modelMin.x - 300-extru*10000 - config.wipeTowerSize, storage.modelMax.y + 300));
+
+
+
         //If we changed extruder, print the wipe/prime tower for this nozzle;
-        gcodeLayer.addPolygonsByOptimizer(storage.wipeTower, &supportConfig);
+  Polygons fillPolygonss=storage.wipeTower.offset(MM2INT(5.0*gcodeLayer.getExtruder()));
+   //     gcodeLayer.addPolygonsByOptimizer(storage.wipeTower, &supportConfig);
+   gcodeLayer.addPolygonsByOptimizer(aa, &supportConfig);
         Polygons fillPolygons;
-        generateLineInfill(storage.wipeTower, fillPolygons, config.extrusionWidth, config.extrusionWidth, config.infillOverlap, 45 + 90 * (layerNr % 2));
+        generateLineInfill(aa, fillPolygons, config.extrusionWidth, config.extrusionWidth, config.infillOverlap, 45 + 90 * (layerNr % 2));
         gcodeLayer.addPolygonsByOptimizer(fillPolygons, &supportConfig);
 
         //Make sure we wipe the old extruder on the wipe tower.
