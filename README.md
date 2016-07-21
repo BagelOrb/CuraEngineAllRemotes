@@ -24,7 +24,7 @@ The Ooze Shield is repeated according to the number of extruders used. Each colo
 
 The tweaks are still being developed. Let me know if you have any suggestions.
 
-Updating plugon from Repetier-Host
+Updating plugin from Repetier-Host
 ==================================
 To update the CuraEngine plugin in your currently installed Repetier-Host, download the file Curaengine_triple_extrusion.zip and extract it to the plugins/CuraEngine folder inside your RepetierHost instalation folder (C:\Program Files\Repetier-Host\plugins\CuraEngine). Overwirte the CuraEngine.exe file.
 
