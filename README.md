@@ -16,6 +16,18 @@ Terms of the license can be found in the LICENSE file. Or at http://www.gnu.org/
 
 But in general it boils down to: You need to share the source of any CuraEngine modifications if you make an application with the CuraEngine. (Even if you make a web-based slicer, you still need to share the source!)
 
+Optimizations
+=========
+The code was tweaked to support triple color filament change. We made these changes so it is possible to print three colors using CuraEngine with the Diamond hotend.
+A wipe tower is created per extruder used. Each tower is adjacent to the other, so changing color with triple extrusion will not print the same tower twice in the same layer (acculating pressure in the nozzle/bowden tube).
+The Ooze Shield is repeated according to the number of extruders used. Each color will have a shield which is adjacent (0.5mm) to the other. This also prevents printing the same shield in the same layer.
+
+The tweaks are still being developed. Let me know if you have any suggestions.
+
+Updating plugon from Repetier-Host
+==================================
+To update the CuraEngine plugin in your currently installed Repetier-Host, download the file Curaengine_triple_extrusion.zip and extract it to the plugins/CuraEngine folder inside your RepetierHost instalation folder (C:\Program Files\Repetier-Host\plugins\CuraEngine). Overwirte the CuraEngine.exe file.
+
 
 Internals
 =========
