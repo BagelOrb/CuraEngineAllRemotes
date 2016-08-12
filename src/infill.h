@@ -12,7 +12,7 @@ namespace cura {
 // CUSTOM FILLS
 void generateChamberedInfill(Polygons outline, Polygons& result, int extrusionWidth, int inset_value, int layerNr);
 void generateDoubleConcentricInfill(Polygons outline, Polygons& result, int extrusionWidth, int inset_value);
-
+void generateAxisChamberedInfill(Polygons outline, Polygons& result, int extrusionWidth, int inset_value, int layerNr);
 // CURA STANDARD FILLS
 void generateConcentricInfill(Polygons outline, Polygons& result, int inset_value);
 void generateAutomaticInfill(const Polygons& in_outline, Polygons& result, int extrusionWidth, int lineSpacing, int infillOverlap, double rotation);

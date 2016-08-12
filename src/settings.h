@@ -27,7 +27,7 @@ enum Support_Pattern
 };
 
 #ifndef DEFAULT_CONFIG_PATH
-#define DEFAULT_CONFIG_PATH "build/skin.cfg"
+#define DEFAULT_CONFIG_PATH "build/good_pla.cfg"
 #endif
 
 #define CONFIG_MULTILINE_SEPARATOR "\"\"\""
@@ -100,7 +100,8 @@ enum Infill_Pattern
     INFILL_LINES = 2,
     INFILL_CONCENTRIC = 3,
     INFILL_DOUBLE_CONCENTRIC = 4,
-    INFILL_CHAMBERED = 5 
+    INFILL_CHAMBERED = 5, 
+    INFILL_AXIS_CHAMBERED = 6
 };
 
 /**

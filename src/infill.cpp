@@ -3,24 +3,19 @@
 // #include "rapidjson/include/reader.h"
 namespace cura {
 
-void generateChamberedInfill(Polygons outline, Polygons& result, int extrusionWidth, int inset_value, int layerNr){
-    cura::logError("Layer %d\n", layerNr);
-    // int doubleGap = extrusionWidth * 3;
-    // int chamberSize = extrusionWidth * 3;
-    
+void generateAxisChamberedInfill(Polygons outline, Polygons& result, int extrusionWidth, int inset_value, int layerNr){
+   
+    int doubleGap = extrusionWidth * 1;
 
-    // // CALCULATE FILL DISTANCE
-    // if(outline.size() > 0){
-    //     PolygonRef r = outline[0];
-    //     Point com = r.centerOfMass();
-    //     Point cp = r.closestPointTo(com);  
-    //     Point distance = vSize(com - cp)/ 1000;  
-    //     cura::logError("Dist: %dmm, COM (%d, %d); CP(%d, %d)\n", distance, com.X, com.Y, cp.X, cp.Y); 
-             
-    // }
-  
+    double start_area = 0;
+    double stop_area = 0;
+    if(outline.size()  > 0){
+       printf("generateChamberedInfill %f\n", outline[0].area());
+        start_area = outline[0].area();
+    }
+    stop_area = start_area / 4.0;
 
-    while(outline.size() > 0)
+    while(outline.size() > 0 && outline[0].area() > stop_area)
     {
         for (unsigned int polyNr = 0; polyNr < outline.size(); polyNr++)
         {
@@ -29,6 +24,82 @@ void generateChamberedInfill(Polygons outline, Polygons& result, int extrusionWi
         }
         outline = outline.offset(-inset_value);
     }
+    if(outline.size() > 0){
+        for (unsigned int polyNr = 0; polyNr < outline.size(); polyNr++)
+        {
+            PolygonRef r = outline[polyNr];
+            result.add(r);
+        }
+        outline = outline.offset(doubleGap);
+    }
+    if(outline.size() > 0){
+        generateChamberedInfill(outline, result, extrusionWidth, inset_value * 2, layerNr);
+    }
+}
+void generateChamberedInfill(Polygons outline, Polygons& result, int extrusionWidth, int inset_value, int layerNr){
+    cura::logError("Layer %d\n", layerNr);
+    int doubleGap = extrusionWidth * 1;
+    
+    while(outline.size() > 0)
+    {   
+
+        AABB boundary(outline); 
+
+        double origin_x = boundary.min.X;
+        double origin_y = boundary.min.Y;
+
+        double height = boundary.max.Y - boundary.min.Y;
+        double width = boundary.max.X - boundary.min.X;
+
+        origin_x += width / 2.0;
+        origin_y += height / 2.0;
+
+        // printf("ORIGIN %f, %f \n", origin_x/1000, origin_y/1000);
+
+        // double gap_factor = 5.0;
+        // double x_gap = width / gap_factor / 2.0;
+        // double y_gap = height / gap_factor / 2.0;
+
+        double x_gap = 1750; // a fixed 1mm hole
+        double y_gap = 1750; // a fixed 1mm hole
+        double overeach = 200; 
+
+        Polygons a_e; 
+        Polygons b_e;
+        ClipperLib::Path a; 
+        ClipperLib::Path b; 
+        ClipperLib::Path c; 
+
+
+        a << ClipperLib::IntPoint(origin_x - x_gap, boundary.max.Y + overeach) << ClipperLib::IntPoint(origin_x + x_gap, boundary.max.Y + overeach) << 
+            ClipperLib::IntPoint(origin_x + x_gap, boundary.min.Y - overeach) << ClipperLib::IntPoint(origin_x - x_gap, boundary.min.Y - overeach);
+        
+        b << ClipperLib::IntPoint(boundary.min.X - overeach, origin_y + y_gap) << ClipperLib::IntPoint(boundary.max.X + overeach, origin_y + y_gap) << 
+            ClipperLib::IntPoint(boundary.max.X + overeach, origin_y - y_gap) << ClipperLib::IntPoint(boundary.min.X - overeach, origin_y - y_gap);
+
+        a_e.add(a);
+        b_e.add(b);
+       
+        Polygons holes_final = a_e.unionPolygons(b_e);
+        
+     
+        Polygons walls;
+        walls.add(outline);
+        Polygons wall = walls.difference(outline.offset(-doubleGap));
+
+
+        Polygons s = wall.difference(holes_final);
+        // Polygons sp = outline.difference(s);
+        for (unsigned int polyNr = 0; polyNr < s.size(); polyNr++)
+        {
+            PolygonRef r = s[polyNr];
+            result.add(r);
+        }        
+
+
+        outline = outline.offset(-inset_value);
+    }
+
 }
 // CUSTOM G-CODE - SINTARE PROJECT
 void generateDoubleConcentricInfill(Polygons outline, Polygons& result, int extrusionWidth, int inset_value)

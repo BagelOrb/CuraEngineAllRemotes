@@ -16,7 +16,7 @@ class Carpal{
 	public:
     	Carpal(std::vector<std::string> v);
     	void toString();
-    	bool inside(int);
+    	int inside(int);
     	// [1, 25, 3, 0.58]
         double density;
 

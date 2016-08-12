@@ -14,6 +14,13 @@ Carpal::Carpal(std::vector<std::string> v){
 void Carpal::toString(){
 	printf("id:%d layer:%d fill:%d den: %f\n", this->id, this->layerID, this->fillpattern, this->density);
 }
-bool Carpal::inside(int layer){
-	return layer < this->layerID;
+int Carpal::inside(int layer){
+	
+	if(layer < this->layerID){
+		int diff = std::abs(layer - this->layerID);
+		if(diff > 5) return 1; // normal inside
+		else return 2; // solid layer
+	}
+	else
+		return -1; //outside
 }

@@ -350,7 +350,8 @@ private:
     void writeGCode(SliceDataStorage& storage)
     {
 
-        std::vector<Carpal> carpals = getCarpals(csv_read("tests/csvs/carpal.csv"));
+        // std::vector<Carpal> carpals = getCarpals(csv_read("tests/csvs/grid_log.csv"));
+        std::vector<Carpal> carpals = getCarpals(csv_read("tests/csvs/bunny.csv"));
         for(int i = 0; i < (int) carpals.size(); i++){
             // carpals[i].toString();
         }
@@ -511,10 +512,18 @@ private:
                 int n = (int) carpals.size();
                 int forceFill = config.infillPattern;
                 int forceSparseInfillLineDistance = config.sparseInfillLineDistance;
+               
                 for(int i = 0; i < n; i++){
-                    if(carpals[i].inside(layerNr)){
+                    if(carpals[i].inside(layerNr) == 1){
                         forceFill = carpals[i].fillpattern;
                         forceSparseInfillLineDistance = (int) (100 * extrusionWidth / carpals[i].density / 100);
+
+                        // float fillDensity = 100 * extrusionWidth / forceSparseInfillLineDistance;
+                        break;
+                    }
+                    if(carpals[i].inside(layerNr) == 2){
+                        forceFill = carpals[i].fillpattern;
+                        forceSparseInfillLineDistance = (int) (100 * extrusionWidth / 1.0 / 100);
 
                         // float fillDensity = 100 * extrusionWidth / forceSparseInfillLineDistance;
                         break;
@@ -556,7 +565,7 @@ private:
     }
 
 
-
+    Polygons wheel_hack; 
 
 
     //Add a single layer from a single mesh-volume to the GCode
@@ -648,7 +657,8 @@ private:
 
             Polygons infillPolygons;
             // int fillAngle = 90;
-            double fillAngle = layerNr/3.0;
+            double fillAngle = 45;
+            // double fillAngle = layerNr/3.0;
             // fillAngle ++;
 
 
@@ -675,9 +685,18 @@ private:
             // float fillDensity = 100 * 1000 * extrusionWidth / config.sparseInfillLineDistance; 
             float fillDensity = 100 * extrusionWidth / forceSparseInfillLineDistance;
             printf("Layer %d, Infill pattern #%d, Fill Angle: %2.2f, Density: %2.2f FillDistance: %d, extrusionWidth: %2.2d\n",  layerNr, forceFillPattern, fillAngle, fillDensity, forceSparseInfillLineDistance, extrusionWidth);
-
+            Polygons outline; 
+            
             if (forceSparseInfillLineDistance > 0)
-            {
+            {   
+                // if(layerNr == 16){
+                //     wheel_hack = Polygons(part->sparseOutline); 
+                // }
+                // if(layerNr > 16){
+                //     outline = Polygons(wheel_hack);
+                // } else{
+                    outline = part->sparseOutline;
+                // }
                 // switch (config.infillPattern)
                 switch (forceFillPattern)
                 {
@@ -716,6 +735,10 @@ private:
                         generateChamberedInfill( part->sparseOutline, infillPolygons,
                             extrusionWidth, forceSparseInfillLineDistance, layerNr);
 
+                        break;
+                    case INFILL_AXIS_CHAMBERED:
+                        generateAxisChamberedInfill(outline, infillPolygons,
+                            extrusionWidth, forceSparseInfillLineDistance, layerNr);
                         break;
                 }
             }
