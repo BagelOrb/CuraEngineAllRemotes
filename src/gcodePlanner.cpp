@@ -109,7 +109,7 @@ GCodePlanner::GCodePlanner(SliceDataStorage& storage, int layer_nr, int z, int l
     extruder_plans.reserve(storage.meshgroup->getExtruderCount());
     extruder_plans.emplace_back(current_extruder, start_position, layer_nr, is_initial_layer, layer_thickness, fan_speed_layer_time_settings_per_extruder[current_extruder], storage.retraction_config_per_extruder[current_extruder]);
     comb = nullptr;
-    was_inside = is_inside_mesh; 
+    was_inside = is_inside_mesh;
     is_inside = false; // assumes the next move will not be to inside a layer part (overwritten just before going into a layer part)
     if (combing_mode != CombingMode::OFF)
     {
@@ -148,7 +148,7 @@ Polygons GCodePlanner::computeCombBoundaryInside(CombingMode combing_mode)
             return storage.raftOutline.offset(MM2INT(0.1));
         }
     }
-    else 
+    else
     {
         Polygons comb_boundary;
         for (SliceMeshStorage& mesh : storage.meshes)
@@ -166,12 +166,12 @@ Polygons GCodePlanner::computeCombBoundaryInside(CombingMode combing_mode)
                 if (mesh.getSettingBoolean("infill_mesh"))
                 {
                     continue;
-                }
-                layer.getSecondOrInnermostWalls(comb_boundary);
             }
+                layer.getSecondOrInnermostWalls(comb_boundary);
         }
-        return comb_boundary;
     }
+        return comb_boundary;
+}
 }
 
 void GCodePlanner::setIsInside(bool _is_inside)
@@ -194,18 +194,18 @@ bool GCodePlanner::setExtruder(int extruder)
         {
             end_pos += lastPosition;
         }
-        else 
+        else
         {
             Point extruder_offset(train->getSettingInMicrons("machine_nozzle_offset_x"), train->getSettingInMicrons("machine_nozzle_offset_y"));
             end_pos += extruder_offset; // absolute end pos is given as a head position
         }
-        addTravel(end_pos); //  + extruder_offset cause it 
+        addTravel(end_pos); //  + extruder_offset cause it
     }
     if (extruder_plans.back().paths.empty() && extruder_plans.back().inserts.empty())
     { // first extruder plan in a layer might be empty, cause it is made with the last extruder planned in the previous layer
         extruder_plans.back().extruder = extruder;
     }
-    else 
+    else
     {
         extruder_plans.emplace_back(extruder, lastPosition, layer_nr, is_initial_layer, layer_thickness, fan_speed_layer_time_settings_per_extruder[extruder], storage.retraction_config_per_extruder[extruder]);
         assert((int)extruder_plans.size() <= storage.meshgroup->getExtruderCount() && "Never use the same extruder twice on one layer!");
@@ -222,7 +222,7 @@ bool GCodePlanner::setExtruder(int extruder)
         {
             start_pos += lastPosition;
         }
-        else 
+        else
         {
             Point extruder_offset(train->getSettingInMicrons("machine_nozzle_offset_x"), train->getSettingInMicrons("machine_nozzle_offset_y"));
             start_pos += extruder_offset; // absolute start pos is given as a head position
@@ -255,7 +255,7 @@ GCodePath& GCodePlanner::addTravel(Point p)
     GCodePath* path = nullptr;
     GCodePathConfig& travel_config = storage.travel_config_per_extruder[getExtruder()];
     RetractionConfig& retraction_config = storage.retraction_config_per_extruder[getExtruder()];
-    
+
     bool combed = false;
 
     SettingsBaseVirtual* extr = getLastPlannedExtruderTrainSettings();
@@ -303,24 +303,24 @@ GCodePath& GCodePlanner::addTravel(Point p)
                 }
             }
 
-            for (CombPath& combPath : combPaths)
-            { // add all comb paths (don't do anything special for paths which are moving through air)
-                if (combPath.size() == 0)
-                {
-                    continue;
-                }
-                path = getLatestPathWithConfig(&travel_config, SpaceFillType::None);
-                path->retract = retract;
+                for (CombPath& combPath : combPaths)
+                { // add all comb paths (don't do anything special for paths which are moving through air)
+                    if (combPath.size() == 0)
+                    {
+                        continue;
+                    }
+                    path = getLatestPathWithConfig(&travel_config, SpaceFillType::None);
+                    path->retract = retract;
                 // don't perform a z-hop
-                for (Point& combPoint : combPath)
-                {
-                    path->points.push_back(combPoint);
+                    for (Point& combPoint : combPath)
+                    {
+                        path->points.push_back(combPoint);
+                    }
+                    lastPosition = combPath.back();
                 }
-                lastPosition = combPath.back();
             }
         }
-    }
-    
+
     if (!combed) {
         // no combing? always retract!
         if (!shorterThen(lastPosition - p, retraction_config.retraction_min_travel_distance))
@@ -390,9 +390,9 @@ void GCodePlanner::addPolygon(PolygonRef polygon, int start_idx, GCodePathConfig
                     Point half_way = p0 + normal(vector, wall_0_wipe_dist - distance_traversed);
                     addTravel_simple(half_way);
                     break;
-                }
-                else
-                {
+    }
+    else
+    {
                     addTravel_simple(p1);
                     distance_traversed += p0p1_dist;
                 }
@@ -455,7 +455,7 @@ void GCodePlanner::addLinesByOptimizer(Polygons& polygons, GCodePathConfig* conf
 
 void ExtruderPlan::forceMinimalLayerTime(double minTime, double minimalSpeed, double travelTime, double extrudeTime)
 {
-    double totalTime = travelTime + extrudeTime; 
+    double totalTime = travelTime + extrudeTime;
     if (totalTime < minTime && extrudeTime > 0.0)
     {
         double minExtrudeTime = minTime - travelTime;
@@ -464,12 +464,12 @@ void ExtruderPlan::forceMinimalLayerTime(double minTime, double minimalSpeed, do
         double factor = extrudeTime / minExtrudeTime;
         for (GCodePath& path : paths)
         {
-            if (path.isTravelPath())
-                continue;
-            double speed = path.config->getSpeed() * factor;
-            if (speed < minimalSpeed)
-                factor = minimalSpeed / path.config->getSpeed();
-        }
+                if (path.isTravelPath())
+                    continue;
+                double speed = path.config->getSpeed() * factor;
+                if (speed < minimalSpeed)
+                    factor = minimalSpeed / path.config->getSpeed();
+            }
 
         //Only slow down for the minimal time if that will be slower.
         assert(getExtrudeSpeedFactor() == 1.0); // The extrude speed factor is assumed not to be changed yet
@@ -477,19 +477,19 @@ void ExtruderPlan::forceMinimalLayerTime(double minTime, double minimalSpeed, do
         {
             setExtrudeSpeedFactor(factor);
         }
-        else 
+        else
         {
             factor = 1.0;
         }
-        
+
         double inv_factor = 1.0 / factor; // cause multiplication is faster than division
-        
+
         // Adjust stored naive time estimates
         estimates.extrude_time *= inv_factor;
         for (GCodePath& path : paths)
         {
-            path.estimates.extrude_time *= inv_factor;
-        }
+                path.estimates.extrude_time *= inv_factor;
+            }
 
         if (minTime - (extrudeTime * inv_factor) - travelTime > 0.1)
         {
@@ -506,54 +506,54 @@ TimeMaterialEstimates ExtruderPlan::computeNaiveTimeEstimates()
     bool was_retracted = false; // wrong assumption; won't matter that much. (TODO)
     for (GCodePath& path : paths)
     {
-        bool is_extrusion_path = false;
-        double* path_time_estimate;
-        double& material_estimate = path.estimates.material;
-        if (!path.isTravelPath())
-        {
-            is_extrusion_path = true;
-            path_time_estimate = &path.estimates.extrude_time;
-        }
-        else 
-        {
-            if (path.retract)
+            bool is_extrusion_path = false;
+            double* path_time_estimate;
+            double& material_estimate = path.estimates.material;
+            if (!path.isTravelPath())
             {
-                path_time_estimate = &path.estimates.retracted_travel_time;
+                is_extrusion_path = true;
+                path_time_estimate = &path.estimates.extrude_time;
             }
-            else 
+            else
             {
-                path_time_estimate = &path.estimates.unretracted_travel_time;
-            }
-            if (path.retract != was_retracted)
-            { // handle retraction times
-                double retract_unretract_time;
                 if (path.retract)
                 {
-                    retract_unretract_time = retraction_config.distance / retraction_config.speed;
+                    path_time_estimate = &path.estimates.retracted_travel_time;
                 }
-                else 
+                else
                 {
-                    retract_unretract_time = retraction_config.distance / retraction_config.primeSpeed;
+                    path_time_estimate = &path.estimates.unretracted_travel_time;
                 }
-                path.estimates.retracted_travel_time += 0.5 * retract_unretract_time;
-                path.estimates.unretracted_travel_time += 0.5 * retract_unretract_time;
+            if (path.retract != was_retracted)
+                { // handle retraction times
+                    double retract_unretract_time;
+                    if (path.retract)
+                    {
+                        retract_unretract_time = retraction_config.distance / retraction_config.speed;
+                    }
+                    else
+                    {
+                        retract_unretract_time = retraction_config.distance / retraction_config.primeSpeed;
+                    }
+                    path.estimates.retracted_travel_time += 0.5 * retract_unretract_time;
+                    path.estimates.unretracted_travel_time += 0.5 * retract_unretract_time;
+                }
             }
-        }
-        for(Point& p1 : path.points)
-        {
-            double length = vSizeMM(p0 - p1);
-            if (is_extrusion_path)
+            for(Point& p1 : path.points)
             {
-                material_estimate += length * INT2MM(layer_thickness) * INT2MM(path.config->getLineWidth());
+                double length = vSizeMM(p0 - p1);
+                if (is_extrusion_path)
+                {
+                    material_estimate += length * INT2MM(layer_thickness) * INT2MM(path.config->getLineWidth());
+                }
+                double thisTime = length / path.config->getSpeed();
+                *path_time_estimate += thisTime;
+                p0 = p1;
             }
-            double thisTime = length / path.config->getSpeed();
-            *path_time_estimate += thisTime;
-            p0 = p1;
-        }
         estimates += path.estimates;
-    }
+            }
     return estimates;
-}
+        }
 
 void ExtruderPlan::processFanSpeedAndMinimalLayerTime(bool force_minimal_layer_time)
 {
@@ -562,7 +562,7 @@ void ExtruderPlan::processFanSpeedAndMinimalLayerTime(bool force_minimal_layer_t
     totalPrintTime = estimates.getTotalTime();
     if (force_minimal_layer_time)
     {
-        forceMinimalLayerTime(fsml.cool_min_layer_time, fsml.cool_min_speed, estimates.getTravelTime(), estimates.getExtrudeTime());
+    forceMinimalLayerTime(fsml.cool_min_layer_time, fsml.cool_min_speed, estimates.getTravelTime(), estimates.getExtrudeTime());
     }
 
     /*
@@ -587,7 +587,7 @@ void ExtruderPlan::processFanSpeedAndMinimalLayerTime(bool force_minimal_layer_t
         fan_speed = fsml.cool_fan_speed_max;
     }
     else if (force_minimal_layer_time && totalLayerTime < fsml.cool_min_layer_time_fan_speed_max)
-    { 
+    {
         // when forceMinimalLayerTime didn't change the extrusionSpeedFactor, we adjust the fan speed
         double fan_speed_diff = fsml.cool_fan_speed_max - fsml.cool_fan_speed_min;
         double layer_time_diff = fsml.cool_min_layer_time_fan_speed_max - fsml.cool_min_layer_time;
@@ -597,16 +597,16 @@ void ExtruderPlan::processFanSpeedAndMinimalLayerTime(bool force_minimal_layer_t
     /*
     Supposing no influence of minimal layer time; i.e. layer time > min layer time fan speed min:
 
-              max..   fan 'full' on layer
-                   |  :
-                   |  :
-      ^       min..|..:________________
-     fan           |  /
-    speed          | /
+           max..   fan 'full' on layer
+                |  :
+                |  :
+      ^    min..|..:________________
+     fan        |  /
+    speed       | /
           speed_0..|/
                    |
                    |__________________
-                     layer nr >
+                  layer nr >
 
     */
     if (layer_nr < fsml.cool_fan_full_layer)
@@ -641,11 +641,11 @@ void GCodePlanner::processFanSpeedAndMinimalLayerTime()
 void GCodePlanner::writeGCode(GCodeExport& gcode)
 {
     completeConfigs();
-    
+
     CommandSocket::setLayerForSend(layer_nr);
     CommandSocket::setSendCurrentPosition( gcode.getPositionXY() );
     gcode.setLayerNr(layer_nr);
-    
+
     gcode.writeLayerComment(layer_nr);
 
     if (layer_nr == 1 - Raft::getTotalExtraLayers(storage))
@@ -655,8 +655,8 @@ void GCodePlanner::writeGCode(GCodeExport& gcode)
     }
 
     gcode.setZ(z);
-    
-    
+
+
     GCodePathConfig* last_extrusion_config = nullptr; // used to check whether we need to insert a TYPE comment in the gcode.
 
     int extruder = gcode.getExtruderNr();
@@ -678,7 +678,7 @@ void GCodePlanner::writeGCode(GCodeExport& gcode)
             if (train->getSettingInMillimetersPerSecond("max_feedrate_z_override") > 0)
             {
                 gcode.writeMaxZFeedrate(train->getSettingInMillimetersPerSecond("max_feedrate_z_override"));
-            }
+        }
 
             { // require printing temperature to be met
                 constexpr bool wait = true;
@@ -697,9 +697,9 @@ void GCodePlanner::writeGCode(GCodeExport& gcode)
                 if (prev_layer_nr == storage.max_print_height_per_extruder[prev_extruder])
                 {
                     prev_extruder_temp = 0; // TODO ? should there be a setting for extruder_off_temperature ?
-                }
-                gcode.writeTemperatureCommand(prev_extruder, prev_extruder_temp, wait);
             }
+                gcode.writeTemperatureCommand(prev_extruder, prev_extruder_temp, wait);
+        }
         }
         else if (extruder_plan_idx == 0 && layer_nr != 0 && storage.meshgroup->getExtruderTrain(extruder)->getSettingBoolean("retract_at_layer_change"))
         {
@@ -708,8 +708,8 @@ void GCodePlanner::writeGCode(GCodeExport& gcode)
         gcode.writeFanCommand(extruder_plan.getFanSpeed());
         std::vector<GCodePath>& paths = extruder_plan.paths;
 
-        extruder_plan.inserts.sort([](const NozzleTempInsert& a, const NozzleTempInsert& b) -> bool { 
-                return  a.path_idx < b.path_idx; 
+        extruder_plan.inserts.sort([](const NozzleTempInsert& a, const NozzleTempInsert& b) -> bool {
+                return  a.path_idx < b.path_idx;
             } );
 
         const ExtruderTrain* train = storage.meshgroup->getExtruderTrain(extruder);
@@ -724,7 +724,7 @@ void GCodePlanner::writeGCode(GCodeExport& gcode)
         for(unsigned int path_idx = 0; path_idx < paths.size(); path_idx++)
         {
             extruder_plan.handleInserts(path_idx, gcode);
-            
+
             GCodePath& path = paths[path_idx];
 
             if (acceleration_enabled)
@@ -742,11 +742,11 @@ void GCodePlanner::writeGCode(GCodeExport& gcode)
                 if (path.perform_z_hop)
                 {
                     gcode.writeZhopStart(retraction_config.zHop);
-                }
+            }
                 else
                 {
                     gcode.writeZhopEnd();
-                }
+            }
             }
             if (!path.config->isTravelPath() && last_extrusion_config != path.config)
             {
@@ -781,12 +781,12 @@ void GCodePlanner::writeGCode(GCodeExport& gcode)
                 }
                 continue;
             }
-            
+
             bool spiralize = path.spiralize;
             if (!spiralize) // normal (extrusion) move (with coasting
             {
                 CoastingConfig& coasting_config = storage.coasting_config[extruder];
-                bool coasting = coasting_config.coasting_enable; 
+                bool coasting = coasting_config.coasting_enable;
                 if (coasting)
                 {
                     coasting = writePathWithCoasting(gcode, extruder_plan_idx, path_idx, layer_thickness, coasting_config.coasting_volume, coasting_config.coasting_speed, coasting_config.coasting_min_volume);
@@ -808,7 +808,7 @@ void GCodePlanner::writeGCode(GCodeExport& gcode)
                         gcode.writeMove(paths[path_idx+2].points.back(), speed, paths[path_idx+1].getExtrusionMM3perMM());
                         path_idx += 2;
                     }
-                    else 
+                    else
                     {
                         for(unsigned int point_idx = 0; point_idx < path.points.size(); point_idx++)
                         {
@@ -865,7 +865,7 @@ void GCodePlanner::writeGCode(GCodeExport& gcode)
                 gcode.writeMove(gcode.getPositionXY(), storage.travel_config_per_extruder[extruder].getSpeed(), 0);
                 // TODO: is this safe?! wouldn't the head move into the sides then?!
                 gcode.writeMove(gcode.getPositionXY() - Point(-MM2INT(20.0), 0), storage.travel_config_per_extruder[extruder].getSpeed(), 0);
-            }
+        }
             gcode.writeDelay(extruder_plan.extraTime);
         }
 
@@ -873,22 +873,22 @@ void GCodePlanner::writeGCode(GCodeExport& gcode)
     } // extruder plans /\  .
     
     gcode.updateTotalPrintTime();
-}
+    }
 
 void GCodePlanner::overrideFanSpeeds(double speed)
-{
-    for (ExtruderPlan& extruder_plan : extruder_plans)
     {
+    for (ExtruderPlan& extruder_plan : extruder_plans)
+        {
         extruder_plan.setFanSpeed(speed);
+        }
     }
-}
 
 
 void GCodePlanner::completeConfigs()
 {
     storage.support_config.setLayerHeight(layer_thickness);
     storage.support_skin_config.setLayerHeight(layer_thickness);
-    
+
     for (SliceMeshStorage& mesh : storage.meshes)
     {
         mesh.inset0_config.setLayerHeight(layer_thickness);
@@ -900,9 +900,9 @@ void GCodePlanner::completeConfigs()
             mesh.infill_config[idx].setLayerHeight(layer_thickness);
         }
     }
-    
+
     storage.primeTower.setConfigs(storage.meshgroup, layer_thickness);
-    
+
     processInitialLayersSpeedup();
 }
 
@@ -989,39 +989,39 @@ bool GCodePlanner::makeRetractSwitchRetract(GCodeExport& gcode, unsigned int ext
     std::vector<GCodePath>& paths = extruder_plans[extruder_plan_idx].paths;
     for (unsigned int path_idx2 = path_idx + 1; path_idx2 < paths.size(); path_idx2++)
     {
-        if (paths[path_idx2].getExtrusionMM3perMM() > 0) 
+        if (paths[path_idx2].getExtrusionMM3perMM() > 0)
         {
-            return false; 
+            return false;
         }
     }
-    
+
     if (extruder_plans.size() <= extruder_plan_idx+1)
     {
         return false; // TODO: check first extruder of the next layer! (generally only on the last layer of the second extruder)
     }
-        
+
     if (extruder_plans[extruder_plan_idx + 1].extruder != extruder_plans[extruder_plan_idx].extruder)
     {
         return true;
     }
-    else 
+    else
     {
         return false;
     }
 }
-    
+
 bool GCodePlanner::writePathWithCoasting(GCodeExport& gcode, unsigned int extruder_plan_idx, unsigned int path_idx, int64_t layerThickness, double coasting_volume, double coasting_speed, double coasting_min_volume)
 {
-    if (coasting_volume <= 0) 
-    { 
-        return false; 
+    if (coasting_volume <= 0)
+    {
+        return false;
     }
     ExtruderPlan& extruder_plan = extruder_plans[extruder_plan_idx];
     std::vector<GCodePath>& paths = extruder_plan.paths;
     GCodePath& path = paths[path_idx];
     if (path_idx + 1 >= paths.size()
         ||
-        ! (!path.isTravelPath() &&  paths[path_idx + 1].config->isTravelPath()) 
+        ! (!path.isTravelPath() &&  paths[path_idx + 1].config->isTravelPath())
         ||
         path.points.size() < 2
         )
@@ -1031,25 +1031,25 @@ bool GCodePlanner::writePathWithCoasting(GCodeExport& gcode, unsigned int extrud
 
     int64_t coasting_min_dist_considered = 100; // hardcoded setting for when to not perform coasting
 
-    
+
     double extrude_speed = path.config->getSpeed() * extruder_plan.getExtrudeSpeedFactor(); // travel speed 
-    
+
     int64_t coasting_dist = MM2INT(MM2_2INT(coasting_volume) / layerThickness) / path.config->getLineWidth(); // closing brackets of MM2INT at weird places for precision issues
     int64_t coasting_min_dist = MM2INT(MM2_2INT(coasting_min_volume + coasting_volume) / layerThickness) / path.config->getLineWidth(); // closing brackets of MM2INT at weird places for precision issues
     //           /\ the minimal distance when coasting will coast the full coasting volume instead of linearly less with linearly smaller paths
-    
-    
+
+
     std::vector<int64_t> accumulated_dist_per_point; // the first accumulated dist is that of the last point! (that of the last point is always zero...)
     accumulated_dist_per_point.push_back(0);
-    
+
     int64_t accumulated_dist = 0;
-    
+
     bool length_is_less_than_min_dist = true;
-    
+
     unsigned int acc_dist_idx_gt_coast_dist = NO_INDEX; // the index of the first point with accumulated_dist more than coasting_dist (= index into accumulated_dist_per_point)
      // == the point printed BEFORE the start point for coasting
-    
-    
+
+
     Point* last = &path.points[path.points.size() - 1];
     for (unsigned int backward_point_idx = 1; backward_point_idx < path.points.size(); backward_point_idx++)
     {
@@ -1057,21 +1057,21 @@ bool GCodePlanner::writePathWithCoasting(GCodeExport& gcode, unsigned int extrud
         int64_t dist = vSize(point - *last);
         accumulated_dist += dist;
         accumulated_dist_per_point.push_back(accumulated_dist);
-        
+
         if (acc_dist_idx_gt_coast_dist == NO_INDEX && accumulated_dist >= coasting_dist)
         {
             acc_dist_idx_gt_coast_dist = backward_point_idx; // the newly added point
         }
-        
+
         if (accumulated_dist >= coasting_min_dist)
         {
             length_is_less_than_min_dist = false;
             break;
         }
-        
+
         last = &point;
     }
-    
+
     if (accumulated_dist < coasting_min_dist_considered)
     {
         return false;
