@@ -11,6 +11,7 @@ Vcs-Browser: https://github.com/Ultimaker/CuraEngine
 
 Package: cura-engine2
 Architecture: any
+Breaks: cura-engine
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: command line slicer engine for 3d printers
  The CuraEngine is a C++ console application for 3D printing GCode generation.
