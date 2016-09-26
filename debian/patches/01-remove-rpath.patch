@@ -1,0 +1,18 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -14,8 +14,6 @@
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
+ endif()
+ 
+-set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+-
+ set(CURA_ENGINE_VERSION "master" CACHE STRING "Version name of Cura")
+ 
+ option(BUILD_TESTS OFF)
+@@ -118,4 +116,4 @@
+ # Installing CuraEngine.
+ include(GNUInstallDirs)
+ install(TARGETS CuraEngine DESTINATION ${CMAKE_INSTALL_BINDIR})
+-include(CPackConfig.cmake)
+\ No newline at end of file
++include(CPackConfig.cmake)
