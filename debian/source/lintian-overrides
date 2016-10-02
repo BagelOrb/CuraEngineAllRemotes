@@ -1,0 +1,5 @@
+# The 'evil' JSON license does not apply here, because the affected
+# files are not distributed with CuraEngine.
+# See this upstream pull request for more info:
+# https://github.com/Ultimaker/CuraEngine/pull/394
+cura-engine source: license-problem-json-evil libs/rapidjson/license.txt
