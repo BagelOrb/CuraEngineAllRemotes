@@ -5,3 +5,10 @@ Part of the dependency list is based on the work of
 Thomas Karl Pietrowski (thopiekar). You can find his
 own packaging effort here:
 https://github.com/thopiekar/Cura-packaging
+
+CuraEngine uses the rapidjson library, which normally
+includes test scripts that are covered by a problematic
+license. These test scripts were removed by the upstream
+project, so the respective clauses in the license file
+do not apply to CuraEngine.
+A Lintian override was added to reflect this.
