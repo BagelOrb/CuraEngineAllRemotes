@@ -4,8 +4,11 @@
 #include <stdio.h>
 
 #include "MeshGroup.h"
+#include "utils/gettime.h"
 #include "utils/logoutput.h"
 #include "utils/string.h"
+
+#include "settings/SettingRegistry.h" // loadExtruderJSONsettings
 
 namespace cura
 {
@@ -28,7 +31,159 @@ void* fgets_(char* ptr, size_t len, FILE* f)
     return nullptr;
 }
 
-bool loadMeshSTL_ascii(Mesh* mesh, const char* filename, FMatrix3x3& matrix)
+MeshGroup::MeshGroup(SettingsBaseVirtual* settings_base)
+: SettingsBase(settings_base)
+, extruder_count(-1)
+{}
+
+MeshGroup::~MeshGroup()
+{
+    for (unsigned int extruder = 0; extruder < MAX_EXTRUDERS; extruder++)
+    {
+        if (extruders[extruder])
+        {
+            delete extruders[extruder];
+        }
+    }
+}
+
+int MeshGroup::getExtruderCount() const
+{
+    if (extruder_count == -1)
+    {
+        extruder_count = getSettingAsCount("machine_extruder_count");
+    }
+    return extruder_count;
+}
+
+ExtruderTrain* MeshGroup::createExtruderTrain(unsigned int extruder_nr)
+{
+    if (!extruders[extruder_nr])
+    {
+        extruders[extruder_nr] = new ExtruderTrain(this, extruder_nr);
+        int err = SettingRegistry::getInstance()->loadExtruderJSONsettings(extruder_nr, extruders[extruder_nr]);
+        if (err)
+        {
+            logError("Couldn't load extruder.def.json for extruder %i\n", extruder_nr);
+            std::exit(1);
+        }
+    }
+    return extruders[extruder_nr];
+}
+
+ExtruderTrain* MeshGroup::getExtruderTrain(unsigned int extruder_nr)
+{
+    assert(extruders[extruder_nr]);
+    return extruders[extruder_nr];
+}
+
+const ExtruderTrain* MeshGroup::getExtruderTrain(unsigned int extruder_nr) const
+{
+    assert(extruders[extruder_nr]);
+    return extruders[extruder_nr];
+}
+
+Point3 MeshGroup::min() const
+{
+    if (meshes.size() < 1)
+    {
+        return Point3(0, 0, 0);
+    }
+    Point3 ret = meshes[0].min();
+    for(unsigned int i=1; i<meshes.size(); i++)
+    {
+        Point3 v = meshes[i].min();
+        ret.x = std::min(ret.x, v.x);
+        ret.y = std::min(ret.y, v.y);
+        ret.z = std::min(ret.z, v.z);
+    }
+    return ret;
+}
+
+Point3 MeshGroup::max() const
+{
+    if (meshes.size() < 1)
+    {
+        return Point3(0, 0, 0);
+    }
+    Point3 ret = meshes[0].max();
+    for(unsigned int i=1; i<meshes.size(); i++)
+    {
+        Point3 v = meshes[i].max();
+        ret.x = std::max(ret.x, v.x);
+        ret.y = std::max(ret.y, v.y);
+        ret.z = std::max(ret.z, v.z);
+    }
+    return ret;
+}
+
+void MeshGroup::clear()
+{
+    for(Mesh& m : meshes)
+    {
+        m.clear();
+    }
+}
+
+void MeshGroup::finalize()
+{
+    extruder_count = getSettingAsCount("machine_extruder_count");
+
+    for (int extruder_nr = 0; extruder_nr < extruder_count; extruder_nr++)
+    {
+        createExtruderTrain(extruder_nr); // create it if it didn't exist yet
+
+        if (getSettingAsIndex("adhesion_extruder_nr") == extruder_nr)
+        {
+            getExtruderTrain(extruder_nr)->setIsUsed(true);
+            continue;
+        }
+
+        for (const Mesh& mesh : meshes)
+        {
+            if (mesh.getSettingBoolean("support_enable")
+                && (
+                    getSettingAsIndex("support_infill_extruder_nr") == extruder_nr
+                    || getSettingAsIndex("support_extruder_nr_layer_0") == extruder_nr
+                    || (getSettingBoolean("support_interface_enable") && getSettingAsIndex("support_interface_extruder_nr") == extruder_nr)
+                    )
+                )
+            {
+                getExtruderTrain(extruder_nr)->setIsUsed(true);
+                break;
+            }
+        }
+    }
+
+    for (const Mesh& mesh : meshes)
+    {
+        getExtruderTrain(mesh.getSettingAsIndex("extruder_nr"))->setIsUsed(true);
+    }
+
+    //If the machine settings have been supplied, offset the given position vertices to the center of vertices (0,0,0) is at the bed center.
+    Point3 meshgroup_offset(0, 0, 0);
+    if (!getSettingBoolean("machine_center_is_zero"))
+    {
+        meshgroup_offset.x = getSettingInMicrons("machine_width") / 2;
+        meshgroup_offset.y = getSettingInMicrons("machine_depth") / 2;
+    }
+    
+    // If a mesh position was given, put the mesh at this position in 3D space. 
+    for(Mesh& mesh : meshes)
+    {
+        Point3 mesh_offset(mesh.getSettingInMicrons("mesh_position_x"), mesh.getSettingInMicrons("mesh_position_y"), mesh.getSettingInMicrons("mesh_position_z"));
+        if (mesh.getSettingBoolean("center_object"))
+        {
+            Point3 object_min = mesh.min();
+            Point3 object_max = mesh.max();
+            Point3 object_size = object_max - object_min;
+            mesh_offset += Point3(-object_min.x - object_size.x / 2, -object_min.y - object_size.y / 2, -object_min.z);
+        }
+        mesh.offset(mesh_offset + meshgroup_offset);
+    }
+}
+
+bool loadMeshSTL_ascii(Mesh* mesh, const char* filename, const FMatrix3x3& matrix)
 {
     FILE* f = fopen(filename, "rt");
     char buffer[1024];
@@ -61,7 +216,7 @@ bool loadMeshSTL_ascii(Mesh* mesh, const char* filename, FMatrix3x3& matrix)
     return true;
 }
 
-bool loadMeshSTL_binary(Mesh* mesh, const char* filename, FMatrix3x3& matrix)
+bool loadMeshSTL_binary(Mesh* mesh, const char* filename, const FMatrix3x3& matrix)
 {
     FILE* f = fopen(filename, "rb");
 
@@ -114,7 +269,7 @@ bool loadMeshSTL_binary(Mesh* mesh, const char* filename, FMatrix3x3& matrix)
     return true;
 }
 
-bool loadMeshSTL(Mesh* mesh, const char* filename, FMatrix3x3& matrix)
+bool loadMeshSTL(Mesh* mesh, const char* filename, const FMatrix3x3& matrix)
 {
     FILE* f = fopen(filename, "r");
     if (f == nullptr)
@@ -168,8 +323,10 @@ bool loadMeshSTL(Mesh* mesh, const char* filename, FMatrix3x3& matrix)
     return loadMeshSTL_binary(mesh, filename, matrix);
 }
 
-bool loadMeshIntoMeshGroup(MeshGroup* meshgroup, const char* filename, FMatrix3x3& transformation, SettingsBaseVirtual* object_parent_settings)
+bool loadMeshIntoMeshGroup(MeshGroup* meshgroup, const char* filename, const FMatrix3x3& transformation, SettingsBaseVirtual* object_parent_settings)
 {
+    TimeKeeper load_timer;
+
     const char* ext = strrchr(filename, '.');
     if (ext && (strcmp(ext, ".stl") == 0 || strcmp(ext, ".STL") == 0))
     {
@@ -177,6 +334,7 @@ bool loadMeshIntoMeshGroup(MeshGroup* meshgroup, const char* filename, FMatrix3x
         if(loadMeshSTL(&mesh,filename,transformation)) //Load it! If successful...
         {
             meshgroup->meshes.push_back(mesh);
+            log("loading '%s' took %.3f seconds\n",filename,load_timer.restart());
             return true;
         }
     }

@@ -75,14 +75,14 @@ public:
     }
 
 
-    int32_t max()
+    int32_t max() const
     {
         if (x > y && x > z) return x;
         if (y > z) return y;
         return z;
     }
 
-    bool testLength(int32_t len)
+    bool testLength(int32_t len) const
     {
         if (x > len || x < -len)
             return false;
@@ -119,7 +119,7 @@ public:
             x*p.y-y*p.x);
     }
 
-    int64_t dot(const Point3& p)
+    int64_t dot(const Point3& p) const
     {
         return x*p.x + y*p.y + z*p.z;
     }
@@ -135,6 +135,8 @@ inline Point3 operator*(const int32_t i, const Point3& rhs) {
 inline Point3 operator*(const double d, const Point3& rhs) {
     return rhs * d;
 }
+
+using coord_t = ClipperLib::cInt;
 
 /* 64bit Points are used mostly troughout the code, these are the 2D points from ClipperLib */
 typedef ClipperLib::IntPoint Point;
@@ -153,13 +155,15 @@ static Point no_point(std::numeric_limits<int32_t>::infinity(), std::numeric_lim
 INLINE Point operator-(const Point& p0) { return Point(-p0.X, -p0.Y); }
 INLINE Point operator+(const Point& p0, const Point& p1) { return Point(p0.X+p1.X, p0.Y+p1.Y); }
 INLINE Point operator-(const Point& p0, const Point& p1) { return Point(p0.X-p1.X, p0.Y-p1.Y); }
-INLINE Point operator*(const Point& p0, const int32_t i) { return Point(p0.X*i, p0.Y*i); }
-INLINE Point operator*(const int32_t i, const Point& p0) { return p0 * i; }
+template<typename T> INLINE Point operator*(const Point& p0, const T i) { return Point(p0.X * i, p0.Y * i); }
+template<typename T> INLINE Point operator*(const T i, const Point& p0) { return p0 * i; }
 INLINE Point operator/(const Point& p0, const int32_t i) { return Point(p0.X/i, p0.Y/i); }
 INLINE Point operator/(const Point& p0, const Point& p1) { return Point(p0.X/p1.X, p0.Y/p1.Y); }
 
 INLINE Point& operator += (Point& p0, const Point& p1) { p0.X += p1.X; p0.Y += p1.Y; return p0; }
 INLINE Point& operator -= (Point& p0, const Point& p1) { p0.X -= p1.X; p0.Y -= p1.Y; return p0; }
+template<typename T> INLINE Point& operator *= (Point& p0, const T i) { p0.X *= i; p0.Y *= i; return p0; }
+template<typename T> INLINE Point& operator /= (Point& p0, const T i) { p0.X /= i; p0.Y /= i; return p0; }
 
 //INLINE bool operator==(const Point& p0, const Point& p1) { return p0.X==p1.X&&p0.Y==p1.Y; }
 //INLINE bool operator!=(const Point& p0, const Point& p1) { return p0.X!=p1.X||p0.Y!=p1.Y; }

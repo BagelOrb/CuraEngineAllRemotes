@@ -8,15 +8,13 @@
 
 #include "weaveDataStorage.h"
 #include "commandSocket.h"
-#include "settings.h"
+#include "settings/settings.h"
 
 #include "MeshGroup.h"
 #include "slicer.h"
 
 #include "utils/polygon.h"
 #include "Weaver.h"
-
-#include "debug.h"
 
 namespace cura
 {
@@ -33,11 +31,11 @@ private:
     
     int initial_layer_thickness;
     int filament_diameter;
-    int extrusionWidth;
+    int line_width;
     double flowConnection;
     double flowFlat; 
-    double extrusion_per_mm_connection; 
-    double extrusion_per_mm_flat; 
+    double extrusion_mm3_per_mm_connection;
+    double extrusion_mm3_per_mm_flat;
     int nozzle_outer_diameter;
     int nozzle_head_distance;
     double nozzle_expansion_angle;

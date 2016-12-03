@@ -10,6 +10,7 @@
 # * All settings random
 
 import ast #For safe function evaluation.
+import math #For evaluating setting inheritance functions.
 import sys
 import subprocess
 import os
@@ -22,29 +23,51 @@ import threading
 from xml.etree import ElementTree
 
 
+# Mock function that occurs in fdmprinter.def.json
+# Use wrapper to provide locals
+def extruderValueWrapper(_locals):
+    def extruderValue(extruder_nr, parameter):
+        return eval(parameter, globals(), _locals)
+    return extruderValue
+
+
+# Mock function that occurs in fdmprinter.def.json
+# Use wrapper to provide locals
+def extruderValuesWrapper(_locals):
+    def extruderValues(parameter):
+        return [eval(parameter, globals(), _locals)]
+    return extruderValues
+
+
+# Mock function that occurs in fdmprinter.def.json
+# Use wrapper to provide locals
+def resolveOrValueWrapper(_locals):
+    def resolveOrValue(parameter):
+        return eval(parameter, globals(), _locals)
+    return resolveOrValue
+
+
 ## The TestSuite class stores the test results of a single set of tests.
 #  TestSuite objects are created by the TestResults class.
-class TestSuite():
+class TestSuite:
     def __init__(self, name):
         self._name = name
         self._successes = []
         self._failures = []
     
-    ## Add a successfull test result to the test suite.
+    ## Add a successful test result to the test suite.
     def success(self, class_name, test_name):
-        #print('Success:', class_name, test_name)
         self._successes.append((class_name, test_name))
 
     ## Add a failed test result to the test suite.
     def failure(self, class_name, test_name, error_message):
-        #print('Failure:', class_name, test_name, error_message)
         self._failures.append((class_name, test_name, error_message))
 
     ## Return the number of tests in this test suite
     def getTestCount(self):
         return self.getSuccessCount() + self.getFailureCount()
 
-    ## Return the number of successfull tests in this test suite
+    ## Return the number of successful tests in this test suite
     def getSuccessCount(self):
         return len(self._successes)
 
@@ -55,7 +78,7 @@ class TestSuite():
 
 ## The TestResults class stores a group of TestSuite objects, each TestSuite object contains failed and successful test.
 #  This class can output the result of the tests in a JUnit xml format for parsing in Jenkins.
-class TestResults():
+class TestResults:
     def __init__(self):
         self._testsuites = []
     
@@ -64,6 +87,12 @@ class TestResults():
         suite = TestSuite(name)
         self._testsuites.append(suite)
         return suite
+
+    def getFailureCount(self):
+        result = 0
+        for testsuite in self._testsuites:
+            result += testsuite.getFailureCount()
+        return result
 
     ## Save the test results to the file given in the filename.
     def saveXML(self, filename):
@@ -87,7 +116,7 @@ class TestResults():
         return ElementTree.ElementTree(xml).write(filename, "utf-8", True)
 
 
-class Setting():
+class Setting:
     ##  Creates a new setting from a JSON node.
     #
     #   Some parts of the setting may have to be evaluated as functions. For
@@ -100,12 +129,15 @@ class Setting():
     #   \param locals The local variables for eventual function evaluation.
     def __init__(self, key, data, locals):
         self._key = key
-        self._default = data["default"]
+        if "value" in data: #Evaluate "value" if we can, otherwise just take default_value.
+            self._default = self._evaluateFunction(data.get("value", "0"), locals)
+        else:
+            self._default = data.get("default_value", 0)
         self._type = data["type"]
-        self._min_value = self._evaluateFunction(data.get("min_value", None), locals)
-        self._max_value = self._evaluateFunction(data.get("max_value", None), locals)
-        self._min_value_warning = self._evaluateFunction(data.get("min_value_warning", None), locals)
-        self._max_value_warning = self._evaluateFunction(data.get("max_value_warning", None), locals)
+        self._min_value = self._evaluateFunction(data.get("minimum_value", None), locals)
+        self._max_value = self._evaluateFunction(data.get("maximum_value", None), locals)
+        self._min_value_warning = self._evaluateFunction(data.get("minimum_value_warning", None), locals)
+        self._max_value_warning = self._evaluateFunction(data.get("maximum_value_warning", None), locals)
         self._options = data.get("options", None)
         if self._options is not None:
             self._options = list(self._options.keys())
@@ -121,7 +153,7 @@ class Setting():
     #  For enums and booleans it will contain the exact possible values.
     #  For string settings only the default value is returned.
     def getSettingValues(self):
-        if self._type == "boolean":
+        if self._type == "bool":
             return ["True", "False"]
         if self._type == "float" or self._type == "int":
             ret = [self._default]
@@ -152,8 +184,14 @@ class Setting():
             return ret
         if self._type == "enum":
             return self._options
-        if self._type == "string":
-            return self._default
+        if self._type == "str":
+            return [self._default]
+        if self._type == "extruder":
+            return [self._default] # TODO: also allow for other values below machine_extruder_count
+        if self._type == "polygon":
+            return [self._default]
+        if self._type == "polygons":
+            return [self._default]
         print("Unknown setting type:", self._type)
 
     ## Return a random value for this setting. The returned value will be a valid value according to the settings json file.
@@ -192,6 +230,7 @@ class Setting():
     def _evaluateFunction(self, code, locals):
         if not code: #The input was None. This setting value doesn't exist in the JSON.
             return None
+
         try:
             tree = ast.parse(code, "eval")
             compiled = compile(code, self._key, "eval")
@@ -204,12 +243,13 @@ class Setting():
 
         return eval(compiled, globals(), locals)
 
-class EngineTest():
+class EngineTest:
     def __init__(self, json_filename, engine_filename, models):
         self._json_filename = json_filename
         self._json = json.load(open(json_filename, "r"))
         self._locals = {}
         self._addAllLocals() #Fills the _locals dictionary.
+        self._addLocalsFunctions()  # Add mock functions used in fdmprinter
         self._engine = engine_filename
         self._models = models
         self._settings = {}
@@ -218,12 +258,13 @@ class EngineTest():
         self._flattenAllSettings()
 
     def _flattenAllSettings(self):
-        for key, data in self._json["categories"].items():
-            self._flattenSettings(data["settings"])
+        for key, data in self._json["settings"].items(): # top level settings are categories
+            self._flattenSettings(data["children"]) # actual settings are children of top level category-settings
     
     def _flattenSettings(self, settings):
             for key, setting in settings.items():
-                self._settings[key] = Setting(key, setting, self._locals)
+                if not ("type" in setting and setting["type"] == "category"):
+                    self._settings[key] = Setting(key, setting, self._locals)
                 if "children" in setting:
                     self._flattenSettings(setting["children"])
 
@@ -280,8 +321,10 @@ class EngineTest():
         p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         p.error = ""
         t = threading.Thread(target=self._abortProcess, args=(p,))
+        p.aborting = False
         t.start()
         stdout, stderr = p.communicate()
+        p.aborting = True
         if p.error == "Timeout":
             return "Timeout: %s" % (' '.join(cmd))
         if p.wait() != 0:
@@ -289,7 +332,10 @@ class EngineTest():
         return None
     
     def _abortProcess(self, p):
-        time.sleep(60)
+        for i in range(0, 60):
+            time.sleep(1) #Check every 1000ms if we need to abort the thread.
+            if p.aborting:
+                break
         if p.poll() is None:
             p.terminate()
             p.error = "Timeout"
@@ -301,9 +347,18 @@ class EngineTest():
     #
     #   The results are stored in self._locals, keyed by the setting name.
     def _addAllLocals(self):
-        for key, data in self._json["categories"].items():
-            self._addLocals(data["settings"])
-        self._addLocals(self._json["machine_settings"])
+        for key, data in self._json["settings"].items(): # top level categories
+            self._addLocals(data["children"]) # the actual settings in each category
+
+    def _addLocalsFunctions(self):
+        extruderValue = extruderValueWrapper(self._locals)
+        self._locals['extruderValue'] = extruderValue
+
+        extruderValues = extruderValuesWrapper(self._locals)
+        self._locals['extruderValues'] = extruderValues
+
+        resolveOrValue = resolveOrValueWrapper(self._locals)
+        self._locals['resolveOrValue'] = resolveOrValue
 
     ##  Adds the default values in a node of the setting tree to the locals.
     #
@@ -312,7 +367,8 @@ class EngineTest():
     #   \param settings The JSON node of which to add the default values.
     def _addLocals(self, settings):
         for key, setting in settings.items():
-            self._locals[key] = setting["default"]
+            if not ("type" in setting and setting["type"] == "category"): # skip category-settings
+                self._locals[key] = setting["default_value"]
             if "children" in setting:
                 self._addLocals(setting["children"]) #Recursively go down the tree.
 
@@ -330,9 +386,9 @@ def main(engine, model_path):
             sys.exit(1)
         else:
             print("Slicing took: %f" % (time.time() - t))
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="CuraEngine testing script")
+    parser.add_argument("--simple", action="store_true", help="Only run the single test, exit")
     parser.add_argument("json", type=str, help="Machine JSON file to use")
     parser.add_argument("engine", type=str, help="Engine executable")
     parser.add_argument("models", type=str, nargs="+", help="List of models to use for testing")
@@ -340,10 +396,13 @@ if __name__ == "__main__":
 
     et = EngineTest(args.json, args.engine, args.models)
     if et.testDefaults() == 0:
-        et.testSingleChanges()
-        if et.testSingleRandom() == 0:
-            et.testDualRandom()
-        if et.testAllRandom(10) == 0:
-            et.testAllRandom(100)
+        if not args.simple:
+            et.testSingleChanges()
+            if et.testSingleRandom() == 0:
+                et.testDualRandom()
+            if et.testAllRandom(10) == 0:
+                et.testAllRandom(100)
     et.getResults().saveXML("output.xml")
-
+    if args.simple:
+        if et.getResults().getFailureCount() > 0:
+            sys.exit(1)
