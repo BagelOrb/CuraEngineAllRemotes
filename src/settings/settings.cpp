@@ -35,7 +35,7 @@ std::string toString(EGCodeFlavor flavor)
             return "Griffin";
         case EGCodeFlavor::REPETIER:
             return "Repetier";
-        case EGCodeFlavor::G2CORE_PRE:
+        case EGCodeFlavor::G2CORE_0_9:
             return "G2CorePre";
         case EGCodeFlavor::REPRAP:
         default:
@@ -341,8 +341,8 @@ EGCodeFlavor SettingsBaseVirtual::getSettingAsGCodeFlavor(std::string key) const
         return EGCodeFlavor::REPRAP_VOLUMATRIC;
     else if (value == "Repetier")
         return EGCodeFlavor::REPETIER;
-    else if (value == "G2CorePre")
-        return EGCodeFlavor::G2CORE_PRE;
+    else if (value == "G2Core-0.9")
+        return EGCodeFlavor::G2CORE_0_9;
 
     return EGCodeFlavor::REPRAP;
 }

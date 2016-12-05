@@ -96,7 +96,7 @@ enum class EGCodeFlavor
  *  Retraction is done using G0, not G1.
  *  All non-Motion controls (temperature, fans, etc) are done using M100 or M101 and JSON commands.
  **/
-    G2CORE_PRE = 8,
+    G2CORE_0_9 = 8,
 };
 
 /*!
@@ -210,7 +210,7 @@ public:
     /*!
      * Set the parent settings base for inheriting a setting to a specific setting base.
      * This overrides the use of \ref SettingsBaseVirtual::parent.
-     * 
+     *
      * \param key The setting for which to override the inheritance
      * \param parent The setting base from which to obtain the setting instead.
      */

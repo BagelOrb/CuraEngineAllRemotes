@@ -241,7 +241,7 @@ Point GCodeExport::getGcodePos(const int64_t x, const int64_t y, const int extru
 void GCodeExport::setFlavor(EGCodeFlavor flavor)
 {
     this->flavor = flavor;
-    if (flavor == EGCodeFlavor::MACH3 || flavor == EGCodeFlavor::G2CORE_PRE) {
+    if (flavor == EGCodeFlavor::MACH3 || flavor == EGCodeFlavor::G2CORE_0_9) {
         for(int n=0; n<MAX_EXTRUDERS; n++) {
             extruder_attr[n].extruderCharacter = 'A' + n;
         }
@@ -579,7 +579,7 @@ void GCodeExport::writeMove(int x, int y, int z, double speed, double extrusion_
         Point3 diff = Point3(x,y,z) - getPosition();
         if (isZHopped > 0)
         {
-            if (flavor == EGCodeFlavor::G2CORE_PRE) {
+            if (flavor == EGCodeFlavor::G2CORE_0_9) {
                 // Use G0 to hop as fast as possible.
                 // Shouldn't all flavors use G0 here?
                 *output_stream << "G0 Z";
@@ -607,7 +607,7 @@ void GCodeExport::writeMove(int x, int y, int z, double speed, double extrusion_
             else
             {
                 current_e_value += extruder_attr[current_extruder].retraction_e_amount_current;
-                if (flavor == EGCodeFlavor::G2CORE_PRE) {
+                if (flavor == EGCodeFlavor::G2CORE_0_9) {
                     // G2Core uses G0 instead of G1, so a special filament jerk can be used
                     // TODO: Fix the speed for estimating this move.
                     using_g0 = true;
@@ -730,7 +730,7 @@ void GCodeExport::writeRetraction(RetractionConfig* config, bool force, bool ext
     {
         double speed = ((retraction_diff_e_amount < 0.0)? config->speed : extr_attr.last_retraction_prime_speed) * 60;
         current_e_value += retraction_diff_e_amount;
-        if (flavor == EGCodeFlavor::G2CORE_PRE) {
+        if (flavor == EGCodeFlavor::G2CORE_0_9) {
             // G2Core uses G0 instead of G1, so a special filament jerk can be used
             // TODO: Fix the speed for estimating this move.
             *output_stream << "G0 " << extr_attr.extruderCharacter << PrecisionedDouble{5, current_e_value} << new_line;
@@ -849,7 +849,7 @@ void GCodeExport::writeFanCommand(double speed)
     if (currentFanSpeed == speed)
         return;
 
-    if (flavor == EGCodeFlavor::G2CORE_PRE) {
+    if (flavor == EGCodeFlavor::G2CORE_0_9) {
         // G2Core uses the same command to stop as to start the fan - seting output 4
         *output_stream << "M100 ({out4:" << PrecisionedDouble{1, (speed/100)} << "})" << new_line;
     }
@@ -884,7 +884,7 @@ void GCodeExport::writeTemperatureCommand(int extruder, double temperature, bool
         return;
     }
 
-	if (flavor == EGCodeFlavor::G2CORE_PRE) {
+	if (flavor == EGCodeFlavor::G2CORE_0_9) {
         *output_stream << "M100 ({\"he" << (extruder+1) << "st\":" << PrecisionedDouble{1, temperature} << "})" << new_line;
 
         if (wait) {
@@ -913,7 +913,7 @@ void GCodeExport::writeBedTemperatureCommand(double temperature, bool wait)
         return;
     }
 
-    if (flavor == EGCodeFlavor::G2CORE_PRE) {
+    if (flavor == EGCodeFlavor::G2CORE_0_9) {
         *output_stream << "M100 ({\"he3st\":" << PrecisionedDouble{1, temperature} << "})" << new_line;
 
         if (wait) {
@@ -930,7 +930,7 @@ void GCodeExport::writeBedTemperatureCommand(double temperature, bool wait)
 
 void GCodeExport::writeAcceleration(double acceleration)
 {
-	if (flavor == EGCodeFlavor::G2CORE_PRE) {
+	if (flavor == EGCodeFlavor::G2CORE_0_9) {
 		return;
 	}
 	if (current_acceleration != acceleration)
@@ -943,7 +943,7 @@ void GCodeExport::writeAcceleration(double acceleration)
 
 void GCodeExport::writeJerk(double jerk)
 {
-	if (flavor == EGCodeFlavor::G2CORE_PRE) {
+	if (flavor == EGCodeFlavor::G2CORE_0_9) {
 		return;
 	}
     if (current_jerk != jerk)
