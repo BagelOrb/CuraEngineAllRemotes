@@ -36,7 +36,7 @@ std::string toString(EGCodeFlavor flavor)
         case EGCodeFlavor::REPETIER:
             return "Repetier";
         case EGCodeFlavor::G2CORE_0_9:
-            return "G2CorePre";
+            return "G2Core-0.9";
         case EGCodeFlavor::REPRAP:
         default:
             return "RepRap";
