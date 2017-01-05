@@ -193,6 +193,8 @@ public:
     int raftAirGap;
     int raftAirGapLayer0;
 
+    int stretchDistance;
+
     FMatrix3x3 matrix;
     IntPoint objectPosition;
     int objectSink;
