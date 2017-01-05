@@ -31,7 +31,8 @@ private:
     Point3 currentPosition;
     Point extruderOffset[MAX_EXTRUDERS];
     char extruderCharacter[MAX_EXTRUDERS];
-    int currentSpeed, retractionSpeed;
+    int currentSpeed = 0;
+    int retractionSpeed = 45;
     int zPos;
     bool isRetracted;
     int extruderNr;
@@ -41,7 +42,7 @@ private:
     std::string postSwitchExtruderCode;
     
     double totalFilament[MAX_EXTRUDERS];
-    double totalPrintTime;
+    double totalPrintTime = 0.0;
     TimeEstimateCalculator estimateCalculator;
 public:
     
@@ -124,14 +125,14 @@ public:
     }
 };
 
-class GCodePath
+struct GCodePath
 {
-public:
     GCodePathConfig* config;
     bool retract;
     int extruder;
     vector<Point> points;
-    bool done;//Path is finished, no more moves should be added, and a new path should be started instead of any appending done to this one.
+    //Path is finished, no more moves should be added, and a new path should be started instead of any appending done to this one.
+    bool done;
 };
 
 //The GCodePlanner class stores multiple moves that are planned.
@@ -144,17 +145,17 @@ private:
     
     Point lastPosition;
     vector<GCodePath> paths;
-    Comb* comb;
+    Comb* comb = nullptr;
     
     GCodePathConfig travelConfig;
-    int extrudeSpeedFactor;
-    int travelSpeedFactor;
+    int extrudeSpeedFactor = 100;
+    int travelSpeedFactor = 100;
     int currentExtruder;
     int retractionMinimalDistance;
-    bool forceRetraction;
-    bool alwaysRetract;
-    double extraTime;
-    double totalPrintTime;
+    bool forceRetraction = false;
+    bool alwaysRetract = false;
+    double extraTime = 0.0;
+    double totalPrintTime = 0.0;
 private:
     GCodePath* getLatestPathWithConfig(GCodePathConfig* config);
     void forceNewPathStart();

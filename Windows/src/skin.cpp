@@ -4,6 +4,7 @@
 #include "utils/remove_utils.h"
 
 #include <algorithm>
+
 namespace cura {
 
 Polygons& getSkinOutline(SliceLayerPart* part)
@@ -115,7 +116,6 @@ void generateSparse(int layerNr, SliceVolumeStorage& storage, int extrusionWidth
 
         double minAreaSize = 3.0;//(2 * M_PI * INT2MM(config.extrusionWidth) * INT2MM(config.extrusionWidth)) * 3;
         remove_if(result, removePolygon(minAreaSize));
-
         part.sparseOutline = sparse.difference(result);
     }
 }

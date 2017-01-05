@@ -65,6 +65,7 @@ void Comb::calcMinMax()
     }
 }
 
+// TODO: Check usage, is index required, or can the polygonref be returned?
 unsigned int Comb::getPolygonAbove(int64_t x)
 {
     int64_t min = POINT_MAX;
@@ -94,12 +95,12 @@ Point Comb::getBounderyPointWithOffset(unsigned int polygonNr, unsigned int idx)
 }
 
 Comb::Comb(Polygons& _boundery)
-: boundery(_boundery)
+: boundery(_boundery),
+    minX(new int64_t[boundery.size()]),
+    maxX(new int64_t[boundery.size()]),
+    minIdx(new unsigned int[boundery.size()]),
+    maxIdx(new unsigned int[boundery.size()])
 {
-    minX = new int64_t[boundery.size()];
-    maxX = new int64_t[boundery.size()];
-    minIdx = new unsigned int[boundery.size()];
-    maxIdx = new unsigned int[boundery.size()];
 }
 
 Comb::~Comb()

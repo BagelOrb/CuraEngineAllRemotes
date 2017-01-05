@@ -6,6 +6,8 @@
 #include <algorithm>
 namespace cura {
 
+#include "utils/remove_utils.h"
+
 void optimizePolygon(PolygonRef poly)
 {
     Point p0 = poly[poly.size()-1];

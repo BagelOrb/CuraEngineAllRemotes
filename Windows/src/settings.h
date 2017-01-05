@@ -9,11 +9,21 @@
 #define VERSION "DEV"
 #endif
 
-#define FIX_HORRIBLE_UNION_ALL_TYPE_A    0x01
-#define FIX_HORRIBLE_UNION_ALL_TYPE_B    0x02
-#define FIX_HORRIBLE_EXTENSIVE_STITCHING 0x04
-#define FIX_HORRIBLE_UNION_ALL_TYPE_C    0x08
-#define FIX_HORRIBLE_KEEP_NONE_CLOSED    0x10
+#ifndef DEFAULT_CONFIG_PATH
+#define DEFAULT_CONFIG_PATH "default.cfg"
+#endif
+
+#define CONFIG_MULTILINE_SEPARATOR "\"\"\""
+
+// TODO: Use multiple bools instead
+enum Fix_Horrible
+{
+    FIX_HORRIBLE_UNION_ALL_TYPE_A = 0x01,
+    FIX_HORRIBLE_UNION_ALL_TYPE_B = 0x02,
+    FIX_HORRIBLE_EXTENSIVE_STITCHING = 0x04,
+    FIX_HORRIBLE_UNION_ALL_TYPE_C = 0x08,
+    FIX_HORRIBLE_KEEP_NONE_CLOSED = 0x10
+};
 
 /**
  * Type of support material.
@@ -31,7 +41,16 @@ enum Support_Pattern
 #define DEFAULT_CONFIG_PATH "default.cfg"
 #endif
 
-#define CONFIG_MULTILINE_SEPARATOR "\"\"\""
+/**
+ * Type of infill pattern.
+ */
+enum Infill_Pattern
+{
+    INFILL_AUTOMATIC = 0,
+    INFILL_GRID = 1,
+    INFILL_LINES = 2,
+    INFILL_CONCENTRIC = 3
+};
 
 enum GCode_Flavor
 {
@@ -89,7 +108,7 @@ enum GCode_Flavor
     GCODE_FLAVOR_REPRAP_VOLUMATRIC = 5,
 };
 
-#define MAX_EXTRUDERS 16
+constexpr unsigned int MAX_EXTRUDERS = 16;
 
 /**
  * Type of infill pattern.
@@ -165,20 +184,20 @@ public:
     int infillPattern;
 
     //Support material
-    int supportType;
-    int supportAngle;
-    int supportEverywhere;
-    int supportLineDistance;
-    int supportXYDistance;
-    int supportZDistance;
-    int supportExtruder;
+    int supportType             = SUPPORT_TYPE_GRID;
+    int supportAngle            = -1;
+    int supportEverywhere       = 0;
+    int supportLineDistance     = sparseInfillLineDistance;
+    int supportXYDistance       = 700;
+    int supportZDistance        = 150;
+    int supportExtruder         = -1;
 
     //Cool settings
-    int minimalLayerTime;
-    int minimalFeedrate;
-    int coolHeadLift;
-    int fanSpeedMin;
-    int fanSpeedMax;
+    int minimalLayerTime        = 5;
+    int minimalFeedrate         = 10;
+    int coolHeadLift            = 0;
+    int fanSpeedMin             = 100;
+    int fanSpeedMax             = 100;
 
     //Raft settings
     int raftMargin;

@@ -21,8 +21,6 @@ namespace cura {
 
 fffProcessor::fffProcessor(ConfigSettings& config) : config(config)
 {
-    fileNr = 1;
-    maxObjectHeight = 0;
 }
 
 void fffProcessor::guiConnect(int portNr)
@@ -782,23 +780,33 @@ void fffProcessor::addVolumeLayerToGCode(SliceDataStorage& storage,
 
         if (config.sparseInfillLineDistance > 0)
         {
-            if (config.sparseInfillLineDistance > extrusionWidth * 4)
+            switch(config.infillPattern)
             {
-                generateLineInfill(part->sparseOutline, fillPolygons,
-                                   extrusionWidth,
-                                   config.sparseInfillLineDistance * 2,
-                                   config.infillOverlap, 45);
-                generateLineInfill(part->sparseOutline, fillPolygons,
-                                   extrusionWidth,
-                                   config.sparseInfillLineDistance * 2,
-                                   config.infillOverlap, 45 + 90);
-            }
-            else
-            {
-                generateLineInfill(part->sparseOutline, fillPolygons,
-                                   extrusionWidth,
-                                   config.sparseInfillLineDistance,
-                                   config.infillOverlap, fillAngle);
+                case INFILL_AUTOMATIC:
+                    generateAutomaticInfill(part->sparseOutline, fillPolygons,
+                                            extrusionWidth,
+                                            config.sparseInfillLineDistance,
+                                            config.infillOverlap, fillAngle);
+                    break;
+
+                case INFILL_GRID:
+                    generateGridInfill(part->sparseOutline, fillPolygons,
+                                       extrusionWidth,
+                                       config.sparseInfillLineDistance,
+                                       config.infillOverlap, fillAngle);
+                    break;
+                    
+                case INFILL_LINES:
+                    generateLineInfill(part->sparseOutline, fillPolygons,
+                                       extrusionWidth,
+                                       config.sparseInfillLineDistance,
+                                       config.infillOverlap, fillAngle);
+                    break;
+                    
+                case INFILL_CONCENTRIC:
+                    generateConcentricInfill(part->sparseOutline, fillPolygons,
+                            config.sparseInfillLineDistance);
+                    break;
             }
         }
 
@@ -810,7 +818,7 @@ void fffProcessor::addVolumeLayerToGCode(SliceDataStorage& storage,
         if (!config.spiralizeMode || static_cast<int>(layerNr) < config.downSkinCount)
             gcodeLayer.moveInsideCombBoundary(config.extrusionWidth * 2);
     }
-    gcodeLayer.setCombBoundary(NULL);
+    gcodeLayer.setCombBoundary(nullptr);
 }
 
 void fffProcessor::addSupportToGCode(SliceDataStorage& storage, GCodePlanner& gcodeLayer,
@@ -905,7 +913,7 @@ void fffProcessor::addSupportToGCode(SliceDataStorage& storage, GCodePlanner& gc
         if (config.supportType == SUPPORT_TYPE_GRID)
             gcodeLayer.addPolygonsByOptimizer(island, &supportConfig);
         gcodeLayer.addPolygonsByOptimizer(supportLines, &supportConfig);
-        gcodeLayer.setCombBoundary(NULL);
+        gcodeLayer.setCombBoundary(nullptr);
     }
 }
 

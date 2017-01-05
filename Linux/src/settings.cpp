@@ -10,8 +10,9 @@
 #define RTRIM_STRING(s) do { while(((s).length() > 0) && isspace((s)[(s).length() - 1])) { (s).erase((s).length() - 1); } } while(0)
 #define TRIM_STRING(s) do { LTRIM_STRING(s); RTRIM_STRING(s); } while(0)
 #define STRINGIFY(_s) #_s
-#define SETTING(name, default) do { _index.push_back(_ConfigSettingIndex(STRINGIFY(name), &name)); name = (default); } while(0)
-#define SETTING2(name, altname, default) do { _index.push_back(_ConfigSettingIndex(STRINGIFY(name), &name)); _index.push_back(_ConfigSettingIndex(STRINGIFY(altname), &name)); name = (default); } while(0)
+#define SETTING(name) do { _index.push_back(_ConfigSettingIndex(STRINGIFY(name), &name)); } while(0)
+#define SETTING_VAL(name, default) do { _index.push_back(_ConfigSettingIndex(STRINGIFY(name), &name)); name = default; } while(0)
+#define SETTING2(name, altname) do { _index.push_back(_ConfigSettingIndex(STRINGIFY(name), &name)); _index.push_back(_ConfigSettingIndex(STRINGIFY(altname), &name)); } while(0)
 
 ConfigSettings::ConfigSettings()
 {

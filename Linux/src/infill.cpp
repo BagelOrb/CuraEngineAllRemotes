@@ -51,6 +51,32 @@ int compare_int64_t(const void* a, const void* b)
     return 0;
 }
 
+void generateAutomaticInfill(const Polygons& in_outline, Polygons& result,
+                             int extrusionWidth, int lineSpacing,
+                             int infillOverlap, double rotation)
+{
+    if (lineSpacing > extrusionWidth * 4)
+    {
+        generateGridInfill(in_outline, result, extrusionWidth, lineSpacing,
+                           infillOverlap, rotation);
+    }
+    else
+    {
+        generateLineInfill(in_outline, result, extrusionWidth, lineSpacing,
+                           infillOverlap, rotation);
+    }
+}
+
+void generateGridInfill(const Polygons& in_outline, Polygons& result,
+                        int extrusionWidth, int lineSpacing, int infillOverlap,
+                        double rotation)
+{
+    generateLineInfill(in_outline, result, extrusionWidth, lineSpacing * 2,
+                       infillOverlap, rotation);
+    generateLineInfill(in_outline, result, extrusionWidth, lineSpacing * 2,
+                       infillOverlap, rotation + 90);
+}
+
 void generateLineInfill(const Polygons& in_outline, Polygons& result, int extrusionWidth, int lineSpacing, int infillOverlap, double rotation)
 {
     Polygons outline = in_outline.offset(extrusionWidth * infillOverlap / 100);
@@ -102,7 +128,7 @@ void generateLineInfill(const Polygons& in_outline, Polygons& result, int extrus
             break;
     
         std::sort(std::begin(list), std::end(list));
-       for(unsigned int i = 0; i + 1 < list.size(); i+=2)
+        for(unsigned int i = 0; i + 1 < list.size(); i+=2)
         {
             if (list[i+1] - list[i] < extrusionWidth / 5)
                 continue;
