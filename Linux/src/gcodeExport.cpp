@@ -31,6 +31,8 @@ GCodeExport::GCodeExport()
     setFlavor(GCODE_FLAVOR_REPRAP);
     memset(extruderOffset, 0, sizeof(extruderOffset));
     f = stdout;
+
+    firstLineSection = 0.0;
 }
 
 GCodeExport::~GCodeExport()
@@ -115,6 +117,15 @@ void GCodeExport::setRetractionSettings(int retractionAmount, int retractionSpee
 void GCodeExport::setZ(int z)
 {
     this->zPos = z;
+}
+
+void GCodeExport::setFirstLineSection(int initialLayerThickness, int filamentDiameter, int filamentFlow, int layer0extrusionWidth)
+{
+	double _filamentArea = M_PI * (INT2MM(filamentDiameter) / 2.0) * (INT2MM(filamentDiameter) / 2.0);
+	if (flavor == GCODE_FLAVOR_ULTIGCODE || flavor == GCODE_FLAVOR_REPRAP_VOLUMATRIC)//UltiGCode uses volume extrusion as E value, and thus does not need the filamentArea in the mix.
+		this->firstLineSection = INT2MM(initialLayerThickness) * INT2MM(layer0extrusionWidth);
+	else
+		this->firstLineSection = INT2MM(initialLayerThickness) / _filamentArea * double(filamentFlow) / 100.0 * INT2MM(layer0extrusionWidth);
 }
 
 Point GCodeExport::getPositionXY()
@@ -264,7 +275,37 @@ void GCodeExport::writeMove(Point p, int speed, int lineWidth)
             fprintf(f, " Z%0.2f", INT2MM(zPos));
         if (lineWidth != 0)
             fprintf(f, " %c%0.5f", extruderCharacter[extruderNr], extrusionAmount);
+
+		#if EN_FIRSTLINE == 1
+        static int firstline = 0;
+        if(firstline == 0)
+        {
+        	double x = INT2MM(p.X - extruderOffset[extruderNr].X);
+        	double y = INT2MM(p.Y - extruderOffset[extruderNr].Y);
+        	double diff = sqrt(x*x+y*y);
+        	double e = 1.5 * this->firstLineSection * diff;
+        	if(e <= 0.0)
+        	{
+        		fprintf(f, " %c%0.5f",extruderCharacter[extruderNr], 10.0);
+        	}else
+        	{
+        		fprintf(f, " %c%0.5f",extruderCharacter[extruderNr], e);
+        	}
+        	firstline = 1;
+        }
+		#endif
+		
         fprintf(f, "\n");
+
+		#if EN_FIRSTLINE == 1
+        if(firstline == 1)
+        {
+        	fprintf(f, "G92 %c0\n", extruderCharacter[extruderNr]);
+        	fprintf(f, "G92 %c0.5\n", extruderCharacter[extruderNr]);
+        	fprintf(f, "G92 %c0\n", extruderCharacter[extruderNr]);
+        	firstline = 2;
+        }
+		#endif
     }
     
     currentPosition = Point3(p.X, p.Y, zPos);
@@ -418,6 +459,7 @@ GCodePlanner::GCodePlanner(GCodeExport& gcode, int travelSpeed, int retractionMi
     alwaysRetract = false;
     currentExtruder = gcode.getExtruderNr();
     this->retractionMinimalDistance = retractionMinimalDistance;
+    layer0Retract = false;
 }
 GCodePlanner::~GCodePlanner()
 {
@@ -561,6 +603,11 @@ void GCodePlanner::forceMinimalLayerTime(double minTime, int minimalSpeed)
 
 void GCodePlanner::writeGCode(bool liftHeadIfNeeded, int layerThickness)
 {
+	writeGCode(liftHeadIfNeeded, layerThickness, -3);
+}
+
+void GCodePlanner::writeGCode(bool liftHeadIfNeeded, int layerThickness, int layerNr)
+{
     GCodePathConfig* lastConfig = nullptr;
     int extruder = gcode.getExtruderNr();
 
@@ -573,7 +620,14 @@ void GCodePlanner::writeGCode(bool liftHeadIfNeeded, int layerThickness)
             gcode.switchExtruder(extruder);
         }else if (path->retract)
         {
-            gcode.writeRetraction();
+        	if(layerNr == 0)
+        	{
+        		if(n != 0)
+        			gcode.writeRetraction();
+        	}else
+        	{
+        		gcode.writeRetraction();
+        	}
         }
         if (path->config != &travelConfig && lastConfig != path->config)
         {
@@ -654,7 +708,18 @@ void GCodePlanner::writeGCode(bool liftHeadIfNeeded, int layerThickness)
         }else{
             for(unsigned int i=0; i<path->points.size(); i++)
             {
-                gcode.writeMove(path->points[i], speed, path->config->lineWidth);
+            	if(layer0Retract)
+            	{
+            		if(i != 0 && i == path->points.size() - 1 && path->config->lineWidth != 0)
+            		{
+            			gcode.writeMove(path->points[i], speed, path->config->lineWidth);
+            			gcode.writeRetraction();
+            		}
+            		else
+            			gcode.writeMove(path->points[i], speed, path->config->lineWidth);
+            	}
+            	else
+            		gcode.writeMove(path->points[i], speed, path->config->lineWidth);
             }
         }
     }
@@ -669,6 +734,11 @@ void GCodePlanner::writeGCode(bool liftHeadIfNeeded, int layerThickness)
         gcode.writeMove(gcode.getPositionXY() - Point(-MM2INT(20.0), 0), travelConfig.speed, 0);
         gcode.writeDelay(extraTime);
     }
+}
+
+void GCodePlanner::setLayer0Retract(bool _layer0Retract)
+{
+	this->layer0Retract = _layer0Retract;
 }
 
 }//namespace cura

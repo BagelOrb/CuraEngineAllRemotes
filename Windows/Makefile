@@ -8,7 +8,7 @@ LIBS_DIR = libs
 
 BUILD_TYPE = RELEASE
 
-VERSION ?= DEV
+VERSION ?= 14.09.26
 CXX ?= g++
 CFLAGS += -c -Wall -Wextra -Wold-style-cast -Woverloaded-virtual -std=c++11 -DVERSION=\"$(VERSION)\" -isystem libs
 
@@ -39,7 +39,7 @@ ifeq ($(OS),Windows_NT)
 	#For windows make it large address aware, which allows the process to use more then 2GB of memory.
 	EXECUTABLE := $(EXECUTABLE).exe
 	CFLAGS += -march=pentium4 -flto
-	LDFLAGS += -Wl,--large-address-aware -lm -lwsock32 -flto
+	LDFLAGS += --static -Wl,--large-address-aware -lm -lwsock32 -flto
 	MKDIR_PREFIX = mkdir -p
 else
 	MKDIR_PREFIX = mkdir -p

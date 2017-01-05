@@ -23,7 +23,8 @@
 enum Support_Pattern
 {
     SUPPORT_TYPE_GRID = 0,
-    SUPPORT_TYPE_LINES = 1
+    SUPPORT_TYPE_LINES = 1,
+    SUPPORT_TYPE_LINES_CONNECT = 2
 };
 
 #ifndef DEFAULT_CONFIG_PATH

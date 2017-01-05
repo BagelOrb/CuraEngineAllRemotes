@@ -75,6 +75,7 @@ public:
     {
         if (!gcode.isOpened())
             return false;
+        gcode.writeComment("Generated with Cura_SteamEngine %s", VERSION);
 
         TimeKeeper timeKeeperTotal;
         SliceDataStorage storage;
@@ -467,6 +468,10 @@ private:
                 gcode.setExtrusion(config.layerThickness, config.filamentDiameter, config.filamentFlow);
 
             GCodePlanner gcodeLayer(gcode, config.moveSpeed, config.retractionMinimalDistance);
+            if (layerNr == 0)
+            	gcodeLayer.setLayer0Retract(true);
+            else
+            	gcodeLayer.setLayer0Retract(false);
             int32_t z = config.initialLayerThickness + layerNr * config.layerThickness;
             z += config.raftBaseThickness + config.raftInterfaceThickness + config.raftSurfaceLayers*config.raftSurfaceThickness;
             if (config.raftBaseThickness > 0 && config.raftInterfaceThickness > 0)
@@ -510,8 +515,8 @@ private:
                 fanSpeed = fanSpeed * layerNr / config.fanFullOnLayerNr;
             }
             gcode.writeFanCommand(fanSpeed);
-
-            gcodeLayer.writeGCode(config.coolHeadLift > 0, static_cast<int>(layerNr) > 0 ? config.layerThickness : config.initialLayerThickness);
+            gcode.setFirstLineSection(config.initialLayerThickness, config.filamentDiameter, config.filamentFlow, config.layer0extrusionWidth);
+            gcodeLayer.writeGCode(config.coolHeadLift > 0, static_cast<int>(layerNr) > 0 ? config.layerThickness : config.initialLayerThickness, layerNr);
         }
 
         cura::log("Wrote layers in %5.2fs.\n", timeKeeper.restart());
@@ -738,6 +743,15 @@ private:
                     break;
                 case SUPPORT_TYPE_LINES:
                     generateLineInfill(island, supportLines, config.extrusionWidth, config.supportLineDistance, config.infillOverlap, 0);
+                    break;
+                case SUPPORT_TYPE_LINES_CONNECT:
+                    if (layerNr == 0)
+                    {
+                        generateLineInfill(island, supportLines, config.extrusionWidth, config.supportLineDistance, config.infillOverlap + 150, 0);
+                        generateLineInfill(island, supportLines, config.extrusionWidth, config.supportLineDistance, config.infillOverlap + 150, 90);
+                    }else{
+                        generateLineInfill(island, supportLines, config.extrusionWidth, config.supportLineDistance, config.infillOverlap, 0, true);
+                    }
                     break;
                 }
             }
