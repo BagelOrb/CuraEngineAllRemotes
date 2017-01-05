@@ -202,9 +202,9 @@ public:
     Point getPositionXY();
 
     int getPositionZ();
-
+    int total_layers = 0;
     int getExtruderNr();
-    
+	
     void setFilamentDiameter(unsigned int n, int diameter);
     
     double getCurrentExtrudedVolume();
