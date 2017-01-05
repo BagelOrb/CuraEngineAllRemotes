@@ -628,11 +628,11 @@ void CommandSocket::sendPrintTimeMaterialEstimates()
 
 void CommandSocket::sendPrintMaterialForObject(int index, int extruder_nr, float print_time)
 {
-//     socket.sendInt32(CMD_OBJECT_PRINT_MATERIAL);
-//     socket.sendInt32(12);
-//     socket.sendInt32(index);
-//     socket.sendInt32(extruder_nr);
-//     socket.sendFloat32(print_time);
+     //socket.sendInt32(CMD_OBJECT_PRINT_MATERIAL);
+     //socket.sendInt32(12);
+     //socket.sendInt32(index);
+     //socket.sendInt32(extruder_nr);
+     //socket.sendFloat32(print_time);
 }
 
 void CommandSocket::sendLayerData()

@@ -249,6 +249,18 @@ void slice(int argc, char **argv)
                           cura::logError("@Qubick: Let's save material information.\n\nc");
                         }
                         break;
+                    case 'M': // Print Meshes Individually
+                        processor.setSetting("PrintMeshesSeperatly", "true");
+                        break;
+                    case 'S': // Print Layer Parts Individually
+                        processor.setSetting("StackLayerParts", "true");
+			            break;
+                    case 'g': // Backwards compatibitily to talk to gui
+                        commandSocket = new CommandSocket(&processor);
+                        ip = "127.0.0.1";
+                        port = std::atoi(argv[argn + 1]);
+                        argn += 1;
+                        break;
                     default:
                         cura::logError("Unknown option: %c\n", *str);
                         print_call(argc, argv);

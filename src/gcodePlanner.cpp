@@ -981,6 +981,10 @@ void GCodePlanner::processInitialLayersSpeedup()
                 mesh.infill_config[idx].setSpeedIconic();
             }
         }
+        if (skip)
+        {
+            gcode.setZPos2NextZPos ();
+        }
     }
 }
 

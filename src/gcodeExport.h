@@ -161,7 +161,7 @@ protected:
 
 public:
     
-    GCodeExport();
+    GCodeExport(); 
     ~GCodeExport();
 
     /*!

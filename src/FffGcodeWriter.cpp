@@ -1483,6 +1483,120 @@ void FffGcodeWriter::finalize()
     */
 }
 
+void FffGcodeWriter::retractHeadSaftly ()
+{
+    gcode.writeComment("RETRACTING THE HEAD");
+
+    Point p = gcode.getPositionXY();
+    Point3 first_point;
+
+    first_point.x = p.X;
+    first_point.y = p.Y;
+    first_point.z = getSettingInMicrons("machine_height");
+
+    gcode.writeMove(first_point, getSettingInMillimetersPerSecond("retraction_retract_speed"), 0);
+    gcode.writeComment("GOT TO HERE");
+}
+
+void FffGcodeWriter::stackLayerParts2 (SliceDataStorage &storage)
+{
+    for (unsigned int mesh_index=0; mesh_index < storage.meshes.size(); mesh_index++)
+    {
+        std::vector<std::vector<SliceLayer> > storageContainer;
+
+        for (std::vector<SliceLayer>::iterator layer = storage.meshes[mesh_index].layers.begin();
+             layer != storage.meshes[mesh_index].layers.end(); layer++)
+        {
+            for (std::vector<SliceLayerPart>::iterator part = layer->parts.begin();
+                part != layer->parts.end(); part++)
+            {
+                unsigned int index = part - layer->parts.begin();
+
+                if (index == storageContainer.size())
+                {
+                    storageContainer.push_back(std::vector<SliceLayer>());
+                }
+
+                SliceLayer newLayer = *layer;
+                newLayer.parts.clear();
+                newLayer.parts.push_back(*part);
+                storageContainer[index].push_back (newLayer);
+            } 
+        }
+
+        storage.meshes[mesh_index].layers.clear();
+
+        // ADD SUPPORT
+        std::vector<Polygons> supports = storage.support.supportAreasPerLayer;
+        for (unsigned int i = 1; i < storageContainer.size(); i++)
+        {
+            storage.support.supportAreasPerLayer.insert(storage.support.supportAreasPerLayer.end(),
+                                                        supports.begin(), supports.end());
+        }
+
+        for (std::vector<std::vector<SliceLayer> >::reverse_iterator stack = storageContainer.rbegin();
+            stack != storageContainer.rend(); stack++)
+        {
+            for (std::vector<SliceLayer>::iterator layer = stack->begin(); layer != stack->end(); layer++)
+            {
+                if (layer == stack->begin() && stack != storageContainer.rbegin())
+                {
+                    layer->isNewLayer = true;
+                }
+
+                storage.meshes[mesh_index].layers.push_back (*layer);
+            }
+        }
+    }
+}
+
+void FffGcodeWriter::mergeMeshes(SliceDataStorage &storage)
+{
+    unsigned int meshCount = storage.meshes.size();
+    
+    if (meshCount == 1)
+    {
+            std::cout << "WARNING: -S flag detected but only 1 model loaded" << std::endl;
+            return;
+    }
+
+    std::vector<SliceLayer> layers;
+
+    for (std::vector<SliceMeshStorage>::iterator mesh = storage.meshes.begin();
+         mesh != storage.meshes.end(); mesh++)
+    {
+        for (std::vector<SliceLayer>::iterator layer = mesh->layers.begin();
+             layer != mesh->layers.end(); layer++)
+        {
+            SliceLayer newLayer = *layer;
+        
+            if ((layer == mesh->layers.begin() && mesh != storage.meshes.begin()) || newLayer.isNewLayer)
+            {
+                newLayer.isNewLayer = true;
+            }
+            
+            layers.push_back (newLayer);
+        }
+    }
+
+    std::vector<Polygons> supports = storage.support.supportAreasPerLayer;
+
+    while (storage.meshes.size() > 1)
+    {
+        storage.meshes.pop_back();
+
+        storage.support.supportAreasPerLayer.insert(storage.support.supportAreasPerLayer.end(),
+                                                    supports.begin(), supports.end());
+    }
+
+    storage.meshes[0].layers.clear();
+
+    for (std::vector<SliceLayer>::iterator layer = layers.begin();
+         layer != layers.end(); layer++)
+    {
+        storage.meshes[0].layers.push_back (*layer);
+    }    
+}
 
 }//namespace cura
 
