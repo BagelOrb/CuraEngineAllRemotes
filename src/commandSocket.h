@@ -7,36 +7,20 @@
 #include "progress/Progress.h"
 #include "PrintFeature.h"
 
-#include <memory>
-
-#ifdef ARCUS
-#include "Cura.pb.h"
-#endif
-
 namespace cura
 {
 
 class CommandSocket
 {
 private:
-    static CommandSocket* instance; //!< May be a nullptr in case it hasn't been instantiated.
-
-    CommandSocket(); //!< The single constructor is known only privately, since this class is similar to a singleton class (except the single object doesn't need to be instantiated)
+    static std::unique_ptr<CommandSocket> instance_; //!< always instantiated
 
 public:
-    static CommandSocket* getInstance(); //!< Get the CommandSocket instance, or nullptr if it hasn't been instantiated.
+    static CommandSocket* getInstance();
+    static void setInstance(std::unique_ptr<CommandSocket> instance);
 
-    static void instantiate(); //!< Instantiate the CommandSocket.
-
-    static bool isInstantiated(); //!< Check whether the singleton is instantiated
-
-    /*!
-     * Connect with the GUI
-     * This creates and initialises the arcus socket and then continues listening for messages. 
-     * \param ip string containing the ip to connect with
-     * \param port int of the port to connect with.
-     */
-    void connect(const std::string& ip, int port);
+protected:
+    CommandSocket() = default;
 
 #ifdef ARCUS
     /*! 
@@ -94,12 +78,12 @@ public:
     /*! 
      * Send progress to GUI
      */
-    void sendProgress(float amount);
+    virtual void sendProgress(float amount) {}
     
     /*!
      * Send the current stage of the process to the GUI (starting, slicing infill, etc) 
      */
-    void sendProgressStage(Progress::Stage stage);
+    virtual void sendProgressStage(Progress::Stage stage) {}
     
     /*!
      * Send time estimate of how long print would take.
@@ -134,9 +118,9 @@ public:
      * This should indicate that no more data (g-code, prefix/postfix, metadata
      * or otherwise) should be sent any more regarding the latest slice job.
      */
-    void sendFinishedSlicing();
+    virtual void sendFinishedSlicing() {}
 
-    void beginGCode();
+    virtual void beginGCode() {}
     
     /*!
      * Flush the gcode in gcode_output_stream into a message queued in the socket.

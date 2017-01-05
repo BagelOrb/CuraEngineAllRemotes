@@ -1,4 +1,3 @@
-#include "utils/logoutput.h"
 #include "commandSocket.h"
 #include "FffProcessor.h"
 #include "progress/Progress.h"

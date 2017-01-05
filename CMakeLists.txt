@@ -150,6 +150,10 @@ set(engine_TEST_UTILS
 # Generating ProtoBuf protocol
 if (ENABLE_ARCUS)
 protobuf_generate_cpp(engine_PB_SRCS engine_PB_HEADERS Cura.proto)
+set(engine_SRCS
+    ${engine_SRCS}
+    src/commandSocketArcus.cpp
+)
 endif ()
 
 # Compiling CuraEngine itself.
