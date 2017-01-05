@@ -620,3 +620,16 @@ void AreaSupport::generateSupportInterface(SliceDataStorage& storage, const Slic
 
 
 }//namespace cura
+
+
+//        double minAreaSize = 3.0;//(2 * M_PI * INT2MM(config.extrusionWidth) * INT2MM(config.extrusionWidth)) * 3;
+//        for(unsigned int i=0; i<result.size(); i++)
+//        {
+//            double area = INT2MM(INT2MM(fabs(result[i].area())));
+//            if (area < minAreaSize) /* Only create an up/down skin if the area is large enough. So you do not create tiny blobs of "trying to fill" */
+//            {
+//                result.remove(i);
+//                i -= 1;
+//            }
+//        }
+
