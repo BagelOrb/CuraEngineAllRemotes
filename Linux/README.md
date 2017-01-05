@@ -13,7 +13,7 @@ Furthermore it depends on libArcus by Ultimaker, which can be found at http://gi
 
 This is just a console application for GCode generation. For a full graphical application look at https://github.com/Ultimaker/Cura which is the graphical frontend for CuraEngine.
 
-The CuraEngine can be used seperately or in other applications. Feel free to add it to your application. But please take note of the License.
+The CuraEngine can be used seperately or in other applications. Feel free to add it to your application. But to take note of the License.
 
 License
 =======
@@ -76,7 +76,7 @@ CURA_ENGINE_SEARCH_PATH=/path/to/Cura/resources/definitions:/user/defined/path
 Internals
 =========
 
-The Cura Engine is structured as mainly .h files. This is not standard for a C++ project. However, using less cpp files makes the optimizer work harder and removes linking error issues. It's partialy a result of lazyness but comes in handy for optimalizations.
+The Cura Engine is structured as mainly .h files. This is not standard for an C++ project. However, using less cpp files makes the optimizer work harder and removes linking error issues. It's partialy a result of lazyness but also for optimalizations.
 
 The .h files contain different steps called from the main.cpp file. The main.cpp file contains the global slicing logic.
 
@@ -101,20 +101,20 @@ The OptimizedModel is a 3D model stored with vertex<->face relations. This gives
 
 Slicer
 ======
-While usually the whole GCode generation process is called 'slicing', the Slicer in the CuraEngine is the piece of code that generates layers. Each layer contains closed 2D polygons.
+While usually the whole GCode generation process is called Slicing. The slicer in the CuraEngine is the piece of code that generates layers. Each layer has closed 2D polygons.
 These polygons are generated in a 2 step process. First all triangles are cut into lines per layer, for each layer a "line segment" is added to that layer.
 Next all these line-segments are connected to eachother to make Polygons. The vertex<->face relations of the OptimizedModel help to make this process fast, as there is a huge chance that 2 connecting faces also make 2 connecting line-segments.
-This code also patches up small holes in the 3D model, so your model doesn't need to be a perfect Manifold. It also deals with incorrect normals, so it can flip around line-segments to fit end-to-end.
+This code also fixes up small holes in the 3D model, so your model doesn't need to be perfect Manifold. It also accounts for incorrect normals, so it can flip around line-segments to fit end-to-end.
 
 After the Slicer we have closed Polygons which can be used in Clipper, as Clipper can only opperate on closed 2D polygons.
 
 LayerParts
 ==========
-An important concept to grasp is the idea of LayerParts. LayerParts are seperate parts inside a single layer. For example, in a solid cube each layer has a single LayerPart. However, in a table the layers which cover the legs have a LayerPart per leg, and thus there will be 4 LayerParts.
-A LayerPart is a seperated area inside a single layer which does not touch any other LayerParts. Most operations run on LayerParts as it reduces the amount of data to be processed. During GCode generation handling each LayerPart as a separate step makes sure you never travel between LayerParts which reduces the amount of external travel.
+An important concept to grasp is the LayerParts. LayerParts are seperate parts inside a single layer. For example, if you have a cube. Then each layer has a single LayerPart. However, if you have a table, then the layers which build the legs have a LayerPart per leg, and thus there will be 4 LayerParts.
+A LayerPart is a seperated area inside a single layer which does not touch any other LayerParts. Most operations run on LayerParts as it reduces the amount of data to process. During GCode generation handling each LayerPart as an own step makes sure you never travel between LayerParts and thus reducing the amount of external travel.
 LayerParts are generated after the Slicer step.
 
-In order to generate the LayerParts, Clipper is used. A Clipper union with extended results gives a list of Polygons with holes in them. Each polygon is a LayerPart, and the holes are added to this LayerPart.
+To generate the LayerParts Clipper is used. A Clipper union with extended results gives a list of Polygons with holes in them. Each polygon is a LayerPart, and the holes are added to this LayerPart.
 
 
 Insets
@@ -126,7 +126,7 @@ Up/Down skin
 The skin code generates the fully filled areas, it does this with some heavy boolean Clipper action. The skin step uses data from different layers to get the job done. Check the code for details.
 The sparse infill area code is almost the same as the skin code. With the difference that it keeps the other areas and uses different offsets.
 
-Note that these steps generate the areas, not the actual infill lines. The infill line paths are generated later on. So the result of this step are lists of Polygons which are the areas that need to be filled.
+Note that these steps generate the areas, not the actual infill lines. The infill line paths are generated later on. So the result of this step are list of Polygons which are the areas that need to be filled.
 
 GCode generation
 ================
