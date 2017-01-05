@@ -276,6 +276,21 @@ void GCodeExport::setFlavor(EGCodeFlavor flavor)
     {
         firmware_retract = false;
     }
+
+	if (flavor == EGCodeFlavor::KIDDO)
+	{
+		xyzPrecision = 2;
+		ePrecision = 4;
+		fPrecision = 0;
+		argsSeparator = "";	
+	}
+	else
+	{
+		xyzPrecision = 3;
+		ePrecision = 5;
+		fPrecision = 1;
+		argsSeparator = " ";	
+	}
 }
 
 EGCodeFlavor GCodeExport::getFlavor()
