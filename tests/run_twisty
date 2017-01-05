@@ -1,0 +1,3 @@
+rm build/main.o 
+make
+./build/CuraEngine -s infillPattern=1 -v -o tests/gcodes/twisty.gcode tests/stls/cylinder-r10.STL
