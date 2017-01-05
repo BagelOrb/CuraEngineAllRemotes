@@ -710,6 +710,8 @@ void FffPolygonGenerator::processPlatformAdhesion(SliceDataStorage& storage)
         break;
     case EPlatformAdhesion::NONE:
         break;
+    case EPlatformAdhesion::NONE:
+	break;
     }
 }
 
