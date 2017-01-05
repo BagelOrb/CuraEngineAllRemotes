@@ -113,9 +113,11 @@ public:
 
 class ConfigSettings
 {
-private:
-    std::vector<_ConfigSettingIndex> _index;
+
 public:
+
+    std::vector<_ConfigSettingIndex> _index;
+
     static ConfigSettings *config; // allow access to config settings from everywhere
     int layerThickness;
     int initialLayerThickness;

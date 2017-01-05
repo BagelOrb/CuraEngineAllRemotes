@@ -97,7 +97,7 @@ public:
     {
         if (!gcode.isOpened())
             return;
-        gcode.finalize(maxObjectHeight, config.moveSpeed, config.endCode.c_str());
+        gcode.finalize(maxObjectHeight, config.moveSpeed, config.endCode.c_str(), config._index);
     }
 
 private:

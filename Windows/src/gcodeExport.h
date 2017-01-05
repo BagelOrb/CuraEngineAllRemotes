@@ -94,7 +94,7 @@ public:
     
     void writeFanCommand(int speed);
     
-    void finalize(int maxObjectHeight, int moveSpeed, const char* endCode);
+    void finalize(int maxObjectHeight, int moveSpeed, const char* endCode, std::vector<_ConfigSettingIndex> index);
 
     int getFileSize();
     void tellFileSize();
