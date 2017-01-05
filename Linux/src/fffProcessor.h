@@ -16,6 +16,7 @@ class fffProcessor
 private:
     int maxObjectHeight;
     int fileNr;
+    bool coloredStlSupport = false;
     GCodeExport gcode;
     ConfigSettings& config;
     TimeKeeper timeKeeper;
@@ -82,6 +83,11 @@ public:
         guiSocket.sendNr(GUI_CMD_FINISH_OBJECT);
 
         return true;
+    }
+
+    void enableColoredStlSupport()
+    {
+      this->coloredStlSupport = true;
     }
 
     void finalize()
