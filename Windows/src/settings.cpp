@@ -23,6 +23,7 @@ ConfigSettings::ConfigSettings()
     SETTING(filamentDiameter, 2890);
     SETTING(filamentFlow, 100);
     SETTING(layer0extrusionWidth, 600);
+	SETTING(layer0flow, 100);
     SETTING(extrusionWidth, 400);
     SETTING(insetCount, 2);
     SETTING(downSkinCount, 6);
