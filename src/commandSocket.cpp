@@ -250,17 +250,27 @@ CommandSocket::CommandSocket()
 
 CommandSocket* CommandSocket::getInstance()
 {
+#ifdef ARCUS
     return instance;
+#else
+    return NULL;
+#endif
 }
 
 void CommandSocket::instantiate()
 {
+#ifdef ARCUS
     instance = new CommandSocket();
+#endif
 }
 
 bool CommandSocket::isInstantiated()
 {
+#ifdef ARCUS
     return instance != nullptr;
+#else
+    return false;
+#endif
 }
 
 
