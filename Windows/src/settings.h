@@ -129,6 +129,7 @@ public:
     int insetCount;
     int downSkinCount;
     int upSkinCount;
+    int up5050SkinCount;
     int skirtDistance;
     int skirtLineCount;
     int skirtMinLength;

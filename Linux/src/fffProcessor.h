@@ -568,6 +568,14 @@ private:
                     generateLineInfill(part->skinParts[skinPartNr].outline, fillPolygons, extrusionWidth, extrusionWidth, config.infillOverlap, (bridge > -1) ? bridge : fillAngle);
                 }
             }
+            for(Polygons outline : part->up5050Outline.splitIntoParts())
+            {
+                int bridge = -1;
+                if (layerNr > 0)
+                    bridge = bridgeAngle(outline, &storage.volumes[volumeIdx].layers[layerNr-1]);       
+                generateLineInfill(outline, fillPolygons, extrusionWidth, config.sparseInfillLineDistance, config.infillOverlap, (bridge > -1) ? bridge : fillAngle);
+            }
+            
             if (config.sparseInfillLineDistance > 0)
             {
                 for(int skinPartNr=0;skinPartNr<part->skinParts.size();++skinPartNr)
