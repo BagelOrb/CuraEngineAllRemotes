@@ -30,7 +30,7 @@ ConfigSettings::ConfigSettings()
     SETTING(skirtMinLength, 0);
     SETTING(pointsClipDistance, 0);
 
-    SETTING(initialSpeedupLayers, 4);
+    SETTING(flowDoublingTime, 45);
     SETTING(initialLayerSpeed, 20);
     SETTING(printSpeed, 50);
     SETTING(inset0Speed, 50);
@@ -85,7 +85,7 @@ ConfigSettings::ConfigSettings()
     SETTING(raftSurfaceSpeed, 0);
 
     SETTING(minimalLayerTime, 5);
-    SETTING(minimalFeedrate, 10);
+    SETTING(minimalFeedrate, 2);
     SETTING(coolHeadLift, 0);
     SETTING(fanSpeedMin, 100);
     SETTING(fanSpeedMax, 100);
