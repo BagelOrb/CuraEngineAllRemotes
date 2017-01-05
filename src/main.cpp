@@ -26,6 +26,8 @@
 namespace cura
 {
 
+#include "color.h"
+
 void print_usage()
 {
     logAlways("\n");

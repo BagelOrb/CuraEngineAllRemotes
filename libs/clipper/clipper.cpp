@@ -1006,6 +1006,7 @@ TEdge* ClipperBase::ProcessBound(TEdge* E, bool NextIsForward)
       else if (EStart->Bot.X != E->Bot.X)
         ReverseHorizontal(*E);
     }
+    return Result;
   }
   
   EStart = E;
@@ -1422,7 +1423,6 @@ void Clipper::ZFillFunction(ZFillCallback zFillFunc)
   m_ZFill = zFillFunc;
 }
 //------------------------------------------------------------------------------
-#endif
 
 void Clipper::Reset()
 {

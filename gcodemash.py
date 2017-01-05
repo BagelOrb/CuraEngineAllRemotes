@@ -70,7 +70,7 @@ class gcode(object):
         return None
     
     def _load(self, gcodeFile):
-        self.colorList = []
+        self.colorList = [[(1,1,1), 0]]
         self.layerList = []
         color = None
         colorLength = 0.0
@@ -110,6 +110,14 @@ class gcode(object):
                     self.colorList.append((color, colorLength))
                 colorLength = 0
                 color = None
+            if line.startswith(';;;COLOR;;;'):
+                line = line[10:]
+                newColor = (getCodeFloat(line, 'R'), getCodeFloat(line, 'G'), getCodeFloat(line, 'B'))
+                length = getCodeFloat(line, 'E')
+                if self.colorList[-1][0] == newColor:
+                    self.colorList[-1][1] += length
+                else:
+                    self.colorList.append([newColor, length])
 
             if ';' in line:
                 comment = line[line.find(';')+1:].strip()

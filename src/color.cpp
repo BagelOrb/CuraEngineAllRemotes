@@ -1,6 +1,18 @@
 /** Copyright (C) 2013 David Braam - Released under terms of the AGPLv3 License */
 #include <assert.h>
+#include <math.h>
+#include <sstream>
+#include <iostream>
 #include "color.h"
+#include "utils/intpoint.h"
+#include "utils/logoutput.h"
+
+using std::string;
+using std::ostringstream;
+using std::endl;
+using std::cout;
+using ClipperLib::cInt;
+using ClipperLib::Path;
 
 namespace cura {
 ClipperLib::FollowingZFill colorFill;
