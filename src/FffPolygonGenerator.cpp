@@ -35,9 +35,9 @@ bool FffPolygonGenerator::generateAreas(SliceDataStorage& storage, MeshGroup* me
     {
         return false;
     }
-    
+
     slices2polygons(storage, timeKeeper);
-    
+
     return true;
 }
 
@@ -510,7 +510,7 @@ void FffPolygonGenerator::removeEmptyFirstLayers(SliceDataStorage& storage, cons
 {
     int n_empty_first_layers = 0;
     for (unsigned int layer_idx = 0; layer_idx < total_layers; layer_idx++)
-    { 
+    {
         bool layer_is_empty = true;
         if (storage.support.generated && layer_idx < storage.support.supportLayers.size())
         {
@@ -530,8 +530,8 @@ void FffPolygonGenerator::removeEmptyFirstLayers(SliceDataStorage& storage, cons
                 break;
             }
         }
-        
-        if (layer_is_empty) 
+
+        if (layer_is_empty)
         {
             n_empty_first_layers++;
         } else
@@ -539,7 +539,7 @@ void FffPolygonGenerator::removeEmptyFirstLayers(SliceDataStorage& storage, cons
             break;
         }
     }
-    
+
     if (n_empty_first_layers > 0)
     {
         log("Removing %d layers because they are empty\n", n_empty_first_layers);
@@ -735,13 +735,13 @@ void FffPolygonGenerator::processFuzzyWalls(SliceMeshStorage& mesh)
             {
                 // generate points in between p0 and p1
                 PolygonRef result = results.newPoly();
-                
+
                 int64_t dist_left_over = rand() % (min_dist_between_points / 2); // the distance to be traversed on the line before making the first new point
                 Point* p0 = &poly.back();
                 for (Point& p1 : poly)
                 { // 'a' is the (next) new point between p0 and p1
                     Point p0p1 = p1 - *p0;
-                    int64_t p0p1_size = vSize(p0p1);    
+                    int64_t p0p1_size = vSize(p0p1);
                     int64_t dist_last_point = dist_left_over + p0p1_size * 2; // so that p0p1_size - dist_last_point evaulates to dist_left_over - p0p1_size
                     for (int64_t p0pa_dist = dist_left_over; p0pa_dist < p0p1_size; p0pa_dist += min_dist_between_points + rand() % range_random_point_dist)
                     {
@@ -753,7 +753,7 @@ void FffPolygonGenerator::processFuzzyWalls(SliceMeshStorage& mesh)
                         dist_last_point = p0pa_dist;
                     }
                     dist_left_over = p0p1_size - dist_last_point;
-                    
+
                     p0 = &p1;
                 }
                 while (result.size() < 3 )
