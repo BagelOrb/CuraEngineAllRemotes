@@ -7,7 +7,7 @@
 #include <sys/time.h>
 #endif
 #include <signal.h>
-#if defined(__linux__) || (defined(__APPLE__) && defined(__MACH__))
+#if (defined(__linux__) && !defined(__ANDROID__)) || (defined(__APPLE__) && defined(__MACH__))
 #include <execinfo.h>
 #include <sys/resource.h>
 #endif

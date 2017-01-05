@@ -1,0 +1,13 @@
+language: python
+python: "2.7"
+build_image: shippableimages/ubuntu1404_base
+before_install:
+    - sudo apt-get update
+install:
+    - sudo apt-get install -y  --no-install-recommends p7zip-full build-essential wget
+    - wget http://dl.google.com/android/ndk/android-ndk-r10d-linux-x86_64.bin -O /opt/android-ndk-r10d-linux-x86_64.bin
+    - 7z x -o/opt /opt/android-ndk-r10d-linux-x86_64.bin > /dev/null
+script:
+    - export PATH=/opt/android-ndk-r10d:$PATH && ./build.sh
+    - tar czf shippable/CuraEngine-`echo $BUILD_NUMBER | cut -d . -f 1`.tar.gz -C libs/armeabi CuraEngine
+archive: true

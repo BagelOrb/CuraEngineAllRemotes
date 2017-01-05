@@ -329,6 +329,17 @@ Point GCodeExport::getPositionXY()
     return Point(currentPosition.x, currentPosition.y);
 }
 
+void GCodeExport::resetStartPosition()
+{
+    startPosition.x = INT32_MIN;
+    startPosition.y = INT32_MIN;
+}
+
+Point GCodeExport::getStartPositionXY()
+{
+    return Point(startPosition.x, startPosition.y);
+}
+
 int GCodeExport::getPositionZ()
 {
     return currentPosition.z;
