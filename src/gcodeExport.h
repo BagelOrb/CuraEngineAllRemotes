@@ -113,6 +113,7 @@ private:
 
     int current_extruder;
     int currentFanSpeed;
+    bool fanRunning;
     EGCodeFlavor flavor;
 
     double totalPrintTime; //!< The total estimated print time in seconds

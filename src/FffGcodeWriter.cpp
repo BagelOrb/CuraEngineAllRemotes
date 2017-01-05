@@ -337,6 +337,8 @@ void FffGcodeWriter::processRaft(SliceDataStorage& storage, unsigned int total_l
     int extra_infill_shift = 0;
     Polygons raft_polygons; // should remain empty, since we only have the lines pattern for the raft...
     
+    int n_raft_surface_layers = train->getSettingAsCount("raft_surface_layers");
+    
     { // raft base layer
         
         int layer_nr = initial_raft_layer_nr;

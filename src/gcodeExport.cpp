@@ -479,6 +479,11 @@ void GCodeExport::writeLayerCountComment(int layer_count)
     *output_stream << ";LAYER_COUNT:" << layer_count << new_line;
 }
 
+void GCodeExport::writeLayerCountComment(int layer_count)
+{
+    *output_stream << ";LAYER_COUNT:" << layer_count << "\n";
+}
+
 void GCodeExport::writeLine(const char* line)
 {
     *output_stream << line << new_line;

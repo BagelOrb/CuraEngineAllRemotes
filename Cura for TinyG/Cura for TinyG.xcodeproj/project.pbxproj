@@ -1,0 +1,72 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 47;
+	objects = {
+
+/* Begin PBXFileReference section */
+		CD7F64501BBAB62C0072458E /* CuraEngine */ = {isa = PBXFileReference; lastKnownFileType = folder; name = CuraEngine; path = ..; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		CD7F64491BBAB5EA0072458E = {
+			isa = PBXGroup;
+			children = (
+				CD7F64501BBAB62C0072458E /* CuraEngine */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXProject section */
+		CD7F644A1BBAB5EA0072458E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0700;
+			};
+			buildConfigurationList = CD7F644D1BBAB5EA0072458E /* Build configuration list for PBXProject "Cura for TinyG" */;
+			compatibilityVersion = "Xcode 6.3";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = CD7F64491BBAB5EA0072458E;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+			);
+		};
+/* End PBXProject section */
+
+/* Begin XCBuildConfiguration section */
+		CD7F644E1BBAB5EA0072458E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		CD7F644F1BBAB5EA0072458E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CD7F644D1BBAB5EA0072458E /* Build configuration list for PBXProject "Cura for TinyG" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CD7F644E1BBAB5EA0072458E /* Debug */,
+				CD7F644F1BBAB5EA0072458E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CD7F644A1BBAB5EA0072458E /* Project object */;
+}
