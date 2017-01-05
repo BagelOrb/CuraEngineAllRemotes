@@ -93,8 +93,10 @@ void connect(int argc, char **argv)
     for(int argn = 3; argn < argc; argn++)
     {
         char* str = argv[argn];
+		user_debug("[slc_debug:] argv[%d]=%s\n",argn,str);
         if (str[0] == '-')
         {
+        	user_debug("[slc_debug:] str[0] == '-'\n");
             for(str++; *str; str++)
             {
                 switch(*str)
