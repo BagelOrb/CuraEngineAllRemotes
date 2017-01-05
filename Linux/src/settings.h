@@ -206,6 +206,13 @@ public:
     bool setSetting(const char* key, const char* value);
     bool readSettings(void);
     bool readSettings(const char* path);
+
+    // Arevo specific settings
+    int ArevoFillAngle;		// Beginning angle for first layer
+    int ArevoFillAngleDelta;	// Increment for angle for subsequent layer
+    int ArevoFillAngleLayerRepeatCnt;	// After Cnt layers, start with Beginning agnle
+    int ArevoPauseAfterNLayers;	// Pause printing and move head for service after N layers, zero if no pause
+    std::string ArevoCustomPauseCode;	// After the head is move away - put custom code here - M0, M1 or G4 Pxx etc
 };
 
 #endif//SETTINGS_H

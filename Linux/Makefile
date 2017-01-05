@@ -68,6 +68,8 @@ $(EXECUTABLE): $(OBJECTS) $(BUILD_DIR)/libclipper.a
 $(DIRS):
 	-@$(MKDIR_PREFIX) $(DIRS)
 
+$(BUILD_DIR)/main.o: $(SRC_DIR)/main.cpp $(SRC_DIR)/fffProcessor.h
+
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(CFLAGS) $< -o $@
 

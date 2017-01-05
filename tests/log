@@ -1,0 +1,195 @@
+Running Cura Engine - with default.cfg
+Cura_SteamEngine version DEV
+Copyright (C) 2014 David Braam
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+Loading box.stl from disk...
+Loaded from disk in 0.000s
+Analyzing and optimizing model...
+  Face counts: 12 -> 12 100.0%
+  Vertex counts: 36 -> 8 22.2%
+  Size: 10.000000 10.000000 10.000000
+  vMin: 107.500000 67.500000 0.000000
+  vMax: 117.500000 77.500000 10.000000
+  vMin: 0.000000 0.000000 0.000000
+  vMax: 10.000000 10.000000 10.000000
+  Matrix: 1.000000 0.000000 0.000000
+  Matrix: 0.000000 1.000000 0.000000
+  Matrix: 0.000000 0.000000 1.000000
+Optimize model 0.000s 
+Slicing model...
+Layer count: 36
+Sliced model in 0.000s
+Generating support map...
+Generating layer parts...
+Generated layer parts in 0.001s
+Progress:inset:1:36
+Progress:inset:2:36
+Progress:inset:3:36
+Progress:inset:4:36
+Progress:inset:5:36
+Progress:inset:6:36
+Progress:inset:7:36
+Progress:inset:8:36
+Progress:inset:9:36
+Progress:inset:10:36
+Progress:inset:11:36
+Progress:inset:12:36
+Progress:inset:13:36
+Progress:inset:14:36
+Progress:inset:15:36
+Progress:inset:16:36
+Progress:inset:17:36
+Progress:inset:18:36
+Progress:inset:19:36
+Progress:inset:20:36
+Progress:inset:21:36
+Progress:inset:22:36
+Progress:inset:23:36
+Progress:inset:24:36
+Progress:inset:25:36
+Progress:inset:26:36
+Progress:inset:27:36
+Progress:inset:28:36
+Progress:inset:29:36
+Progress:inset:30:36
+Progress:inset:31:36
+Progress:inset:32:36
+Progress:inset:33:36
+Progress:inset:34:36
+Progress:inset:35:36
+Progress:inset:36:36
+Generated inset in 0.002s
+Progress:skin:1:36
+Progress:skin:2:36
+Progress:skin:3:36
+Progress:skin:4:36
+Progress:skin:5:36
+Progress:skin:6:36
+Progress:skin:7:36
+Progress:skin:8:36
+Progress:skin:9:36
+Progress:skin:10:36
+Progress:skin:11:36
+Progress:skin:12:36
+Progress:skin:13:36
+Progress:skin:14:36
+Progress:skin:15:36
+Progress:skin:16:36
+Progress:skin:17:36
+Progress:skin:18:36
+Progress:skin:19:36
+Progress:skin:20:36
+Progress:skin:21:36
+Progress:skin:22:36
+Progress:skin:23:36
+Progress:skin:24:36
+Progress:skin:25:36
+Progress:skin:26:36
+Progress:skin:27:36
+Progress:skin:28:36
+Progress:skin:29:36
+Progress:skin:30:36
+Progress:skin:31:36
+Progress:skin:32:36
+Progress:skin:33:36
+Progress:skin:34:36
+Progress:skin:35:36
+Progress:skin:36:36
+Generated up/down skin in 0.003s
+Progress:export:1:36
+ArevoFillAngle : 0 
+Progress:export:2:36
+ArevoFillAngle : 30 
+Progress:export:3:36
+ArevoFillAngle : 60 
+Progress:export:4:36
+ArevoFillAngle : 90 
+Progress:export:5:36
+ArevoFillAngle : 120 
+Progress:export:6:36
+ArevoFillAngle : 150 
+Progress:export:7:36
+ArevoFillAngle : 0 
+Progress:export:8:36
+ArevoFillAngle : 30 
+Progress:export:9:36
+ArevoFillAngle : 60 
+Progress:export:10:36
+ArevoFillAngle : 90 
+Progress:export:11:36
+ArevoFillAngle : 120 
+ArevoPause inserted : G4 P1        ;Pause for 1 second delay 
+
+Progress:export:12:36
+ArevoFillAngle : 150 
+Progress:export:13:36
+ArevoFillAngle : 0 
+Progress:export:14:36
+ArevoFillAngle : 30 
+Progress:export:15:36
+ArevoFillAngle : 60 
+Progress:export:16:36
+ArevoFillAngle : 90 
+Progress:export:17:36
+ArevoFillAngle : 120 
+Progress:export:18:36
+ArevoFillAngle : 150 
+Progress:export:19:36
+ArevoFillAngle : 0 
+Progress:export:20:36
+ArevoFillAngle : 30 
+Progress:export:21:36
+ArevoFillAngle : 60 
+ArevoPause inserted : G4 P1        ;Pause for 1 second delay 
+
+Progress:export:22:36
+ArevoFillAngle : 90 
+Progress:export:23:36
+ArevoFillAngle : 120 
+Progress:export:24:36
+ArevoFillAngle : 150 
+Progress:export:25:36
+ArevoFillAngle : 0 
+Progress:export:26:36
+ArevoFillAngle : 30 
+Progress:export:27:36
+ArevoFillAngle : 60 
+Progress:export:28:36
+ArevoFillAngle : 90 
+Progress:export:29:36
+ArevoFillAngle : 120 
+Progress:export:30:36
+ArevoFillAngle : 150 
+Progress:export:31:36
+ArevoFillAngle : 0 
+ArevoPause inserted : G4 P1        ;Pause for 1 second delay 
+
+Progress:export:32:36
+ArevoFillAngle : 30 
+Progress:export:33:36
+ArevoFillAngle : 60 
+Progress:export:34:36
+ArevoFillAngle : 90 
+Progress:export:35:36
+ArevoFillAngle : 120 
+Progress:export:36:36
+ArevoFillAngle : 150 
+Wrote layers in  0.01s.
+Wrote  27.4 kilobytes.
+Progress:process:1:1
+Total time elapsed  0.01s.
+Print time: 220
+Filament: 255
+Filament2: 0
