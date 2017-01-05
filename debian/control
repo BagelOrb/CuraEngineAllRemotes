@@ -1,0 +1,19 @@
+Source: cura-engine
+Priority: optional
+Maintainer: Gregor Riepl <onitake@gmail.com>
+Build-Depends: debhelper (>= 9), cmake (>=2.8.12), quilt,
+ protobuf-compiler (>=3.0.0), libprotobuf-dev,
+ libarcus-dev (>=2.3.0)
+Standards-Version: 3.9.8
+Section: utils
+Homepage: https://github.com/Ultimaker/CuraEngine
+Vcs-Git: https://github.com/Ultimaker/CuraEngine
+Vcs-Browser: https://github.com/Ultimaker/CuraEngine
+
+Package: cura-engine
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: command line slicer engine for 3d printing
+ The CuraEngine is a C++ console application for 3D printing
+ GCode generation. It has been made as a better and faster
+ alternative to the old Skeinforge engine.
