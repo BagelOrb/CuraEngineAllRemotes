@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include <algorithm> // remove_if
+#include <queue>
 
 #include "utils/gettime.h"
 #include "utils/logoutput.h"
@@ -110,13 +111,14 @@ int SlicerLayer::getNextSegmentIdx(const Mesh* mesh, const SlicerSegment& segmen
                 // not immediately returned since we might still encounter the start_segment_idx
                 next_segment_idx = result_segment_idx;
             }
+            return segment_idx;
         }
     }
 
     return next_segment_idx;
 }
 
-void SlicerLayer::connectOpenPolylines(Polygons& open_polylines)
+int SlicerLayer::getNextSegmentIdx(const Mesh* mesh, const SlicerSegment& segment, unsigned int start_segment_idx)
 {
     bool allow_reverse = false;
     // Search a bit fewer cells but at cost of covering more area.
@@ -307,6 +309,7 @@ SlicerLayer::findPossibleStitches(
                 {
                     continue;
                 }
+            }
 
                 Point diff = nearby_start.polyline_term_pt - polyline_1[0];
                 int64_t dist2 = vSize2(diff);
