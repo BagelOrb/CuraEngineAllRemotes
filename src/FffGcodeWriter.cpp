@@ -586,6 +586,9 @@ void FffGcodeWriter::processLayer(SliceDataStorage& storage, int layer_nr, unsig
                 }
             }
         }
+        */
+        PrintableLayerPart& part = *parts[mesh_idx];
+        part.generatePaths(gcode_layer);
     }
 
     if (layer_nr == 0 && getExtrudersNeedPrimeDuringFirstLayer())
