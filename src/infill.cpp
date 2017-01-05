@@ -4,6 +4,11 @@
 #include "utils/polygonUtils.h"
 #include "utils/logoutput.h"
 
+#include <iostream>
+#include <fstream>
+
+#include <opencv2/imgproc/imgproc.hpp>
+
 namespace cura {
 
 int Infill::computeScanSegmentIdx(int x, int line_width)
@@ -475,5 +480,69 @@ void Infill::generateLinearBasedInfill(const int outline_offset, Polygons& resul
       }
     }
 }
+
+
+void generateVoronoiInfill2(const Polygons& in_outline, Polygons& result,
+                           int extrusionWidth, int lineSpacing, int infillOverlap,
+                           std::vector<Point3> inputPoints)
+{
+    Polygons outline = in_outline.offset(extrusionWidth * infillOverlap / 100);
+
+    AABB boundary(outline);
+    
+//    boundary.min.X = ((boundary.min.X / lineSpacing) - 1) * lineSpacing;
+
+//    std::cerr << "bounds: " << boundary.min << boundary.max << "\n";
+
+//    std::cerr << "number of points " << inputPoints.size() << "\n";
+
+    // FIXME: code to do mesh intersect? OR let Cura handle it
+    // Calculate Voronoi
+
+    cv::Rect rect(boundary.min.X, boundary.min.Y,
+                  boundary.max.X-boundary.min.X, boundary.max.Y-boundary.min.Y);
+
+//    std::cerr << "rect " << rect << "\n";
+
+    cv::Subdiv2D subdiv(rect);
+    for(int i = 0; i < inputPoints.size(); i++)
+    {
+        const Point3 ip = inputPoints.at(i);
+        const bool isInside = outline.inside(Point(ip.x, ip.y));
+        // std::cerr << "p " << ip.x << ", " << ip.y << " inside? " << isInside << "\n";
+
+        if (!isInside) {
+            continue;
+        }
+
+        cv::Point2f fp(ip.x, ip.y);
+        try {
+            subdiv.insert(fp);
+        } catch (const std::exception &e) {
+            // TEMP: ignored
+        }
+    }
+
+    std::vector<std::vector<cv::Point2f> > facets;
+    std::vector<cv::Point2f> centers;
+    subdiv.getVoronoiFacetList(std::vector<int>(), facets, centers);
+
+//    std::cerr << "number of facets " << facets.size() << "\n";
+
+    // Add the voronoi lines as infill
+    for( size_t i = 0; i < facets.size(); i++ )
+    {
+        Polygons polygons;
+        PolygonRef p = polygons.newPoly();
+        for( size_t j = 0; j < facets[i].size(); j++ ) {
+            cv::Point2f ip = facets[i][j];
+
+            // std::cerr << "p " << ip.x << ", " << ip.y << " inside? " << isInside << "\n";
+            p.add(Point(ip.x, ip.y));
+        }
+        result.add(polygons.intersection(outline));
+    }
+}
+
 
 }//namespace cura
