@@ -13,6 +13,10 @@ if (ENABLE_ARCUS)
     add_definitions(-DARCUS)
 endif ()
 
+if(CYGWIN)
+    add_definitions(-D_GLIBCXX_USE_C99=1) # proper to_string definition.
+endif(CYGWIN)
+
 if(NOT ${CMAKE_VERSION} VERSION_LESS 3.1)
     set(CMAKE_CXX_STANDARD 14)
 else()
