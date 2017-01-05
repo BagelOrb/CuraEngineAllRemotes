@@ -669,18 +669,7 @@ void GCodePlanner::writeGCode(bool liftHeadIfNeeded, int layerThickness)
             writeStretchedPath(path->points, speed, path->config->lineWidth, path->config->stretchDistance);
         }
     }
-    
-    gcode.updateTotalPrintTime();
-    if (liftHeadIfNeeded && extraTime > 0.0)
-    {
-        gcode.writeComment("Small layer, adding delay of %f", extraTime);
-        gcode.writeRetraction(true);
-        gcode.setZ(gcode.getPositionZ() + MM2INT(3.0));
-        gcode.writeMove(gcode.getPositionXY(), travelConfig.speed, 0);
-        gcode.writeMove(gcode.getPositionXY() - Point(-MM2INT(20.0), 0), travelConfig.speed, 0);
-        gcode.writeDelay(extraTime);
-    }
-}
+ }
 
 void GCodePlanner::writeStretchedPath(vector<Point>& points, int speed, int lineWidth, int _stretchDistance)
 {
