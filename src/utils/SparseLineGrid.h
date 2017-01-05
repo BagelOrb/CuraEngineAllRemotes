@@ -11,6 +11,7 @@
 #include "intpoint.h"
 #include "SparseGrid.h"
 #include "SVG.h" // debug
+#include "logoutput.h"
 
 namespace cura {
 
