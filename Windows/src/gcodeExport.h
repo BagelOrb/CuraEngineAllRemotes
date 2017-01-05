@@ -28,6 +28,7 @@ private:
     double extruderSwitchReturn;
     double minimalExtrusionBeforeRetraction;
     double extrusionAmountAtPreviousRetraction;
+    float zLiftAmount;
     Point3 currentPosition;
     Point extruderOffset[MAX_EXTRUDERS];
     char extruderCharacter[MAX_EXTRUDERS];
@@ -35,6 +36,7 @@ private:
     int retractionSpeed = 45;
     int zPos;
     bool isRetracted;
+    bool isLifted;
     int extruderNr;
     int currentFanSpeed;
     int flavor;
