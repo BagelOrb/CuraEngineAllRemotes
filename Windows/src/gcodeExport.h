@@ -19,6 +19,7 @@ class GCodeExport
 private:
     FILE* f;
     double extrusionAmount;
+    double relativeExtrusionValue;
     double extrusionPerMM;
     double retractionAmount;
     double retractionAmountPrime;
@@ -60,7 +61,7 @@ public:
     
     bool isOpened();
     
-    void setExtrusion(int layerThickness, int filamentDiameter, int flow);
+    void setExtrusion(int layerThickness, int filamentDiameter, int flow, int type);
     
     void setRetractionSettings(int retractionAmount, int retractionSpeed, int extruderSwitchRetraction, int extruderSwitchReturn, int minimalExtrusionBeforeRetraction, int zHop, int retractionAmountPrime);
     
