@@ -519,6 +519,7 @@ public:
     }
 
     void dumpSegmentsToHTML(const char* filename);
+    void dumpNonPolySegsToHtml(const char* filename);
 };
 
 }//namespace cura

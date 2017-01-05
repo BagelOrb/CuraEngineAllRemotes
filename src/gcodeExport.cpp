@@ -303,6 +303,11 @@ void GCodeExport::setNozzleSettings(int singleNozzle)
     this->singleNozzle = singleNozzle;
 }
 
+void GCodeExport::setColoring(const RegionColoring &coloring)
+{
+    this->coloring = coloring;
+}
+
 void GCodeExport::setZ(int z)
 {
     this->current_layer_z = z;

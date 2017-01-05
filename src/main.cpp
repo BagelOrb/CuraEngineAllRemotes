@@ -301,7 +301,7 @@ void slice(int argc, char **argv)
 
 #ifndef DEBUG
     }catch(...){
-        cura::logError("Unknown exception\n");
+        cura::logError("Unknown exception 3\n");
         exit(1);
     }
 #endif

@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <float.h>
 #include <clipper/clipper.hpp>
+#include "../color.h"
 
 #include <algorithm>    // std::reverse, fill_n array
 #include <cmath> // fabs

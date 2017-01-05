@@ -16,6 +16,10 @@ Creating "parts" is an important step, as all elements in a single part should b
 And all every bit inside a single part can be printed without the nozzle leaving the boundary of this part.
 
 It's also the first step that stores the result in the "data storage" so all other steps can access it.
+
+COLOR:
+The color slicer uses LayerParts within an island, where each part is its own color.  This causes the extents
+of single colors to be grouped together without creating visible artifacts in the print.
 */
 
 namespace cura {

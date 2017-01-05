@@ -8,6 +8,8 @@ Integer points are used to avoid floating point rounding errors, and because Cli
 */
 #define INLINE static inline
 
+#include "../color.h"
+
 //Include Clipper to get the ClipperLib::IntPoint definition, which we reuse as Point definition.
 #include <clipper/clipper.hpp>
 
@@ -153,7 +155,8 @@ typedef ClipperLib::IntPoint Point;
 class IntPoint {
 public:
     int X, Y;
-    Point p() { return Point(X, Y); }
+    cura::Color* color;
+    Point p() { return Point(X, Y, toClipperInt(color)); }
 };
 #define POINT_MIN std::numeric_limits<ClipperLib::cInt>::min()
 #define POINT_MAX std::numeric_limits<ClipperLib::cInt>::max()
@@ -285,12 +288,12 @@ public:
 
     Point apply(const Point p) const
     {
-        return Point(p.X * matrix[0] + p.Y * matrix[1], p.X * matrix[2] + p.Y * matrix[3]);
+        return Point(p.X * matrix[0] + p.Y * matrix[1], p.X * matrix[2] + p.Y * matrix[3], p.Z);
     }
 
     Point unapply(const Point p) const
     {
-        return Point(p.X * matrix[0] + p.Y * matrix[2], p.X * matrix[1] + p.Y * matrix[3]);
+        return Point(p.X * matrix[0] + p.Y * matrix[2], p.X * matrix[1] + p.Y * matrix[3], p.Z);
     }
 };
 

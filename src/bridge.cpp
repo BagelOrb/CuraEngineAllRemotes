@@ -11,7 +11,7 @@ int bridgeAngle(Polygons outline, SliceLayer* prevLayer)
     //To detect if we have a bridge, first calculate the intersection of the current layer with the previous layer.
     // This gives us the islands that the layer rests on.
     Polygons islands;
-    for(auto prevLayerPart : prevLayer->parts)
+    for(SliceLayerIsland &prevLayerPart : prevLayer->islands)
     {
         if (!boundaryBox.hit(prevLayerPart.boundaryBox))
             continue;

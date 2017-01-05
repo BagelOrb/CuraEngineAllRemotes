@@ -4,7 +4,7 @@
 * Version   :  6.2.1                                                           *
 * Date      :  31 October 2014                                                 *
 * Website   :  http://www.angusj.com                                           *
-* Copyright :  Angus Johnson 2010-2014                                         *
+* Copyright :  Angus Johnson 2010-2014, Martin Wickham 2015                    *
 *                                                                              *
 * License:                                                                     *
 * Use, modification & distribution is subject to Boost Software License Ver 1. *
@@ -40,8 +40,8 @@
 //improve performance but coordinate values are limited to the range +/- 46340
 //#define use_int32
 
-//use_xyz: adds a Z member to IntPoint. Adds a minor cost to perfomance.
-//#define use_xyz
+//use_xyz: adds a Z member to IntPoint. Adds a cost to performance.
+#define use_xyz
 
 //use_lines: Enables line clipping. Adds a very minor cost to performance.
 #define use_lines
@@ -87,19 +87,63 @@ struct IntPoint {
 #ifdef use_xyz
   cInt Z;
   IntPoint(cInt x = 0, cInt y = 0, cInt z = 0): X(x), Y(y), Z(z) {};
+  IntPoint(const IntPoint2Z& pt);
 #else
   IntPoint(cInt x = 0, cInt y = 0): X(x), Y(y) {};
 #endif
-
-  friend inline bool operator== (const IntPoint& a, const IntPoint& b)
-  {
-    return a.X == b.X && a.Y == b.Y;
-  }
-  friend inline bool operator!= (const IntPoint& a, const IntPoint& b)
-  {
-    return a.X != b.X  || a.Y != b.Y; 
-  }
 };
+
+#ifdef use_xyz
+struct IntPoint2Z {
+  cInt X;
+  cInt Y;
+  cInt correctZ;
+  cInt reverseZ;
+  IntPoint2Z(cInt x = 0, cInt y = 0, cInt cz = 0, cInt rz = 0) : X(x), Y(y), correctZ(cz), reverseZ(rz) {};
+  IntPoint2Z(const IntPoint& pt) : X(pt.X), Y(pt.Y), correctZ(pt.Z), reverseZ(0) {};
+  inline void reverse() { std::swap(correctZ, reverseZ); }
+  inline cInt getZ() const { return correctZ; }
+};
+typedef IntPoint2Z OutCoord;
+#else
+typedef IntPoint OutCoord;
+#endif
+
+inline bool operator== (const IntPoint& a, const IntPoint& b)
+{
+  return a.X == b.X && a.Y == b.Y;
+}
+inline bool operator!= (const IntPoint& a, const IntPoint& b)
+{
+  return a.X != b.X  || a.Y != b.Y;
+}
+#ifdef use_xyz
+inline bool operator== (const IntPoint& a, const IntPoint2Z& b)
+{
+  return a.X == b.X && a.Y == b.Y;
+}
+inline bool operator!= (const IntPoint& a, const IntPoint2Z& b)
+{
+  return a.X != b.X  || a.Y != b.Y;
+}
+inline bool operator== (const IntPoint2Z& a, const IntPoint& b)
+{
+  return a.X == b.X && a.Y == b.Y;
+}
+inline bool operator!= (const IntPoint2Z& a, const IntPoint& b)
+{
+  return a.X != b.X  || a.Y != b.Y;
+}
+inline bool operator== (const IntPoint2Z& a, const IntPoint2Z& b)
+{
+  return a.X == b.X && a.Y == b.Y;
+}
+inline bool operator!= (const IntPoint2Z& a, const IntPoint2Z& b)
+{
+  return a.X != b.X  || a.Y != b.Y;
+}
+#endif
+
 //------------------------------------------------------------------------------
 
 typedef std::vector< IntPoint > Path;
@@ -226,11 +270,15 @@ public:
   IntRect GetBounds();
   bool PreserveCollinear() {return m_PreserveCollinear;};
   void PreserveCollinear(bool value) {m_PreserveCollinear = value;};
+#ifdef use_xyz
+  void Callback(ZFill *zFill);
+#endif
 protected:
   void DisposeLocalMinimaList();
   TEdge* AddBoundsToLML(TEdge *e, bool IsClosed);
   void PopLocalMinima();
   virtual void Reset();
+  void InitEdge2(TEdge& e, PolyType Pt);
   TEdge* ProcessBound(TEdge* E, bool IsClockwise);
   void DoMinimaLML(TEdge* E1, TEdge* E2, bool IsClosed);
   TEdge* DescendToMin(TEdge *&E);
@@ -244,6 +292,9 @@ protected:
   EdgeList          m_edges;
   bool             m_PreserveCollinear;
   bool             m_HasOpenPaths;
+#ifdef use_xyz
+  ZFill           *m_ZFill; //custom callback
+#endif
 };
 //------------------------------------------------------------------------------
 
@@ -309,19 +360,22 @@ private:
   void DoMaxima(TEdge *e);
   void ProcessHorizontals(bool IsTopOfScanbeam);
   void ProcessHorizontal(TEdge *horzEdge, bool isTopOfScanbeam);
-  void AddLocalMaxPoly(TEdge *e1, TEdge *e2, const IntPoint &pt);
-  OutPt* AddLocalMinPoly(TEdge *e1, TEdge *e2, const IntPoint &pt);
+  void AddLocalMaxPoly(TEdge *e1, TEdge *e2, const OutCoord &pt);
+  OutPt* AddLocalMinPoly(TEdge *e1, TEdge *e2, const OutCoord &pt);
+  OutPt* AddIntersectionMinPoly(TEdge *e1, TEdge *e2, const IntPoint &pt);
   OutRec* GetOutRec(int idx);
+  void LinkPolygon(OutPt *tail1, OutPt *head1, OutPt *tail2, OutPt *head2);
   void AppendPolygon(TEdge *e1, TEdge *e2);
   void IntersectEdges(TEdge *e1, TEdge *e2, IntPoint &pt);
   OutRec* CreateOutRec();
-  OutPt* AddOutPt(TEdge *e, const IntPoint &pt);
+  OutPt* AddOutPt(TEdge *e, const OutCoord &pt);
   void DisposeAllOutRecs();
   void DisposeOutRec(PolyOutList::size_type index);
   bool ProcessIntersections(const cInt topY);
   void BuildIntersectList(const cInt topY);
   void ProcessIntersectList();
   void ProcessEdgesAtTopOfScanbeam(const cInt topY);
+  void PromoteIntermediate(TEdge *&e);
   void BuildResult(Paths& polys);
   void BuildResult2(PolyTree& polytree);
   void SetHoleState(TEdge *e, OutRec *outrec);
@@ -335,6 +389,7 @@ private:
   void ClearJoins();
   void ClearGhostJoins();
   void AddGhostJoin(OutPt *op, const IntPoint offPt);
+  bool JoinHorz(OutPt* op1, OutPt* op1b, OutPt* op2, OutPt* op2b, OutCoord Pt, bool DiscardLeft);
   bool JoinPoints(Join *j, OutRec* outRec1, OutRec* outRec2);
   void JoinCommonEdges();
   void DoSimplePolygons();
@@ -356,10 +411,14 @@ public:
   void Execute(Paths& solution, double delta);
   void Execute(PolyTree& solution, double delta);
   void Clear();
+#ifdef use_xyz
+  void Callback(ZFill *zFill);
+#endif
   double MiterLimit;
   double ArcTolerance;
 private:
   Paths m_destPolys;
+  EndType m_endType;
   Path m_srcPoly;
   Path m_destPoly;
   std::vector<DoublePoint> m_normals;
@@ -367,6 +426,9 @@ private:
   double m_miterLim, m_StepsPerRad;
   IntPoint m_lowest;
   PolyNode m_polyNodes;
+#ifdef use_xyz
+  ZFill *m_ZFill;
+#endif
 
   void FixOrientations();
   void DoOffset(double delta);
@@ -374,6 +436,12 @@ private:
   void DoSquare(int j, int k);
   void DoMiter(int j, int k, double r);
   void DoRound(int j, int k);
+#ifdef use_xyz
+  void SetOffsetZ(int step, int steps, int index, IntPoint& dest);
+  void SetPointOffsetZ(int step, int steps, IntPoint& dest);
+  void SetFirstOffsetZ(int step, int steps, IntPoint& dest);
+  void SetLastOffsetZ(int step, int steps, IntPoint& dest);
+#endif
 };
 //------------------------------------------------------------------------------
 

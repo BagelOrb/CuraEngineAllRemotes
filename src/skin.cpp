@@ -332,6 +332,8 @@ void combineInfillLayers(SliceMeshStorage& mesh, unsigned int amount)
                     infill_area_per_combine.push_back(result);
                 }
             }
+            
+            region.sparseOutline = sparse.difference(result);
         }
     }
 }
