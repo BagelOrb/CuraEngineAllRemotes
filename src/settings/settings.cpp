@@ -35,6 +35,8 @@ std::string toString(EGCodeFlavor flavor)
             return "Griffin";
         case EGCodeFlavor::REPETIER:
             return "Repetier";
+        case EGCodeFlavor::G2CORE_0_9:
+            return "G2Core-0.9";
         case EGCodeFlavor::REPRAP:
         default:
             return "RepRap";
@@ -230,20 +232,20 @@ DraftShieldHeightLimitation SettingsBaseVirtual::getSettingAsDraftShieldHeightLi
         return DraftShieldHeightLimitation::FULL;
     }
     else if (value == "limited")
-    {
+        {
         return DraftShieldHeightLimitation::LIMITED;
-    }
+        }
     return DraftShieldHeightLimitation::FULL; //Default.
-}
+    }
 
 FlowTempGraph SettingsBaseVirtual::getSettingAsFlowTempGraph(std::string key) const
-{
+    {
     FlowTempGraph ret;
     std::string value_string = getSettingString(key);
     if (value_string.empty())
-    {
+        {
         return ret; //Empty at this point.
-    }
+            }
     std::regex regex("(\\[([^,\\[]*),([^,\\]]*)\\])");
     // match with:
     // - the last opening bracket '['
@@ -258,20 +260,20 @@ FlowTempGraph SettingsBaseVirtual::getSettingAsFlowTempGraph(std::string key) co
     int submatches[] = { 1, 2, 3 }; // match whole pair, first number and second number of a pair
     std::regex_token_iterator<std::string::iterator> match_iter(value_string.begin(), value_string.end(), regex, submatches);
     while (match_iter != rend)
-    {
+        {
         match_iter++; // match the whole pair
         if (match_iter == rend)
-        {
+            {
             break;
-        }
+            }
         std::string first_substring = *match_iter++;
         std::string second_substring = *match_iter++;
         try
         {
             double first = std::stod(first_substring);
             double second = std::stod(second_substring);
-            ret.data.emplace_back(first, second);
-        }
+        ret.data.emplace_back(first, second);
+            }
         catch (const std::invalid_argument& e)
         {
             logError("Couldn't read 2D graph element [%s,%s] in setting '%s'. Ignored.\n", first_substring.c_str(), second_substring.c_str(), key.c_str());
@@ -339,6 +341,9 @@ EGCodeFlavor SettingsBaseVirtual::getSettingAsGCodeFlavor(std::string key) const
         return EGCodeFlavor::REPRAP_VOLUMATRIC;
     else if (value == "Repetier")
         return EGCodeFlavor::REPETIER;
+    else if (value == "G2Core-0.9")
+        return EGCodeFlavor::G2CORE_0_9;
+
     return EGCodeFlavor::REPRAP;
 }
 
@@ -486,4 +491,3 @@ std::vector<int> SettingsBaseVirtual::getSettingAsIntegerList(std::string key) c
 }
 
 }//namespace cura
-
