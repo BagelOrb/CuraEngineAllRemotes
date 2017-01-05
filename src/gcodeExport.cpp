@@ -298,6 +298,11 @@ EGCodeFlavor GCodeExport::getFlavor()
     return this->flavor;
 }
 
+void GCodeExport::setNozzleSettings(int singleNozzle)
+{
+    this->singleNozzle = singleNozzle;
+}
+
 void GCodeExport::setZ(int z)
 {
     this->current_layer_z = z;
