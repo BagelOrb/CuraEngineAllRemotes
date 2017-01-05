@@ -95,7 +95,9 @@ void FffGcodeWriter::writeGCode(SliceDataStorage& storage, TimeKeeper& time_keep
     {
         processLayer(storage, layer_nr, total_layers);
     }
-    
+
+  std::cout << ">>>> Time processLayer: " << t1.restart() << " s\n" << std::flush;
+
     Progress::messageProgressStage(Progress::Stage::FINISH, &time_keeper);
 
     //Store the object height for when we are printing multiple objects, as we need to clear every one of them when moving to the next position.
@@ -475,7 +477,7 @@ void FffGcodeWriter::processLayer(SliceDataStorage& storage, int layer_nr, unsig
     {
         if (gcode.getExtruderIsUsed(extr_nr))
         {
-            ExtruderTrain* extr = storage.meshgroup->getExtruderTrain(extr_nr);
+            ExtruderTrain* extr (storage.meshgroup->getExtruderTrain(extr_nr));
 
             if (extr->getSettingBoolean("travel_avoid_other_parts"))
             {
@@ -488,9 +490,27 @@ void FffGcodeWriter::processLayer(SliceDataStorage& storage, int layer_nr, unsig
     coord_t max_inner_wall_width = 0;
     for (SettingsBaseVirtual& mesh_settings : storage.meshes)
     {
-        max_inner_wall_width = std::max(max_inner_wall_width, mesh_settings.getSettingInMicrons((mesh_settings.getSettingAsCount("wall_line_count") > 1) ? "wall_line_width_x" : "wall_line_width_0")); 
+        max_inner_wall_width = std::max ( max_inner_wall_width
+                                        , mesh_settings.getSettingInMicrons ( (mesh_settings.getSettingAsCount("wall_line_count") > 1) ? "wall_line_width_x"
+                                                                                                                                       : "wall_line_width_0"
+                                                                            )
+                                        );
     }
-    int64_t comb_offset_from_outlines = max_inner_wall_width * 2;
+
+    GCodePlanner& gcode_layer ( layer_plan_buffer.emplace_back ( storage
+                                                               , layer_nr
+                                                               , (int64_t) (storage.meshes[0].layers[layer_nr].printZ) // z
+                                                               , layer_thickness
+                                                               , last_position_planned
+                                                               , current_extruder_planned
+                                                               , is_inside_mesh_layer_part
+                                                               , fan_speed_layer_time_settings
+                                                               , getSettingAsCombingMode("retraction_combing")
+                                                               , (int64_t) (2 * max_inner_wall_width) // comb_offset_from_outlines
+                                                               , avoid_other_parts
+                                                               , avoid_distance
+                                                               )
+                              );
 
 
 
@@ -576,14 +596,13 @@ void FffGcodeWriter::processLayer(SliceDataStorage& storage, int layer_nr, unsig
     if (include_helper_parts)
     { // add prime tower if it hasn't already been added
         // print the prime tower if it hasn't been printed yet
-        int prev_extruder = gcode_layer.getExtruder(); // most likely the same extruder as we are extruding with now
-        addPrimeTower(storage, gcode_layer, layer_nr, prev_extruder);
+        addPrimeTower(storage, gcode_layer, layer_nr, gcode_layer.getExtruder()); // prev_extruder: most likely the same extruder as we are extruding with now
     }
 
     last_position_planned = gcode_layer.getLastPosition();
     current_extruder_planned = gcode_layer.getExtruder();
     is_inside_mesh_layer_part = gcode_layer.getIsInsideMesh();
-    
+
     gcode_layer.processFanSpeedAndMinimalLayerTime();
 }
 
@@ -728,11 +747,13 @@ void FffGcodeWriter::addMeshLayerToGCode_meshSurfaceMode(SliceDataStorage& stora
 
     setExtruder_addPrime(storage, gcode_layer, layer_nr, mesh->getSettingAsIndex("extruder_nr"));
 
-    SliceLayer* layer = &mesh->layers[layer_nr];
-
+    SliceLayer* layer (&mesh->layers[layer_nr]);
 
     Polygons polygons;
-    for(unsigned int partNr=0; partNr<layer->parts.size(); partNr++)
+
+    const unsigned int partNrCount (layer->parts.size());
+
+    for(unsigned int partNr (0) ; partNr < partNrCount ; ++partNr)
     {
         polygons.add(layer->parts[partNr].outline); //what is this part number?
     }
@@ -779,22 +800,26 @@ void FffGcodeWriter::addMeshLayerToGCode(SliceDataStorage& storage, SliceMeshSto
 
     SliceLayer* layer = &mesh->layers[layer_nr];
 
-    if (layer->parts.size() == 0)
+    SliceLayer* layer (&mesh->layers[layer_nr]);
+
+    if (layer->parts.empty())
     {
         return;
     }
 
     if (mesh->getSettingAsCount("wall_line_count") > 0)
     { // don't switch extruder if there's nothing to print
-        bool empty = true;
+        bool empty (true);
+
         for (SliceLayerPart& part : layer->parts)
         {
-            if (part.insets.size() > 0)
+            if (!part.insets.empty())
             {
                 empty = false;
                 break;
             }
         }
+
         if (empty)
         {
             return;
@@ -813,8 +838,10 @@ void FffGcodeWriter::addMeshLayerToGCode(SliceDataStorage& storage, SliceMeshSto
     PathOrderOptimizer part_order_optimizer(layer_start_position, z_seam_pos, z_seam_type);
     for(unsigned int partNr=0; partNr<layer->parts.size(); partNr++)
     {
-        part_order_optimizer.addPolygon(layer->parts[partNr].insets[0][0]);
+        part_order_optimizer_Polygon.add(layer->parts[partNr].insets[0][0]);
     }
+
+    part_order_optimizer.addPolygons(part_order_optimizer_Polygon);
     part_order_optimizer.optimize();
 
     EFillMethod infill_pattern = mesh->getSettingAsFillMethod("infill_pattern");
