@@ -1,7 +1,15 @@
 /** Copyright (C) 2013 David Braam - Released under terms of the AGPLv3 License */
 #include "bridge.h"
+#include "utils/polygondebug.h"
+
+#include <algorithm>
 
 namespace cura {
+
+double area_cmp(PolygonRef r1, PolygonRef r2)
+{
+    return fabs(r1.area()) > fabs(r2.area());
+}
 
 int bridgeAngle(Polygons outline, SliceLayer* prevLayer)
 {
@@ -19,41 +27,24 @@ int bridgeAngle(Polygons outline, SliceLayer* prevLayer)
     if (islands.size() > 5 || islands.size() < 1)
         return -1;
     
-    //Next find the 2 largest islands that we rest on.
-    double area1 = 0;
-    double area2 = 0;
-    int idx1 = -1;
-    int idx2 = -1;
-    for(unsigned int n=0; n<islands.size(); n++)
-    {
-        //Skip internal holes
-        if (!islands[n].orientation())
-            continue;
-        double area = fabs(islands[n].area());
-        if (area > area1)
-        {
-            if (area1 > area2)
-            {
-                area2 = area1;
-                idx2 = idx1;
-            }
-            area1 = area;
-            idx1 = n;
-        }else if (area > area2)
-        {
-            area2 = area;
-            idx2 = n;
-        }
-    }
-    
-    if (idx1 < 0 || idx2 < 0)
-        return -1;
-    
-    Point center1 = islands[idx1].centerOfMass();
-    Point center2 = islands[idx2].centerOfMass();
+    // Lambda to compare area
+    // const auto area_cmp = [](PolygonRef r1, PolygonRef r2)
+    // { return fabs(r1.area()) > fabs(r2.area()); };
+
+    // Next find the 2 largest islands that we rest on.
+    // Find the first one
+    auto iter = std::max_element(std::begin(islands), std::end(islands), area_cmp);
+    PolygonRef idx1 = *iter;
+    // Remove that from the list
+    islands.erase(iter);
+    // Find the second one
+    iter = std::max_element(std::begin(islands), std::end(islands), area_cmp);
+    PolygonRef idx2 = *iter;
+
+    Point center1 = idx1.centerOfMass();
+    Point center2 = idx2.centerOfMass();
 
     return angle(center2 - center1);
 }
 
 }//namespace cura
-

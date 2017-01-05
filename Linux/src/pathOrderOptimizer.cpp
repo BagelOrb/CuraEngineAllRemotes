@@ -6,11 +6,10 @@ namespace cura {
 void PathOrderOptimizer::optimize()
 {
     std::vector<bool> picked;
-    for(unsigned int i=0;i<polygons.size(); i++)
+    for(PolygonRef poly : polygons)
     {
         int best = -1;
         float bestDist = 0xFFFFFFFFFFFFFFFFLL;
-        PolygonRef poly = polygons[i];
         for(unsigned int j=0; j<poly.size(); j++)
         {
             float dist = vSize2f(poly[j] - startPoint);
@@ -72,9 +71,8 @@ void PathOrderOptimizer::optimize()
     }
     
     p0 = startPoint;
-    for(unsigned int n=0; n<polyOrder.size(); n++)
+    for(int nr : polyOrder)
     {
-        int nr = polyOrder[n];
         int best = -1;
         float bestDist = 0xFFFFFFFFFFFFFFFFLL;
         for(unsigned int i=0;i<polygons[nr].size(); i++)

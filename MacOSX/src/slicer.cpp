@@ -229,8 +229,10 @@ void SlicerLayer::makePolygons(OptimizedVolume* ov, bool keepNoneClosed, bool ex
                 {
                     if (bestResult.pointIdxA == bestResult.pointIdxB)
                     {
-                        for(unsigned int n=0; n<openPolygonList[bestA].size(); n++)
-                            openPolygonList[bestB].add(openPolygonList[bestA][n]);
+                        for(Point& p : openPolygonList[bestA])
+                        {
+                            openPolygonList[bestB].add(p);
+                        }
                         openPolygonList[bestA].clear();
                     }
                     else if (bestResult.AtoB)
@@ -240,8 +242,10 @@ void SlicerLayer::makePolygons(OptimizedVolume* ov, bool keepNoneClosed, bool ex
                             poly.add(polygonList[bestResult.polygonIdx][n]);
                         for(unsigned int n=poly.size()-1;int(n) >= 0; n--)
                             openPolygonList[bestB].add(poly[n]);
-                        for(unsigned int n=0; n<openPolygonList[bestA].size(); n++)
-                            openPolygonList[bestB].add(openPolygonList[bestA][n]);
+                        for(Point& p : openPolygonList[bestA])
+                        {
+                            openPolygonList[bestB].add(p);
+                        }
                         openPolygonList[bestA].clear();
                     }
                     else
@@ -276,10 +280,10 @@ void SlicerLayer::makePolygons(OptimizedVolume* ov, bool keepNoneClosed, bool ex
 
     if (keepNoneClosed)
     {
-        for(unsigned int n=0; n<openPolygonList.size(); n++)
+        for(PolygonRef r : openPolygonList)
         {
-            if (openPolygonList[n].size() > 0)
-                polygonList.add(openPolygonList[n]);
+            if (r.size() > 0)
+                polygonList.add(r);
         }
     }
     //Clear the openPolygonList to save memory, the only reason to keep it after this is for debugging.
@@ -369,9 +373,9 @@ Slicer::Slicer(OptimizedVolume* ov, int32_t initial, int32_t thickness, bool kee
         }
     }
     
-    for(unsigned int layerNr=0; layerNr<layers.size(); layerNr++)
+    for(SlicerLayer& l : layers)
     {
-        layers[layerNr].makePolygons(ov, keepNoneClosed, extensiveStitching);
+        l.makePolygons(ov, keepNoneClosed, extensiveStitching);
     }
 }
 

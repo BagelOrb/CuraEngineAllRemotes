@@ -83,12 +83,9 @@ public:
         if (!prepareModel(storage, files))
             return false;
 
-        processSliceData(storage);
-        writeGCode(storage);
+    bool setTargetFile(const char* filename);
 
-        cura::logProgress("process", 1, 1);//Report the GUI that a file has been fully processed.
-        cura::log("Total time elapsed %5.2fs.\n", timeKeeperTotal.restart());
-        guiSocket.sendNr(GUI_CMD_FINISH_OBJECT);
+    bool processFile(const char* input_filename);
 
         return true;
     }
@@ -734,9 +731,7 @@ private:
         }
         islandOrderOptimizer.optimize();
 
-        for(unsigned int n=0; n<supportIslands.size(); n++)
-        {
-            Polygons& island = supportIslands[islandOrderOptimizer.polyOrder[n]];
+    bool prepareModel(SliceDataStorage& storage, const char* input_filename);
 
             Polygons supportLines;
             if (config.supportLineDistance > 0)
@@ -783,19 +778,9 @@ private:
         }
     }
 
-    void addWipeTower(SliceDataStorage& storage, GCodePlanner& gcodeLayer, int layerNr, int prevExtruder)
-    {
-        if (config.wipeTowerSize < 1)
-            return;
-        //If we changed extruder, print the wipe/prime tower for this nozzle;
-        gcodeLayer.addPolygonsByOptimizer(storage.wipeTower, &supportConfig);
-        Polygons fillPolygons;
-        generateLineInfill(storage.wipeTower, fillPolygons, config.extrusionWidth, config.extrusionWidth, config.infillOverlap, 45 + 90 * (layerNr % 2));
-        gcodeLayer.addPolygonsByOptimizer(fillPolygons, &supportConfig);
+    void addSupportToGCode(SliceDataStorage& storage, GCodePlanner& gcodeLayer, int layerNr);
 
-        //Make sure we wipe the old extruder on the wipe tower.
-        gcodeLayer.addTravel(storage.wipePoint - config.extruderOffset[prevExtruder].p() + config.extruderOffset[gcodeLayer.getExtruder()].p());
-    }
+    void addWipeTower(SliceDataStorage& storage, GCodePlanner& gcodeLayer, int layerNr, int prevExtruder);
 };
 
 }//namespace cura
