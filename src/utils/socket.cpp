@@ -84,7 +84,7 @@ void ClientSocket::sendAll(const void* data, int length)
             close();
             return;
         }
-        ptr += length;
+        ptr += n;
         length -= n;
     }
 }
