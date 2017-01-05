@@ -42,6 +42,20 @@ if(NOT APPLE AND NOT WIN32)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++")
 endif()
 
+if(WIN32)
+    add_definitions(/DNOMINMAX)
+    if (MSVC)
+        # Switch the runtime to use static linking on MSVC
+        foreach(flag_var
+                CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+                CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+        if(${flag_var} MATCHES "/MD")
+            string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
+        endif(${flag_var} MATCHES "/MD")
+        endforeach(flag_var)
+    endif()
+endif()
+
 include_directories(${CMAKE_CURRENT_BINARY_DIR} libs)
 
 add_library(clipper STATIC libs/clipper/clipper.cpp)
