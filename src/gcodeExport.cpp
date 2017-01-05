@@ -9,6 +9,13 @@
 #include "utils/Date.h"
 #include "utils/string.h" // MMtoStream, PrecisionedDouble
 
+#ifdef __WIN32
+float roundf(float x)
+{
+   return x >= 0.0f ? floorf(x + 0.5f) : ceilf(x - 0.5f);
+}
+#endif
+
 namespace cura {
 
 double layer_height; //!< report basic layer height in RepRap gcode file.
