@@ -1,0 +1,1010 @@
+5320550 Tue Jan 3 13:26:02 2017 +0000 Mark Burton Now caches the infill angles within the mesh.
+1057066 Tue Jan 3 13:24:37 2017 +0000 Mark Burton Add infill_angles member to SliceMeshStorage class.
+fd92e7c Tue Jan 3 13:23:25 2017 +0000 Mark Burton Revert FffGcodeWriter::addMeshPartToGCode() back to its original signature.
+be65168 Mon Jan 2 18:55:05 2017 +0000 Mark Burton Remove redundant infill_pattern checks.
+b59846c Mon Jan 2 18:48:41 2017 +0000 Mark Burton Add infill_pattern & infill_angles args to addMeshPartToGCode().
+56ee763 Mon Jan 2 09:28:36 2017 +0000 Mark Burton Removed local function parseIntegerList() and uses new setting method instead.
+014b278 Mon Jan 2 09:27:23 2017 +0000 Mark Burton Added SettingsBaseVirtual::getSettingAsIntegerList(std::string key).
+217b2ad Wed Dec 28 11:05:23 2016 +0000 Mark Burton Match the skin line angles to the infill line angles when both are lines or zig zag style.
+bfb8d22 Wed Dec 28 08:56:25 2016 +0000 Mark Burton Add infill_angles setting to determine the directions of the lines and zig zag infills.
+dbd3372 Wed Dec 28 08:31:10 2016 +0000 Mark Burton Add infill_angles setting to determine the directions of the lines and zig zag infills.
+389eb0d Mon Dec 5 09:31:35 2016 -0600 Rob Giseburt Missed on instance of the g2corepre changing to g2core-0.9
+89946e1 Mon Dec 5 09:18:27 2016 -0600 Rob Giseburt Change G2CorePre to G2Core-0.9 and G2CORE_PRE to G2CORE_0_9
+217fed1 Sat Dec 3 14:15:30 2016 +0100 Gregor Riepl Added missing dots to updated license
+70feb29 Sat Dec 3 14:11:31 2016 +0100 Gregor Riepl Version bump, pull in the correct deps
+193879f Sat Dec 3 14:05:43 2016 +0100 Gregor Riepl Updated changelog for 2.3.0
+09ae5d6 Sat Dec 3 14:04:36 2016 +0100 Gregor Riepl Updated clipper library license
+230a787 Sat Dec 3 13:41:51 2016 +0100 Gregor Riepl Removed stray newline diff from rpath patch
+721f922 Thu Dec 1 16:44:15 2016 -0600 Rob Giseburt Added codeproj and CMakeScripts to gitignore
+3d08422 Thu Dec 1 16:44:15 2016 -0600 Rob Giseburt g2core-pre gcode dialect
+eaed079 Wed Nov 30 21:47:38 2016 +0100 Gregor Riepl Package is now non-native
+82b85d0 Wed Nov 30 08:40:00 2016 +0100 Gregor Riepl Updated changelog
+dc6121f Tue Nov 29 18:53:37 2016 +0100 Gregor Riepl Added readme section, explaining the evil-json lintian override
+bcdee3b Tue Nov 29 08:39:27 2016 +0100 Gregor Riepl Moved credit to thopiekar from contributor list to Debian readme
+f149de8 Mon Nov 28 12:28:27 2016 -0800 paindoctor Implementing std::reference_wrapper as the main member of PolygonRef
+f660f3c Fri Nov 4 16:29:21 2016 +0100 Simon Edwards Use the static runtime when compiling with MSVC.
+72ce68a Fri Nov 4 16:29:06 2016 +0100 Seva Alekseyev Now builds with MSVC 2015. Changes are:
+a4fe7b4 Tue Oct 11 17:54:02 2016 +0200 Philip Standt documentation for settings
+797b35a Wed Oct 5 02:02:08 2016 -0600 Kelly Anderson Allow firmware retract on machines without requiring Volumetric, set with machine_settings.machine_firmware_retract
+3d63fef Sun Oct 2 22:03:12 2016 +0300 Mehmet Sutas Update Makefile
+894cd05 Sun Oct 2 14:44:05 2016 +0200 Gregor Riepl Added Lintian override, clarifying why the tag does not apply
+0c6599c Sun Oct 2 14:08:40 2016 +0200 Gregor Riepl Removed manual license modification
+26be1d2 Sun Oct 2 13:26:26 2016 +0200 Gregor Riepl Added copyright information
+3a5d3f7 Thu Sep 29 21:43:22 2016 -0600 qubick comment for extrusion (traverse) speed adjustment
+821f8aa Thu Sep 29 01:24:37 2016 +0200 Gregor Riepl Added clarification about versioning scheme
+f4016b0 Wed Sep 28 19:33:35 2016 +0200 Gregor Riepl Applied license patch directly
+233faf7 Wed Sep 28 19:33:08 2016 +0200 Gregor Riepl Removed license patch again, does not really solve the issue
+d9165bf Tue Sep 27 08:20:15 2016 +0200 Gregor Riepl Added patch to remove non-applicable 'evil' clause from rapidJSON license
+1533512 Mon Sep 26 23:05:40 2016 +0200 Gregor Riepl Added quilt deps and rpath removal patch
+0556b28 Mon Sep 26 23:05:21 2016 +0200 Gregor Riepl Cleaned out description text (word wrap)
+944b9e6 Mon Sep 26 23:04:45 2016 +0200 Gregor Riepl Removed unused dh overrides
+838a4e3 Mon Sep 26 23:04:24 2016 +0200 Gregor Riepl Fixed incorrect package versioning
+63dc271 Mon Sep 26 23:03:25 2016 +0200 Gregor Riepl Corrected week day in changelog
+712a5c0 Mon Sep 26 08:58:29 2016 +0200 Gregor Riepl Fixed build rules and deps and updated version to allow seamless upgrade (thanks to @thopiekar)
+a096a2a Thu Sep 22 00:13:34 2016 +0200 Gregor Riepl Added anti-dependency against old cura-engine
+91cd469 Wed Sep 21 23:30:19 2016 +0200 Gregor Riepl Added debian package files
+c6f22ca Wed Sep 21 14:39:49 2016 +0600 Victor Larchenko T534: None type is now working correct
+a296c86 Sat Sep 3 01:45:20 2016 -0700 Mark Walker Use Bresenham's line algorithm to emplace
+0df404c Tue Aug 23 13:29:45 2016 -0400 Seva Alekseyev Now builds with MSVC 2015. Changes are:
+df2fc34 Fri Aug 12 13:23:11 2016 -0700 Cesar Torres haptic print
+e7fac11 Thu Jul 21 01:17:19 2016 +0100 Blocks Technology Spelling corrected
+5dbaf44 Thu Jul 21 01:16:29 2016 +0100 Blocks Technology Instructions to update plugin
+022efa2 Thu Jul 21 00:58:16 2016 +0100 Blocks Technology Triple extrusion optimization
+c12755c Tue Jul 19 08:50:14 2016 -0700 Latrocinium Update main.cpp
+fe8b771 Thu Jul 14 16:03:23 2016 +0200 Scott Lenser Fix to make bridging work much better.
+a58cea5 Fri Jul 8 14:44:08 2016 -0400 Scott Lenser Removed trailing whitespace.
+c9d8567 Fri Jul 8 14:43:14 2016 -0400 Scott Lenser Reverting unwanted modifications.
+3a117b8 Wed Jul 6 23:10:38 2016 -0400 Scott Lenser Switched print outs to log().
+4ddd00a Wed Jul 6 23:09:12 2016 -0400 Scott Lenser Resolved signed / unsigned conflict in other direction to match master.
+3c1a9e7 Wed Jul 6 23:00:38 2016 -0400 Scott Lenser Removed trailing white space.
+b2ad596 Wed Jul 6 22:54:10 2016 -0400 Scott Lenser Added trailing header guard comment as per convention.
+6a16c6f Tue Jul 5 23:12:56 2016 -0400 Scott Lenser Removed include that isn't needed after cleanup.
+5ad3d9f Tue Jul 5 22:52:01 2016 -0400 Scott Lenser Removed todo file.
+55811f8 Tue Jul 5 22:51:27 2016 -0400 Scott Lenser Removed some debug cruft related to proto buffers.
+9f8dda3 Tue Jul 5 22:47:31 2016 -0400 Scott Lenser Removed saving settings as json file stuff.
+0634e21 Tue Jul 5 22:41:06 2016 -0400 Scott Lenser Removed mason backend stuff.
+a61dc63 Tue Jul 5 22:09:25 2016 -0400 Scott Lenser Added a bunch of documentation to slicer and sparse grid.
+f35a179 Tue Jul 5 21:47:16 2016 -0400 Scott Lenser Made formatting for convexHull function better match conventions.
+1df99e9 Tue Jul 5 21:36:36 2016 -0400 Scott Lenser Renaming of convexHull variants.
+c232ef1 Tue Jul 5 21:00:59 2016 -0400 Scott Lenser Formatting changes and minor cleanups.
+8c0dbf9 Tue Jul 5 00:52:02 2016 -0400 Scott Lenser Properly support protocol change now.
+27256cb Mon Jul 4 21:47:25 2016 -0400 Scott Lenser Added to list of things to do.
+b00c053 Mon Jul 4 21:44:28 2016 -0400 Scott Lenser Updated todo to reflect completed work.
+a7496a0 Mon Jul 4 21:35:43 2016 -0400 Scott Lenser Improved logic used in SlicerLayer::getNextSegmentIdx().
+c43940b Mon Jul 4 21:08:43 2016 -0400 Scott Lenser Sped up SlicerLayer::makeBasicPolygonLoop.
+7bff26e Mon Jul 4 20:27:02 2016 -0400 Scott Lenser Changed a function interface to avoid completely redundant calculation.
+b57295e Mon Jul 4 19:57:54 2016 -0400 Scott Lenser Sped up SlicerLayer::connectOpenPolylines.
+d83310c Mon Jul 4 19:22:24 2016 -0400 Scott Lenser Removed now unused code and cleaned up printouts.
+a9b4039 Mon Jul 4 19:17:25 2016 -0400 Scott Lenser Sped up stitching by only finding nearby points once.
+3ac88c1 Mon Jul 4 15:52:43 2016 -0400 Scott Lenser Sped up stitching in slicer.
+cf71f65 Mon Jul 4 14:26:01 2016 -0400 Scott Lenser Added more timing in slicer.
+add89d1 Sat Jul 2 17:33:04 2016 -0400 Scott Lenser Made skirt generation obey minimum skirt length.
+b8f2737 Sat Jul 2 17:20:00 2016 -0400 Scott Lenser Fixed bug which broke CuraEngine backend.
+8ab315c Sat Jul 2 16:48:26 2016 -0400 Scott Lenser Better setting handling.
+2bb0fb9 Sat Jul 2 16:20:25 2016 -0400 Scott Lenser Improved skirt calculation.
+af9a24c Sat Jul 2 11:57:23 2016 -0400 Scott Lenser Functional skirt generation.
+0712865 Sat Jul 2 00:55:17 2016 -0400 Scott Lenser Minor accuracy improvement to edge interpolation.
+4bdfd66 Fri Jul 1 20:33:21 2016 -0400 Scott Lenser Added drawing of slicing data / volume store.
+6c2e200 Fri Jul 1 19:56:09 2016 -0400 Scott Lenser Making slicing less exact until I need the extra precision.
+01d42d9 Fri Jul 1 19:54:42 2016 -0400 Scott Lenser Added timing for BuildSubPlanner-s in BuildPlanner.
+aa79163 Fri Jul 1 19:53:31 2016 -0400 Scott Lenser Turned off printing of protobuf messages received.
+3b8771e Fri Jul 1 19:52:24 2016 -0400 Scott Lenser Switched to cpu usage time instead of wall clock for more stable profiling.
+092ffb8 Fri Jul 1 18:34:44 2016 -0400 Scott Lenser Made skirt generation look at every level of object.
+7d452c3 Fri Jul 1 18:34:28 2016 -0400 Scott Lenser Added missing file.
+f97b6ec Fri Jul 1 18:26:17 2016 -0400 Scott Lenser Added some timing print outs.
+a7b21c5 Fri Jul 1 18:06:29 2016 -0400 Scott Lenser Split writing of poly into build plan into a separate function.
+4432081 Fri Jul 1 17:49:32 2016 -0400 Scott Lenser Fixed bug where wire between start and end of polyon was not generated.
+306dd1a Fri Jul 1 17:49:15 2016 -0400 Scott Lenser Removed debug printouts that shouldn't have been checked in.
+361cc96 Fri Jul 1 17:46:17 2016 -0400 Scott Lenser Added code to send layers to GUI to be drawn.
+4f3e325 Fri Jul 1 17:44:21 2016 -0400 Scott Lenser Fixed bug which sent multiple finished slice messages.
+259e7ca Fri Jul 1 17:43:07 2016 -0400 Scott Lenser Fixed bug where gcode was being sent to stdout even when connected to gui when using mason.
+0fa204e Wed Jun 29 10:06:05 2016 -0400 David Bender fix layer height output in gcode
+7b3004f Wed Jun 29 10:06:05 2016 -0400 David Bender this seems to make the test work properly
+ae692e4 Wed Jun 29 10:06:05 2016 -0400 David Bender initial commit of using presliced geometry
+81bb2cb Wed Jun 29 10:04:41 2016 -0400 David Bender initial commit of using presliced geometry
+415fd2a Wed Jun 29 10:00:08 2016 -0400 David Bender Add external library benejson
+94823c0 Wed Jun 29 09:53:26 2016 -0400 David Bender fix layer height output in gcode
+a3d9f65 Mon Jun 27 13:09:39 2016 +0200 Javier Lechuga Smarter noozle cooldown. Adjust routine names, Maybe like this look a bit better?. CURA-1731
+05b184c Mon Jun 27 08:19:25 2016 +0200 Javier Lechuga Smarter noozle cooldown. Start 1 second before in timeBeforeEndToInsertPreheatCommand_coolDownWarmUp routine. CURA-1731
+9ba5bc5 Sun Jun 26 21:47:52 2016 -0400 Scott Lenser Split BuildPlanner into multiple sub planners.
+0dd4961 Sun Jun 26 21:29:08 2016 -0400 Scott Lenser Moved plan generation into a new class "BuildPlanner".
+c63abc2 Sun Jun 26 21:16:43 2016 -0400 Scott Lenser Added data type for full planning stage from volume to tool head paths.
+a4d14ac Sun Jun 26 19:56:09 2016 -0400 Scott Lenser Started a todo list in todo.txt.
+83c5c8e Sun Jun 26 19:47:31 2016 -0400 Scott Lenser Added creation of wire plan that depends on volume store.
+05601f0 Sun Jun 26 19:18:06 2016 -0400 Scott Lenser Moved mason out of cura namespace.
+3c638c7 Sun Jun 26 17:22:24 2016 -0400 Scott Lenser Added a very basic WirePlan as an intermediate representation.
+7f25479 Fri Jun 24 14:26:08 2016 +0200 Javier Lechuga SendMaterialEstimatesOfBothExtrudersToFrontend. Including sendPrintTimeMaterialEstimates in protobuf scheme. CURA-1687
+36b56fc Fri Jun 24 13:15:36 2016 +0200 Javier Lechuga Smarter noozle cooldown. Start 1 second before corrected in timeBeforeExtruderPlanToInsert routine. CURA-1731
+cdc48bc Fri Jun 24 10:43:35 2016 +0200 Javier Lechuga Smarter noozle cooldown. Remove some code duplication and implement routines to get time, temperature and both before end to insert Preheat command coolDownWarmUp. CURA-1731
+4e246b8 Fri Jun 24 09:03:38 2016 +0200 Javier Lechuga SendMaterialEstimatesOfBothExtrudersToFrontend. First commit not ready yet. CURA-1687
+ac38b29 Thu Jun 23 13:11:48 2016 +0200 Javier Lechuga Smarter noozle cooldown. Start 1 second before adjusted in timeBeforeExtruderPlanToInsert routine. CURA-1731
+f4aa01c Thu Jun 23 12:25:25 2016 +0200 Javier Lechuga Smarter noozle cooldown. Adjust wrting style. CURA-1731
+d014c38 Thu Jun 23 12:04:45 2016 +0200 Javier Lechuga Smarter noozle cooldown. Start 1 second before. CURA-1731
+3ef6f3c Thu Jun 23 10:54:30 2016 +0200 Javier Lechuga Smarter noozle cooldown. CURA-1731
+ccc02ec Tue Jun 21 16:27:47 2016 +0200 Javier Lechuga Minor optimization: Writing style, small memory allocations
+3f509f6 Sun Jun 19 22:04:36 2016 -0400 Scott Lenser Added basic plan storage and conversion to gcode.
+604eacb Sat Jun 18 20:01:53 2016 -0400 Scott Lenser Added a VolumeStore representing the volumes involved in the print.
+93c3393 Sat Jun 18 17:18:33 2016 -0400 Scott Lenser Made Slicer::Slicer take const Mesh *.
+53ddf44 Sat Jun 18 16:44:24 2016 -0400 Scott Lenser Added generation of start/end gcode in Mason backend.
+d7f6cd5 Sat Jun 18 16:43:50 2016 -0400 Scott Lenser Made preSetup member function const correct.
+7b34a4a Sat Jun 18 14:40:01 2016 -0400 Scott Lenser Added start of Mason backend.
+c900256 Sat Jun 18 14:14:02 2016 -0400 Scott Lenser Changed name of new backend to Mason.
+4eeef53 Sat Jun 18 13:57:09 2016 -0400 Scott Lenser Added experimental back end option.
+15f02cf Sun Jun 12 20:38:54 2016 -0400 Scott Lenser Fix to make bridging work much better.
+165de0a Sun Jun 12 16:44:12 2016 -0400 Scott Lenser Fixed bug where generated json file had an extra comma.
+e595c56 Sun Jun 12 16:29:53 2016 -0400 Scott Lenser Added code to save global options received over socket into a json file.
+0d0bf5a Sun Jun 12 12:11:25 2016 -0400 Scott Lenser Revert "Changed extension handling to match conventions in Cura."
+00163bc Fri Jun 10 20:51:51 2016 -0400 Scott Lenser Added dumping of socket messages to output.
+da4672d Sat Jun 4 15:23:52 2016 -0400 Scott Lenser Changed extension handling to match conventions in Cura.
+f36ccba Sat Jun 4 15:23:29 2016 -0400 Scott Lenser Improved error message.
+f20caf0 Tue May 31 08:54:05 2016 +0200 sparklexy a minor change on one typo in the comment line
+2437139 Thu May 12 11:33:02 2016 +0800 liu946 simple
+eb41998 Wed May 11 13:17:26 2016 -0400 David Bender this seems to make the test work properly
+f0b1651 Wed May 11 12:54:12 2016 -0400 David Bender initial commit of using presliced geometry
+bc17e4e Wed May 11 12:49:00 2016 -0400 David Bender Add external library benejson
+7003f1c Tue Apr 5 16:36:25 2016 -0300 Gabriel Constenla Fix precisions and add F precision
+b181de9 Mon Apr 4 20:08:11 2016 -0300 Gabriel Constenla Add Kiddo GCode flavor
+2fbfc27 Thu Mar 17 20:32:13 2016 +0100 Sjoerd T. Timmer fix bad declaration of hasNext
+1dee408 Thu Mar 17 20:26:58 2016 +0100 Sjoerd T. Timmer added hasNext method to Towering
+1730177 Thu Mar 17 20:15:19 2016 +0100 Sjoerd T. Timmer minor cleanups
+d107aa8 Thu Mar 17 19:44:26 2016 +0100 Sjoerd T. Timmer Towering compiled weer
+2fad1b4 Wed Mar 16 22:33:50 2016 +0100 Sjoerd T. Timmer towering WIP
+fc70e2e Wed Mar 16 17:16:10 2016 +0100 Sjoerd Timmer preliminary modifications towards a lazy iterator based towering algo
+10c14a2 Tue Mar 15 23:35:39 2016 +0100 Sjoerd T. Timmer forgot to save PrintableLayerPart.h
+0411e19 Tue Mar 15 22:03:50 2016 +0100 Sjoerd T. Timmer werk van Tim
+173f598 Sun Mar 13 23:31:07 2016 +0100 Sjoerd T. Timmer first serious attempt to rewrite code to call new Towering code, fails miserably
+224eafd Sun Mar 13 20:55:00 2016 +0100 Sjoerd T. Timmer Revert "moved layer processing code to PrintableLayer constructor"
+8dcaa61 Tue Mar 8 17:23:16 2016 -0300 Martin Elsner Ramos Removed dead symlink.
+bc43869 Mon Mar 7 11:47:20 2016 +0100 Sjoerd Timmer moved layer processing code to PrintableLayer constructor
+966af8c Fri Mar 4 21:26:24 2016 +0100 Sjoerd Timmer eerste versie towering. nog niet getest. copiled wel
+3650adb Thu Mar 3 21:10:38 2016 +0100 Sjoerd T. Timmer created Towering algorithm class and pasted old code in comments
+b79d374 Thu Mar 3 10:26:03 2016 +0100 Gregwar links
+6ce5a18 Tue Mar 1 02:39:29 2016 +0100 soyer use a null object as a default command socket refactor arcus specific command socket to a separate compilation unit
+0cc0219 Thu Feb 25 17:21:03 2016 -0500 David Bender initial commit of using presliced geometry
+d1ff37c Thu Feb 25 17:20:06 2016 -0500 David Bender Add external library benejson
+f5b8342 Thu Feb 18 13:25:58 2016 -0800 Justin Sy Made skins generate a bit less. Added options: extra support amount & support extrusion width. Made angles 0/90 degrees.
+30801dd Sat Feb 6 01:47:00 2016 +0100 Gregwar Do not simplify polygons
+8a8ddf3 Fri Feb 5 13:01:51 2016 +0100 Gregwar Fix arcus
+77dc0a3 Fri Feb 5 13:00:23 2016 +0100 Gregwar Fixing arcus enabled
+f700f41 Wed Jan 27 10:35:17 2016 +0100 Gregwar libraries
+5a9462d Wed Jan 27 10:32:10 2016 +0100 Gregwar deps.json
+3754065 Mon Jan 25 10:37:30 2016 -0500 qubick top skin pattern in given string, but only works when this setting is given
+3d1c624 Thu Jan 21 20:10:58 2016 -0500 qubick disabled printing inset for textured surface wall
+2a99801 Thu Jan 21 18:02:55 2016 -0500 qubick wall_count added for settings
+87844d7 Thu Jan 21 14:47:14 2016 -0500 qubick remove outer wall or reduce inset
+6a04082 Thu Jan 21 14:44:25 2016 -0500 qubick what is part?
+5854f11 Thu Jan 21 14:28:09 2016 -0500 qubick top bottom skin texture manipulation
+7ad2409 Thu Jan 21 14:26:55 2016 -0500 qubick infill setting force
+9a75e93 Thu Jan 21 14:25:09 2016 -0500 qubick what is layer.part?
+ad8ac71 Wed Jan 20 13:15:48 2016 -0500 qubick added option for material
+37c4fc1 Mon Jan 18 15:32:29 2016 -0500 qubick fdm machine settings
+73858f7 Mon Jan 18 15:21:13 2016 -0500 qubick forced inset_count to be 10 from 3
+835e92f Mon Jan 18 14:59:13 2016 -0500 qubick initial tiny change to check if build-compile works
+a09ac8e Thu Jan 14 02:55:21 2016 -0200 Martin Elsner Ramos Improvements to make it compile on Cygwin.
+448e9e0 Wed Jan 13 22:35:42 2016 -0200 Martin Elsner Ramos Removing unnecessary conversions.
+08b9afa Wed Jan 13 22:31:51 2016 -0200 Martin Elsner Ramos Replacing stoi with strol
+e802f02 Wed Jan 13 22:22:15 2016 -0200 Martin Elsner Ramos Changed to the newer <cstring>
+0f94545 Wed Jan 13 22:17:10 2016 -0200 Martin Elsner Ramos Back to c++11
+5e7fa40 Wed Jan 13 22:06:18 2016 -0200 Martin Elsner Ramos Adding cstdio
+25873fd Wed Jan 13 21:59:02 2016 -0200 Martin Elsner Ramos Activating POSIX options.
+9a51f46 Wed Jan 13 21:50:38 2016 -0200 Martin Elsner Ramos Adjustments in CMakeLists.txt
+b76f4c2 Wed Jan 13 15:28:49 2016 -0200 Martin Elsner Ramos Added ws2_32 reference.
+89f4dbe Wed Jan 13 15:09:31 2016 -0200 Martin Elsner Ramos Fixed CMakeLists
+39be21b Wed Jan 13 14:34:33 2016 -0200 Martin Elsner Ramos Added Cygwin compatibility flag.
+12a02bc Sat Jan 9 15:48:17 2016 -0800 Matthew Shoup Display the current layer being printed to the LCD on REPRAP and MAKERBOT
+28f9650 Tue Nov 24 15:52:06 2015 +0200 Igor fix compilation under cygwin
+7f36b31 Tue Nov 17 22:24:44 2015 +0100 Emil 'Skeen' Madsen status is a bool; false == 0 (succesful >.<')
+5be5755 Tue Nov 17 22:21:02 2015 +0100 Emil 'Skeen' Madsen Return non-0 status if file couldn't be opened
+1cc3c01 Sun Oct 4 16:40:45 2015 -0600 patrick3coffee Merge remote-tracking branch 'Ultimaker/master'
+300ec27 Sun Oct 4 16:24:00 2015 -0600 patrick3coffee first stab at supporting TinyG
+0655b3f Mon Sep 21 14:40:06 2015 +0200 Hajo Nils Krabbenhöft rework getLayerSecondWalls() to make sure it doesn't completely remove isles with less than 0.8mm radius (= offset_from_outlines = 2*nozzle_size)
+c9cd1f8 Mon Sep 21 14:40:06 2015 +0200 Hajo Nils Krabbenhöft instead of the hardcoded 1.5mm, use last_retraction_config->retraction_min_travel_distance as threshold
+f3a897e Mon Sep 21 14:40:06 2015 +0200 Hajo Nils Krabbenhöft replace hardcoded Comb::max_comb_distance_ignored = 1.5mm with function parameter, which defaults to 1.5mm
+3503c46 Mon Sep 21 14:40:06 2015 +0200 Hajo Nils Krabbenhöft use int for zhop
+46a4368 Mon Sep 21 14:40:06 2015 +0200 Hajo Nils Krabbenhöft store current z-hop height and keep applying that on multi-step travel
+4cc31ff Mon Sep 21 14:40:06 2015 +0200 Hajo Nils Krabbenhöft always retract when combing is disabled
+8e292da Mon Aug 31 17:54:03 2015 +0200 tomikpilar Fix Z bug on Mac
+313de19 Wed Aug 12 19:44:23 2015 +0100 lotuspaperboy Init
+2657629 Thu Aug 6 14:13:35 2015 -0600 nickthetait Update README for Phabricator migration
+e5d0de2 Thu Jul 16 16:34:41 2015 -0500 Martin Wickham Change mask generation to include infill
+9053b8e Thu Jul 16 16:28:00 2015 -0500 Martin Wickham Make clipper strictly simple
+b18c02b Thu Jul 16 16:26:10 2015 -0500 Martin Wickham Add a class for svg output (not used yet)
+9797bfb Thu Jul 16 16:25:17 2015 -0500 Martin Wickham MOAR TESTS
+1012f34 Wed Jul 15 19:10:41 2015 -0500 Martin Wickham Consolidate rampant reinterpret_casts
+e62ba00 Wed Jul 15 19:06:29 2015 -0500 Martin Wickham Move RegionColoring into color.h
+a3d6c53 Wed Jul 15 19:04:51 2015 -0500 Martin Wickham Remove defunct function headers
+3aa0afe Tue Jul 14 18:55:15 2015 -0500 Martin Wickham Don't do insets in infill regions
+72faf63 Tue Jul 14 18:32:37 2015 -0500 Martin Wickham Try to optimize unoptimized regions
+d167b08 Tue Jul 14 18:01:02 2015 -0500 Martin Wickham Better references and const correctness in Polygon
+8bee59f Tue Jul 14 18:00:40 2015 -0500 Martin Wickham Rewrite makePolygons to make a more efficient mask
+4a776ce Tue Jul 14 12:48:34 2015 -0500 Martin Wickham Refactor to RegionColorings, fix gui and gcode
+13dea1b Mon Jul 13 15:28:59 2015 -0500 Martin Wickham Set type and color in SliceIslandRegion
+bfb6663 Mon Jul 13 11:45:47 2015 -0500 Martin Wickham Cleanup stale TODOs, add test case
+90f61a9 Fri Jul 10 16:30:56 2015 -0500 Martin Wickham Add SliceLayerIslands, replace ptrs w/ references
+5aa09ba Fri Jul 10 10:33:05 2015 -0500 Martin Wickham Change overlap to a more reasonable value
+8368e4e Fri Jul 10 10:20:22 2015 -0500 Martin Wickham Wow. I'm ashamed of that mistake.
+6261f6e Thu Jul 9 19:55:38 2015 -0500 Martin Wickham Add overlap (not sure it's working...)
+09c5835 Thu Jul 9 15:10:56 2015 -0500 Martin Wickham Split planes into colored regions before slicing
+e66b1b3 Wed Jul 8 13:54:37 2015 -0500 Martin Wickham Move raft z offset into createLayerParts
+fc4273f Wed Jul 8 13:25:43 2015 -0500 Martin Wickham Everything works! (better than texture branch)
+69bff67 Wed Jul 8 11:45:49 2015 -0500 Martin Wickham [DNB] Import SpexGuy/ColorClipper, V7.1.0
+14dc137 Wed Jul 8 11:44:12 2015 -0500 Martin Wickham Update gitignore and set Makefile to debug
+c05f3a9 Tue Jul 7 23:36:15 2015 -0500 Martin Wickham Preserve collinear edges when clipping
+18bdfa1 Tue Jul 7 23:17:08 2015 -0500 Martin Wickham Import SpexGuy/ColorClipper, make work
+3ace874 Fri Jul 3 06:33:38 2015 -0700 HustLion update
+8dfd107 Wed Jul 1 13:45:44 2015 -0500 Martin Wickham Fix a bug in sending extents to the gui
+2dae233 Tue Jun 9 18:19:51 2015 -0500 Martin Wickham String commit
+bac230c Tue Jun 9 18:19:37 2015 -0500 Martin Wickham It works in this specific case.
+42fd20b Tue Jun 9 16:59:59 2015 -0500 Martin Wickham Update clipper to 6.2.1, add debug prints
+28f5d8d Fri Jun 5 15:50:26 2015 -0500 Martin Wickham [buggy] Update gcodemash, fix bugs in color.*
+58800a4 Fri Jun 5 12:37:35 2015 -0500 Martin Wickham [DNP] Update gcode export, theoretically done
+37d8df8 Fri Jun 5 11:57:00 2015 -0500 Martin Wickham [DNP] Avoid nullptr for colors
+b20e188 Fri Jun 5 11:25:00 2015 -0500 Martin Wickham [DNP] Fix bug in Color, use extents internal length
+0b0962c Thu Jun 4 18:41:33 2015 -0500 Martin Wickham [DNP] Make ExtentsManager singleton, fix callbacks
+2a2f86a Thu Jun 4 14:16:13 2015 -0500 Martin Wickham [DNP] Fix derpy cura::IntPoint change from earlier
+6cb2510 Thu Jun 4 14:10:40 2015 -0500 Martin Wickham [DNP] Update slicer and polygon optimizer to new Z
+997db41 Wed Jun 3 19:25:30 2015 -0500 Martin Wickham [DNP] update connection to gui
+381dfb9 Wed Jun 3 17:10:31 2015 -0500 Martin Wickham [DNP] Create color extent structures
+1e4bf34 Mon Jun 1 21:24:34 2015 -0400 yhfudev add automake/autoconf support; using system's rapidjson and polyclipper libs
+8c239cd Mon Jun 1 12:16:47 2015 -0400 yhfudev use deault path for data file
+b9d0c7b Thu May 28 13:15:06 2015 -0400 Youness Alaoui Enable the perimeterBeforeInfill option by default
+323879b Thu May 28 13:06:52 2015 -0400 Youness Alaoui Add support for Z offset setting
+85b3680 Thu May 28 13:05:47 2015 -0400 Youness Alaoui Fix a pointer overflow in GUI communication socket If the send didn't send the whole data, the pointer would move to the end of the buffer and try to send the rest of the data beyond the limit of the buffer.
+57c2bc8 Fri May 22 12:07:32 2015 +0200 tomikpilar ADD infillAngle param
+ebd7b7f Thu May 21 17:21:56 2015 +0200 tomikpilar remove retract if single nozzle is used
+8e244e7 Tue May 19 12:25:05 2015 -0600 nickthetait Revert "Add option to disable combing on skin surfaces".
+c922d5d Tue May 19 12:03:08 2015 -0600 nickthetait Revert "infill vs perimeters ordering" as we don't need the flexibility right now.
+b1f60cd Tue May 12 11:51:20 2015 +0800 Tim Hawkins Add libCuraEngine target
+8b073c2 Tue May 12 11:42:08 2015 +0800 Tim Hawkins Add libCuraEngine target
+b41906a Thu May 7 14:13:51 2015 -0600 Moshen Chan Add option to change print order of infill vs perimeters. Default prints infill first as was changed in v15, but this can lead to surface quality issues where infill would show on surface. This adds the option to change the order.
+f8d695e Sun Apr 26 15:46:07 2015 -0400 gsmith-to - add test suite for certain polygon ops (area, center of mass,   'inside' - fix for PolygonRef.inside - previous version can give errors:     - if the point is very close to the polygon (due to truncation        in the divide)     - if the point's Y coordinate matches a Y coordinate of a polygon        point at a larger X, and the polygon reverses Y direction at        that point.  The second issue is more of a concern, since points far from the polygon   can be misidentified. This implementation also guarantees that points exactly on the polygon return 'false' - there's an optional parameter to make it return true for points on the polygon.
+b05c0d6 Wed Apr 22 21:39:59 2015 -0400 gsmith-to Update polygon.h
+66ad112 Tue Apr 21 13:39:21 2015 +0200 tomikpilar FIX single nozzle
+c362c9f Tue Apr 21 11:41:01 2015 +0200 tomikpilar ADD support for multiextruder with single nozzle
+870b706 Thu Apr 16 22:27:32 2015 -0400 gsmith-to Update clipper_convex_hull.cpp
+575efbf Thu Apr 16 22:01:43 2015 -0400 gsmith-to Update clipper_convex_hull.h
+c34d569 Thu Apr 16 21:58:49 2015 -0400 gsmith-to Update clipper_convex_hull.cpp
+e3c8125 Wed Apr 15 22:46:31 2015 -0400 gsmith-to Create clipper_convex_hull.cpp
+275c5fb Wed Apr 15 22:37:05 2015 -0400 gsmith-to Create clipper_convex_hull.h
+ab18c0e Sat Apr 11 22:19:29 2015 -0700 Cesar Torres fill density enabled!
+e0b0ce6 Sat Apr 11 18:41:44 2015 -0700 Cesar Torres csv read
+9f03d8b Tue Apr 7 10:55:37 2015 +1200 David Eccles (gringer) replace diagonal infill with truncated octahedron infill
+033f7b0 Tue Apr 7 00:41:11 2015 +1200 David Eccles (gringer) Add truncated octohedron infill, use for really sparse infill
+d66449e Tue Apr 7 00:23:01 2015 +1200 David Eccles (gringer) use STL sort (eliminates cast warnings for infill code)
+cbd6913 Sun Apr 5 16:14:34 2015 +0000 The Gitter Badger Added Gitter badge
+1458927 Sat Apr 4 17:22:06 2015 -0500 Scott Hendrickson bug squash
+6ab0d85 Sat Apr 4 17:11:08 2015 -0500 Scott Hendrickson dont read so many colors
+fe883d3 Sat Apr 4 17:05:14 2015 -0500 Scott Hendrickson recieve colors over socket
+962f6a8 Sat Apr 4 14:09:27 2015 -0500 Scott Hendrickson send bigger things to Gui
+cfdca44 Sat Apr 4 14:05:01 2015 -0500 Scott Hendrickson remove initial sendAll in sendToGui
+fbefcb1 Sat Apr 4 13:57:23 2015 -0500 Scott Hendrickson send XY then colors in sendToGui
+c17f508 Sat Apr 4 13:47:42 2015 -0500 Scott Hendrickson fix null deref in sendToGui
+c0e0f49 Sat Apr 4 13:34:21 2015 -0500 Scott Hendrickson add color support to sendPolygonToGui
+57fddbc Sat Apr 4 11:36:58 2015 -0500 Scott Hendrickson remove color debugging
+78940e6 Fri Apr 3 16:33:27 2015 -0500 Scott Hendrickson script to parse gcode comments into .spectrom
+0d8a60b Fri Apr 3 16:31:38 2015 -0500 Scott Hendrickson we done colored things
+233ded8 Fri Apr 3 15:55:00 2015 -0500 Scott Hendrickson offset Z support in clipper
+fd31b26 Fri Apr 3 09:37:05 2015 -0500 Scott Hendrickson rename clipperTest for clarity
+9a547d8 Sun Mar 29 20:35:24 2015 -0700 Cesar Torres skin
+0afe091 Sun Mar 29 20:35:04 2015 -0700 Cesar Torres Double wall
+4baa547 Sun Mar 29 19:32:00 2015 -0700 sunlongcan delete SourceIndightPro
+0da6b11 Sun Mar 29 19:30:41 2015 -0700 sunlongcan modify .gitignore
+f98abf5 Wed Mar 25 04:09:05 2015 -0700 sunlongcan 2015.3.25 19:08 backup
+2cf1f09 Wed Mar 25 03:33:06 2015 -0700 sunlongcan add debug.sh sourceInsight dir
+2c02308 Mon Mar 23 17:33:51 2015 -0700 Cesar Torres TAM settings checked; cube unit test
+7addda7 Mon Mar 23 15:40:03 2015 -0700 Cesar Torres TAM machine setting generator; Sphere test added
+0da4cc6 Mon Mar 23 09:32:29 2015 -0700 Cesar Torres src/settings*
+95c8006 Sun Mar 22 21:04:01 2015 -0500 Scott Hendrickson color is placed into storage
+27ea5e8 Fri Mar 20 14:18:33 2015 +0100 Marwijn Made CuraEngine compile in visual studio
+fed33f3 Tue Mar 17 00:33:21 2015 +0100 Jon Nordby Voronoi: Fix cutting of infill along model outline
+edc0566 Mon Mar 16 22:29:34 2015 +0100 Jon Nordby TEMP: working Vornoi infill
+96ef7e1 Fri Mar 13 15:37:39 2015 +0100 Jon Nordby Infill: Add skeleton code for Voronoi pattern
+74ec72c Sun Mar 8 16:35:31 2015 -0500 Scott Hendrickson add color cache tests
+94c2e2f Sun Mar 8 16:35:15 2015 -0500 Scott Hendrickson fix color cache compilation errors
+a7c1128 Sun Mar 8 15:54:55 2015 -0500 Martin Wickham Commit test.cpp
+8cb16bf Sun Mar 8 15:16:29 2015 -0500 Martin Wickham Add color caching (probably)
+9304701 Mon Mar 2 16:22:13 2015 +0100 tomikpilar ADD multi color print
+57c98c5 Sun Mar 1 18:31:49 2015 -0600 Scott Hendrickson color fixings - needs color storage mapping
+ee9dec7 Sun Mar 1 17:16:34 2015 -0600 Scott Hendrickson Color debug printing
+657b908 Sun Mar 1 16:09:03 2015 -0600 Martin Wickham Add tetrahedron and colored version
+adacbde Sun Mar 1 15:47:18 2015 -0600 Martin Wickham Add simple clipper test for colors
+42b9b79 Sun Mar 1 15:47:05 2015 -0600 Martin Wickham Add color.cpp to makefile
+b9ff460 Sun Mar 1 15:44:36 2015 -0600 Martin Wickham Fix color.cpp namespace issue
+3bd70dc Sun Mar 1 14:41:18 2015 -0600 Scott Hendrickson xyz coloring scheme setup
+9b88cab Thu Feb 26 18:41:33 2015 -0600 Scott Hendrickson initial color modifications
+e67e0ba Tue Feb 10 14:18:04 2015 -0800 jf Set extruder 0 offsets
+3fb0d9d Tue Feb 10 14:56:11 2015 +0100 repetier Undo fix for new positioning method of host 1.1
+4ed188f Sat Feb 7 10:40:24 2015 +0000 reprappro Wipe tower offset is now specified as a vector in (X,Y) in microns from the top left corner of the print.  The default is (-3000,3000) which places the tower 3mm to the left and in the positive Y direction (where it was before it was made variable).
+3c5ee18 Fri Feb 6 17:48:57 2015 +0000 reprappro Option to change the position of the wipe tower added.
+9989031 Sat Jan 31 06:38:32 2015 +0000 Bevaz Shippable.com build script for android
+33ff453 Fri Jan 30 20:36:50 2015 +0000 Bevaz Build for Android
+6686505 Fri Jan 30 09:44:44 2015 +0300 Bevaz Build for android. Initial commit.
+039b72d Thu Jan 29 16:48:04 2015 +0000 unknown Fixed mistake is last merge.
+9a864ba Tue Jan 27 06:39:57 2015 +0300 Ryan Press Add option to disable combing on skin surfaces The existing enableCombing options 0, 1 work as before.  A new option 2 disables combing on the skin surfaces.  This forces a retract to reduce the unsightly scarring on flat surfaces.
+237d7cb Tue Jan 27 06:39:57 2015 +0300 Ryan Press slab-us presslab-us authored 5 days ago evert "Use retract on skins"
+022bfc9 Tue Jan 27 06:39:57 2015 +0300 Ryan Press Use retract on skins Using combing on skins causes unsightly scarring on flat surfaces. By forcing a retract between travel moves we can lift the head above the surface to avoid this.
+6ff5d4a Tue Jan 27 06:39:56 2015 +0300 Ryan Press Reset start position for new layers Reset the start position of the path optimizer for each new layer so that it doesn't double up on the layers, causing problems for cooling.
+2fe0d17 Tue Jan 27 06:39:56 2015 +0300 Aaron Bieber Flags for OpenBSD
+bc6a8d7 Tue Jan 27 06:39:56 2015 +0300 zwbrush Update optimizedModel.h
+ae3b22a Tue Jan 27 06:39:56 2015 +0300 Gina Häußge "*.STL" files might be STL files too
+69dd7a4 Tue Jan 27 06:39:56 2015 +0300 repetier Fixed problems with settings
+c4fd74a Tue Jan 27 06:39:56 2015 +0300 Gina Häußge Fix rounding issue on generated GCODE
+ca3cd31 Tue Jan 27 06:39:56 2015 +0300 electrocbd No -flto compiler option in debug mode under Linux
+4466965 Tue Jan 27 06:39:56 2015 +0300 electrocbd Print skirt before raft
+6c498b1 Tue Jan 27 06:39:56 2015 +0300 repetier Do not add CodeBlocks config
+72a306c Mon Jan 26 18:42:13 2015 +0800 hangxin1940@gmail.com add jni test code
+8273c8b Mon Jan 26 15:01:39 2015 +0800 hangxin1940@gmail.com add clipper link
+70648d9 Mon Jan 26 12:54:58 2015 +0800 hangxin1940@gmail.com add INT32_MIN INT32_MAX define
+10f63bb Mon Jan 26 09:02:59 2015 +0800 hangxin1940@gmail.com add INT64_MIN INT64_MAX define
+95e24b2 Fri Jan 9 01:03:00 2015 +0100 Kamel Makhloufi Reorganized how meta.json (MB5thGen) was generated
+9df3de9 Fri Jan 9 00:58:49 2015 +0100 Kamel Makhloufi Reorganized how meta.json (MB5thGen) was generated
+85ca3a2 Thu Jan 8 21:20:17 2015 +0100 Kamel Makhloufi Reverted Makefile to default
+12301c5 Tue Jan 6 01:11:07 2015 +0100 Oskar Linde New options: Add chamfer to bottom of models
+cd79e60 Mon Jan 5 07:52:10 2015 +0100 Kamel Makhloufi Passing temperature settings to CuraEngine config
+2e6dd58 Sat Jan 3 03:41:29 2015 +0100 Kamel Makhloufi Jsontoolpath Generation for Makerbot 5th Gen
+6eb1688 Tue Dec 30 16:00:44 2014 +0100 Emil Madsen Optimizing build flags, mostly size reductions.
+2b34ae7 Mon Dec 29 04:42:17 2014 +0100 Emil Madsen Allow memory growth when building for the web.
+196502d Fri Dec 26 09:45:29 2014 +0100 repetier Fix wrong pull-request #134
+cc5e1b5 Wed Dec 24 19:47:02 2014 -0500 Youness Alaoui Add support for Z offset setting
+c271b02 Wed Dec 24 18:06:26 2014 -0500 Youness Alaoui Fix a pointer overflow in GUI communication socket If the send didn't send the whole data, the pointer would move to the end of the buffer and try to send the rest of the data beyond the limit of the buffer.
+0a285a0 Wed Dec 24 20:59:01 2014 +0100 Emil Madsen Access EMSCRIPTEN by environment variable, also assert that it exists.
+976b373 Sun Dec 7 00:01:35 2014 -0800 Ivan Krasin Add Travis CI config to build & test CuraEngine on each commit.
+d867464 Mon Dec 1 11:15:27 2014 +0000 Michael Domingues Update
+990d6ad Mon Dec 1 11:12:49 2014 +0000 Michael Domingues Update
+73b48e3 Mon Dec 1 11:09:47 2014 +0000 Michael Domingues Update
+614267a Mon Dec 1 11:08:21 2014 +0000 Michael Domingues CuraEngine sources in use with BEESOFT
+6fb7876 Wed Nov 5 09:16:05 2014 +0100 Josef Pavlik revert changes, removing my code for bridge
+e291042 Tue Oct 28 12:09:32 2014 +0000 TotalRetribution Added CodeBlocks Project File
+b51992b Tue Oct 28 11:41:03 2014 +0000 TotalRetribution Add option to Reverse Insets Print Order
+16f7a71 Fri Oct 10 22:47:31 2014 +0200 Artur Wronowski fix
+4dcf221 Fri Oct 10 22:44:05 2014 +0200 Artur Wronowski New way to layer0 flow
+b1290ea Fri Oct 10 22:35:03 2014 +0200 Artur Wronowski Another changes for layer0 flow
+b8879bf Mon Oct 6 12:37:31 2014 +0800 edwardFang Revert "Do not add CodeBlocks config"
+47cdb86 Mon Oct 6 12:04:34 2014 +0800 edwardFang The bug of 'Print some silk from the origin point to the starting point,then reset' is not printing any silk.
+cbf1a8b Tue Sep 30 09:03:59 2014 +0800 edwardFang Ignore the '.cproject' file
+6cac05d Sun Sep 28 11:34:46 2014 +0800 shumybest fix pathOrderOptimazer compilation error
+298bc81 Fri Sep 26 09:11:26 2014 +0800 edwardFang Version14.09.26
+35ecc4a Fri Sep 26 08:44:18 2014 +0800 edwardFang Revert "Version14.09.24"
+4aa093f Thu Sep 25 20:48:51 2014 +0800 edwardFang The origin point does not retract.
+aee0081 Thu Sep 25 20:47:45 2014 +0800 edwardFang The bug of 'Print some silk from the origin point to the starting point,then reset' is not printing any silk.
+a17cbdc Wed Sep 24 21:49:43 2014 -0400 repetier Fixed problems with settings
+c90e281 Wed Sep 24 21:49:35 2014 -0400 Gina Häußge Fix rounding issue on generated GCODE
+589a389 Wed Sep 24 21:49:34 2014 -0400 repetier Do not add CodeBlocks config
+a6fc8c9 Wed Sep 24 20:29:09 2014 +0800 edwardFang Version14.09.24
+d184baf Wed Sep 24 20:16:27 2014 +0800 edwardFang Added the structure type of LinesConnect.
+ec4181c Wed Sep 24 19:31:41 2014 +0800 edwardFang The generate gcode file added the CuraEngine version information.
+f53d2b7 Wed Sep 24 19:07:36 2014 +0800 edwardFang The bug of 'Fix the problem when type-A fix horrible generate filled areas due to flipping of line order.' is Some objects at the bottom is filled.
+81097fd Wed Sep 24 19:02:12 2014 +0800 edwardFang The static mode in the win32 compiler.
+f93e607 Wed Sep 24 18:41:17 2014 +0800 edwardFang The zero layer is always retracted.
+0343a97 Wed Sep 24 18:30:37 2014 +0800 edwardFang Print some silk from the origin point to the starting point,then reset.
+f4b048a Wed Sep 24 18:13:30 2014 +0800 edwardFang Ignore the '.project' file, the '.pydevproject' file, the '.settings' files, the '.svn' files and the 'ReadMe' file
+f083601 Fri Sep 5 12:36:40 2014 +0000 morriswinkler added tags for all CuraEngine internal settings
+f8ace65 Tue Aug 19 17:52:38 2014 +0200 Emil Madsen WebCura is compilable.
+083475e Tue Aug 19 17:42:16 2014 +0200 Emil Madsen First attempt to do webcura
+3258f7a Tue Aug 5 16:56:53 2014 +0200 Oskar Linde Add a bulge correction factor to the outer contour to make outer dimensions accurate
+8e10962 Fri Jul 25 00:01:28 2014 +0200 Huwyler some progress
+6c387b6 Sat Jul 19 13:36:00 2014 +0200 electrocbd Fix PolygonRef::inside
+886aa66 Wed Jul 16 20:16:58 2014 +0200 arteq Layer0 flow
+3c667cf Mon Jul 14 22:17:42 2014 +0400 Bevaz More customization for raft
+1d3190a Fri Jul 11 22:57:06 2014 +0200 Huwyler some corrections
+b209710 Fri Jul 11 13:42:46 2014 +0200 Huwyler iterate over all poligons (i.e. holes)
+962886d Fri Jul 11 10:53:41 2014 +0200 Huwyler initial version of new bridging angle calculation. Untested, not thought to the end, really a very first shot.
+0439c93 Tue Jul 8 21:21:48 2014 +0200 Huwyler formatting
+1cf1c2e Tue Jul 8 12:05:04 2014 +0100 Michael Domingues Code comments added
+65f230e Tue Jul 8 10:42:13 2014 +0100 Michael Domingues Refactored writeGCode: clip algorithm
+7693e20 Tue Jul 8 10:41:25 2014 +0100 Michael Domingues new setData method to support clipDistance
+484b1a5 Tue Jul 8 10:39:50 2014 +0100 Michael Domingues New settings
+fb8e48c Mon Jul 7 23:32:28 2014 +0200 Huwyler Preparations for more bridge handling possibilities
+241288a Mon Jul 7 18:20:34 2014 +0100 Michael Domingues New settings to clipDistance and polygonsResolution
+6600fe6 Sun Jul 6 21:25:16 2014 +0200 Huwyler merged generateSparse and generateSkin into one function
+177a520 Tue Jul 1 15:49:35 2014 +0200 Jiří Zůna Colored binary STL support
+e99ac2c Mon Jun 23 22:56:02 2014 +0400 Bevaz Switched first raft layer to grid
+55739be Sun Jun 22 00:17:28 2014 +0400 Bevaz Fix indent
+1732cb7 Sat Jun 21 13:57:11 2014 +0400 Bevaz Increase adhesion of support structure with raft by filling the air gap. Fixed support only layer height
+b18479c Sat Jun 21 12:26:26 2014 +0400 Bevaz Increase adhesion of support structure with raft by filling the air gap. Fix typo
+94a9acb Sat Jun 21 11:52:22 2014 +0400 Bevaz Increase adhesion of support structure with raft by filling the air gap. Write GCode
+75bcbf6 Sat Jun 21 10:34:38 2014 +0400 Bevaz Increase adhesion of support structure with raft by filling the air gap
+25df954 Sat Jun 14 13:15:13 2014 +0200 electrocbd Revert skirt modification
+937123d Sat Jun 14 13:09:44 2014 +0200 electrocbd Fix erratic stretch when points are aligned
+1a77809 Sun Jun 8 15:48:05 2014 +0200 electrocbd Print SKIRT before RAFT
+2ca9077 Fri Jun 6 18:24:00 2014 +0200 FrozenCow Added support for loading STL files as multiple volumes.
+8fe3b24 Wed Jun 4 13:32:24 2014 +0200 Jiří Zůna ADD new config setting "returnAmountExtruderSwitch"
+090ec28 Tue May 20 10:55:57 2014 +0200 Jiří Zůna Adds support for multi extrusion print based on color flag in the STL
+44427cf Sun May 4 15:40:15 2014 -0700 parthasrinivasan CuraEngine changes for Arevo - fill and pause
+27ed20e Wed Apr 30 23:42:15 2014 +0400 Bevaz Fix compile flags
+6d2e348 Sun Apr 27 16:11:36 2014 +0200 electrocbd Décrochements tous les 7mm
+c0be2a0 Fri Apr 25 21:53:37 2014 -0700 Intrinsically-Sublime Revert merge with upstream master
+32591ee Fri Apr 25 19:37:30 2014 +0200 Skeen Made polygon iterable, and moved it's implementation into a seperate file.
+77f387e Fri Apr 25 18:58:39 2014 +0200 Skeen Added Kisslicer like 50/50 infill under top shells, to better support these.
+1ce933a Fri Apr 25 23:45:06 2014 +0800 shumybest remove cygwin def
+462ad34 Thu Apr 24 12:31:12 2014 +0200 Martin Renold slower
+0ab2d47 Thu Apr 24 13:16:50 2014 +0800 shumybest static lib for cygwin
+81b58c2 Thu Apr 24 13:01:03 2014 +0800 shumybest rebase
+aa49349 Mon Apr 21 18:37:39 2014 +0200 Marek Žehra Changed output from stderr to stdout. FPoint now can by converted to string.
+014ecdf Mon Apr 21 15:10:06 2014 +0200 Marek Žehra Added autogen script.
+5a5c8b7 Mon Apr 21 14:54:56 2014 +0200 Marek Žehra Added dynamic linking of clipper lib
+0a861a9 Mon Apr 21 13:05:31 2014 +0200 Marek Zehra Repaired automake config
+140492f Mon Apr 21 12:42:20 2014 +0200 Marek Žehra Added Makefile to ignore list
+a606116 Mon Apr 21 12:41:50 2014 +0200 Marek Žehra Removed Makefile
+13928c8 Mon Apr 21 12:40:14 2014 +0200 Marek Žehra Using automake now.
+33eed7f Wed Apr 16 16:24:27 2014 +0200 Skeen Now doing 50/50 on cube, however there are still issues on center_frame. Namely that the bounding box hits a much larger part. Solution could be explicit 50/50 section/polygon generation.
+d54d438 Wed Apr 16 15:17:39 2014 +0200 Skeen Remove orientation not used.
+fc653de Tue Apr 15 20:40:53 2014 +0200 Skeen No more lambdas!
+b8065c5 Tue Apr 15 20:20:13 2014 +0200 Skeen No more std::remove_if in random files, it's now encapsulated in a helper util file.
+e0535d7 Sat Apr 12 18:07:12 2014 +0200 Martin Renold fix combing
+7748afc Fri Apr 11 13:00:35 2014 +0200 Skeen Now compiling under clang!
+a73dc98 Fri Apr 11 12:58:39 2014 +0200 Skeen Forgot an '&'
+4a06732 Fri Apr 11 12:58:04 2014 +0200 Skeen Reapply the compile on linux patch
+4538528 Thu Apr 10 16:22:26 2014 +0200 Skeen Remove the std::remove_if code, and replaced with a helper function, such that the remove_if syntax, i.e. the erase-remove idiom, is in a single spot.
+33ccc69 Tue Apr 8 20:41:49 2014 +0200 Skeen Fill the model with concentric infill, when this is done.
+0081816 Tue Apr 8 20:35:29 2014 +0200 Skeen Ready support for choosing infills. Default to the old infill, also we can now do concentric infill.
+4671982 Tue Apr 8 20:14:39 2014 +0200 Skeen Add different build profiles. Updated a few constructors. Added a few more range based for loops.
+437d5ca Tue Apr 8 16:02:28 2014 +0200 Skeen Constructors are still C style casts
+ef58620 Tue Apr 8 15:53:51 2014 +0200 Skeen No more C style casts. Using Argument Depending Lookup for begin() and end()
+53e5ee7 Tue Apr 8 15:27:58 2014 +0200 Skeen Changed NULL to nullptr Simplified constructors via inclass intializers
+ce81ba2 Tue Apr 8 14:36:11 2014 +0200 Skeen Forgot to cleanup skin.cpp
+2e59627 Tue Apr 8 14:29:22 2014 +0200 Skeen Minor cleanup
+3a394bb Tue Apr 8 14:23:50 2014 +0200 Skeen Changing indexed loops to C++11 rangebased for loop. Also cleaned up a few lines of code, via the algorithms standard header.
+8d6e2d1 Tue Apr 8 11:48:14 2014 +0200 Skeen These files should have been uploaded with last commit.
+fa1c78e Tue Apr 8 11:41:34 2014 +0200 Skeen Made PolygonRef and Polygon iterateable Split fffProcessor and multivolumes into h/cpp files.
+fbed49e Sun Apr 6 14:33:43 2014 +0200 Marek Žehra Added option to slice single layer
+198a593 Sun Apr 6 11:47:43 2014 +0200 Marek Žehra - Removed warning unused parameter
+1630138 Wed Apr 2 19:24:37 2014 +0200 Martin Renold add flowDoublingTime as a setting
+ec9ef93 Tue Apr 1 22:04:18 2014 +0200 Martin Renold comment the remaining flow jump; debug print
+c1cc7ca Tue Apr 1 20:56:54 2014 +0200 Martin Renold store segment length, fix flow bug
+6df4eb2 Tue Apr 1 20:18:03 2014 +0200 Martin Renold fix initial layer flow
+961d146 Mon Mar 31 06:13:05 2014 +0300 Ryoko Fixed an error of up layers skin generation with raft layers.
+e395a4a Sun Mar 30 17:28:57 2014 +0200 electrocbd Change GCodePathConfig::setData signature to simplify merge
+a4794d2 Fri Mar 28 19:02:54 2014 +0100 Marek Žehra - changed function abs to fabs
+8592d4e Fri Mar 28 12:25:51 2014 +0100 Martin Renold smooth flow (instead of xy speed)
+5cff98c Thu Mar 27 17:22:13 2014 +0100 Martin Renold increase resolution of speed
+0c66d6b Thu Mar 27 16:00:18 2014 +0100 Martin Renold smooth speed changes
+a7498ec Thu Mar 27 16:00:18 2014 +0100 Martin Renold rename for consistency
+ce5a2f3 Thu Mar 27 16:00:18 2014 +0100 Martin Renold refactor speed handling
+3dac494 Wed Mar 26 12:22:48 2014 +0100 Martin Renold turn a silent exception into an error message
+b92ce52 Wed Mar 26 12:22:48 2014 +0100 Martin Renold remove unused travelSpeedFactor
+c3125ba Mon Mar 24 22:26:02 2014 +0400 Bevaz Change Myriwell number
+9bf3bfc Sat Mar 22 17:09:36 2014 +0100 Gregwar Adding anchor line
+54c8814 Fri Mar 14 19:28:17 2014 +0100 Marek Žehra - edited Makefile
+6a19dd6 Fri Mar 14 11:42:56 2014 +0100 Marek Žehra - updated gitignore
+3fcd629 Thu Mar 13 11:27:03 2014 +0100 Marek Žehra Cleaned project
+fd15387 Tue Mar 11 13:33:06 2014 +1030 Toni Frost Add perimInset setting.
+ecc8e5c Sat Mar 8 10:20:50 2014 +0100 Marek Žehra Recompiled library
+b966084 Wed Mar 5 23:22:49 2014 -0800 Intrinsically-Sublime Merge with upstream master
+8d80cef Fri Feb 28 14:07:38 2014 +0100 Pablo Clemente Maseda Updated makefile & socket.cpp to be compatible with mingw v3.8.1
+23ac7ac Sat Feb 22 19:17:04 2014 +0100 Josef Pavlik Rewrite bridge angle detection
+6d79cf0 Thu Feb 20 23:05:09 2014 +0400 Bevaz Fixed library linkage
+0545b4a Wed Feb 12 22:25:27 2014 -0800 Intrinsically-Sublime Automatically insert M83 for Relative E and M82 for Absolute E.
+0da5e77 Wed Feb 12 00:07:56 2014 -0800 Intrinsically-Sublime Bring access to relative extrusion switch to settings. Allows switching from config or command line. Default Relative E
+fa509e9 Tue Feb 11 23:11:57 2014 -0800 Intrinsically-Sublime Add extra perimeter inset setting.
+4290373 Tue Feb 11 13:35:34 2014 +0100 Marek Žehra - Pridana inicializace
+176b058 Mon Feb 10 14:00:16 2014 -0800 Intrinsically-Sublime Add Relative extrusion to gcodeExport
+1825613 Mon Feb 10 13:59:35 2014 -0800 Intrinsically-Sublime Updating files with Windows line endings before making cahnges becasue Git sees the entore file as being changed which makes the next update harder to merge.
+fed4123 Mon Feb 10 14:23:07 2014 +0100 electrocbd stretchDistance is no more initialized in main.cpp
+f3fa600 Fri Feb 7 11:20:10 2014 +0100 Marek Žehra - Added option to generate FPoint with matrix Apply function
+ea88cab Tue Feb 4 22:11:59 2014 +0100 Marek Žehra - Added function retunrning min point
+b1a99f3 Tue Feb 4 16:53:49 2014 +0100 electrocbd stretch algorithm
+729379e Mon Feb 3 20:24:51 2014 +0100 Marek Žehra - Made some methods public
+6d2423d Mon Feb 3 20:19:53 2014 +0100 Marek Žehra - added library to makefile
+b9a2174 Mon Feb 3 19:19:02 2014 +0100 Marek Žehra Edited Makefile for library support
+ed49b2a Thu Jan 23 21:41:20 2014 -0600 uMinded Added wallOuterSpeed and wallInnerSpeed settings for perimiter speed control
+8cc3e3d Fri Jan 10 00:48:32 2014 +0400 Bevaz Fixed time calculation
+15beec9 Mon Dec 30 18:48:40 2013 +0100 Johannes Schriewer Add Z-Axis lift on retraction to avoid scratching the surface infill of the previous layer
+d866e56 Sat Nov 23 12:42:12 2013 +0100 Denis Nareike vase mode hack: no infill by no skin
+5ef5282 Thu Nov 21 12:37:38 2013 +0800 shumybest Support of Cygwin and static link
+4ede4ac Mon Nov 4 22:10:38 2013 +0200 demestav First travel movement towards initial position is not slowed down, preventing oozing.
+833be50 Sun Nov 3 12:50:43 2013 +0400 Bevaz Fixed Myriwell speed position in G1
+06bc707 Sun Nov 3 10:03:29 2013 +0400 Bevaz Added some Myriwell features for retraction and movement
+48cb3ec Tue Oct 29 22:43:20 2013 +0400 Bevaz Log GCode flavor
+1ba9c46 Tue Oct 29 21:23:23 2013 +0400 Bevaz Fixed build error
+8efc5b7 Tue Oct 29 21:11:56 2013 +0400 Bevaz Fixed Myriwell flavor
+fc24935 Tue Oct 29 19:49:37 2013 +0400 Bevaz Added Myriwell flavour GCode
+b5bcfd1 Tue Oct 29 19:24:27 2013 +0400 Bevaz Static build for MINGW32_NT-5.1
+3df40bf Fri Oct 25 17:05:24 2013 +0100 Nelson Silva Use _FILE_OFFSET_BITS to select which file system interface to use
+cd96cc3 Fri Oct 25 17:04:42 2013 +0100 Nelson Silva Renamed LONG_LONG_MAX to LLONG_MAX
+11d8bf4 Fri Oct 25 16:59:44 2013 +0100 Nelson Silva Use _FILE_OFFSET_BITS to select which file system interface to use
+78aadc6 Sun Oct 13 22:02:08 2013 +0300 Jouni More custom tweaking..
+f13d63e Sun Oct 6 21:19:31 2013 +0300 Jouni Hacked OS X build
+2bb47e7 Sun Oct 6 21:11:32 2013 +0300 Jouni Stats to LCD
+60ee56e Thu Sep 19 14:13:06 2013 +0200 Dennis Reimers added setting for bottom layer flow
+52c96eb Mon Sep 16 13:33:02 2013 -0500 Gary Kramlich Remove Makefile since CMake will clobber it
+f4251a1 Mon Sep 16 11:37:51 2013 -0500 Gary Kramlich Initial cmake support
+905b2b2 Sun Aug 4 19:16:21 2013 +0900 gloine improved support generation for dangling object part
+2f6d813 Sun Jun 23 16:30:24 2013 +0200 Miro Hrončok Added PolyTreeToExPolygons function form Clipper documentation and introduced support for Clipper 5.1.x
+f336295 Sun Jun 23 16:13:12 2013 +0200 Miro Hrončok Updated Clipper to 5.1.6
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+c5b99b4 Fri Jan 29 23:16:40 2016 +0800 jacobdai Update gcodeExport.cpp
+50274dc Fri Jan 29 20:26:56 2016 +0800 jacobdai Update gcodeExport.cpp
+23e169d Fri Jan 29 19:54:43 2016 +0800 jacobdai Update gcodeExport.cpp
+09d7a5e Thu Jan 28 12:53:32 2016 +0800 jacobdai Update fffProcessor.h
+58030f5 Thu Jan 28 12:52:29 2016 +0800 jacobdai Update gcodeExport.cpp
+2692743 Wed Jan 20 09:33:42 2016 +0800 jacobdai Update gcodeExport.cpp
+a57de3a Wed Jan 20 09:32:56 2016 +0800 jacobdai Update fffProcessor.h
+c904d9a Tue Jan 19 13:05:46 2016 +0800 jacobdai Update fffProcessor.h
+30dd3d7 Tue Jan 19 12:55:00 2016 +0800 jacobdai Update fffProcessor.h
+c242240 Mon Jan 18 10:07:09 2016 +0800 jacobdai Update gcodeExport.cpp
+e31ab72 Wed Jan 13 10:00:52 2016 +0800 jacobdai Update gcodeExport.cpp
+80ecee7 Wed Jan 13 09:58:32 2016 +0800 jacobdai Update gcodeExport.cpp
+6afa715 Tue Dec 29 10:24:35 2015 +0800 jacobdai Update gcodeExport.cpp
+b008d21 Mon Dec 28 11:04:00 2015 +0800 jacobdai Update fffProcessor.h
+5ab1392 Mon Dec 28 10:28:57 2015 +0800 jacobdai Update fffProcessor.h
+6644aba Mon Dec 28 10:24:09 2015 +0800 jacobdai Update gcodeExport.cpp
+db06d09 Mon Dec 28 10:22:19 2015 +0800 jacobdai Update fffProcessor.h
+f9259db Fri Dec 25 15:48:36 2015 +0800 jacobdai Update fffProcessor.h
+7623393 Fri Dec 25 15:33:39 2015 +0800 jacobdai Update fffProcessor.h
+18e405d Thu Dec 24 20:32:35 2015 +0800 jacobdai Update fffProcessor.h
+fcce24a Thu Dec 24 16:52:00 2015 +0800 jacobdai Update fffProcessor.h
+85ebda3 Thu Dec 24 15:55:14 2015 +0800 jacobdai Update fffProcessor.h
+e199c23 Thu Dec 24 15:02:18 2015 +0800 jacobdai Update fffProcessor.h
+9f42925 Thu Dec 24 14:51:52 2015 +0800 jacobdai Update fffProcessor.h
+61a7b2b Thu Dec 24 14:41:46 2015 +0800 jacobdai Update fffProcessor.h
+212d13f Thu Dec 24 13:51:46 2015 +0800 jacobdai Update fffProcessor.h
+ee1e509 Thu Dec 24 13:43:24 2015 +0800 jacobdai Update fffProcessor.h
+1889d86 Thu Dec 24 09:37:27 2015 +0800 jacobdai Update fffProcessor.h
+86d45fc Wed Dec 23 14:54:15 2015 +0800 jacobdai Update fffProcessor.h
+8e4b932 Wed Dec 23 14:37:38 2015 +0800 jacobdai Update gcodeExport.cpp
+3f1df32 Wed Dec 23 11:09:02 2015 +0800 jacobdai Update fffProcessor.h
+9291e45 Tue Dec 22 16:53:22 2015 +0800 jacobdai Update fffProcessor.h
+4e87668 Tue Dec 22 16:35:51 2015 +0800 jacobdai Update gcodeExport.cpp
+1bc6c44 Tue Dec 22 16:21:53 2015 +0800 jacobdai Update gcodeExport.h
+510d03f Tue Dec 22 16:21:08 2015 +0800 jacobdai Update gcodeExport.cpp
+c6cff67 Tue Dec 22 15:53:52 2015 +0800 jacobdai Update gcodeExport.cpp
+51fef90 Tue Dec 22 15:51:31 2015 +0800 jacobdai Update gcodeExport.cpp
+a62c800 Tue Dec 22 15:42:54 2015 +0800 jacobdai Update gcodeExport.cpp
+744067d Tue Dec 22 15:22:04 2015 +0800 jacobdai Update gcodeExport.cpp
+6749cde Tue Dec 22 15:19:00 2015 +0800 jacobdai Update gcodeExport.cpp
+67c05b4 Tue Dec 22 15:06:52 2015 +0800 jacobdai Update gcodeExport.cpp
+cd91326 Tue Dec 22 15:00:33 2015 +0800 jacobdai Update gcodeExport.cpp
+24d6b8e Tue Dec 22 14:56:51 2015 +0800 jacobdai Update gcodeExport.cpp
+8056b64 Tue Dec 22 14:44:24 2015 +0800 jacobdai Update gcodeExport.cpp
+e66f5b1 Tue Dec 22 14:18:09 2015 +0800 jacobdai Update gcodeExport.cpp
+5756b18 Tue Dec 22 13:58:38 2015 +0800 jacobdai Update gcodeExport.h
+76fa8c4 Tue Dec 22 13:57:33 2015 +0800 jacobdai Update gcodeExport.cpp
+7f22d2e Tue Dec 22 13:53:30 2015 +0800 jacobdai Update gcodeExport.cpp
+66a9264 Tue Dec 22 13:43:45 2015 +0800 jacobdai Update gcodeExport.cpp
+19bb6ec Tue Dec 22 13:37:34 2015 +0800 jacobdai Update gcodeExport.cpp
+7852e93 Tue Dec 22 13:30:39 2015 +0800 jacobdai Update gcodeExport.cpp
+30177b9 Tue Dec 22 13:01:16 2015 +0800 jacobdai Update gcodeExport.cpp
+f9d2091 Tue Dec 22 12:30:24 2015 +0800 jacobdai Update fffProcessor.h
+f9cac29 Tue Dec 22 12:21:54 2015 +0800 jacobdai Update gcodeExport.h
+3cc7deb Tue Dec 22 11:32:02 2015 +0800 jacobdai Update gcodeExport.cpp
+ed15b30 Tue Dec 22 11:29:25 2015 +0800 jacobdai Update gcodeExport.cpp
+2122e02 Tue Dec 22 11:27:06 2015 +0800 jacobdai Update gcodeExport.cpp
+13672d7 Mon Dec 21 13:44:25 2015 +0800 jacobdai Update fffProcessor.h
+6f1b2d8 Mon Dec 21 13:28:54 2015 +0800 jacobdai Update fffProcessor.h
+fb6ff97 Fri Dec 18 18:59:29 2015 +0800 jacobdai Update fffProcessor.h
+fe2fa48 Fri Dec 18 18:50:43 2015 +0800 jacobdai Update fffProcessor.h
+35d4287 Fri Dec 18 18:39:55 2015 +0800 jacobdai Update fffProcessor.h
+c3d9c30 Fri Dec 18 18:31:44 2015 +0800 jacobdai Update fffProcessor.h
+4d37a4a Thu Dec 17 13:31:35 2015 +0800 jacobdai Update gcodeExport.cpp
+a8964be Thu Dec 17 13:10:52 2015 +0800 jacobdai Update gcodeExport.cpp
+1dae57f Thu Dec 17 13:06:55 2015 +0800 jacobdai Update gcodeExport.cpp
+76bf315 Thu Dec 17 12:55:04 2015 +0800 jacobdai Update gcodeExport.cpp
+4de00fa Thu Dec 17 12:37:58 2015 +0800 jacobdai Update gcodeExport.cpp
+d5601cd Thu Dec 17 12:23:05 2015 +0800 jacobdai Update gcodeExport.cpp
+b95a312 Thu Dec 17 11:34:36 2015 +0800 jacobdai Update gcodeExport.cpp
+f4c647a Thu Dec 17 11:21:39 2015 +0800 jacobdai Update gcodeExport.cpp
+18b3b6f Thu Dec 17 11:16:05 2015 +0800 jacobdai Update gcodeExport.cpp
+7b6a5b4 Thu Dec 17 11:07:40 2015 +0800 jacobdai Update gcodeExport.cpp
+09755be Thu Dec 17 10:34:23 2015 +0800 jacobdai Update gcodeExport.cpp
+7b56cff Thu Dec 17 09:48:04 2015 +0800 jacobdai Update gcodeExport.cpp
+5eda6e4 Wed Dec 16 11:07:11 2015 +0800 jacobdai Update fffProcessor.h
+64a1b4f Wed Dec 16 10:05:16 2015 +0800 jacobdai Update fffProcessor.h
+3dee903 Mon Dec 7 09:51:01 2015 +0800 jacobdai Update fffProcessor.h
+7b66f21 Sat Dec 5 10:25:00 2015 +0800 jacobdai Update fffProcessor.h
+84448ef Fri Dec 4 12:26:04 2015 +0800 jacobdai Update fffProcessor.h
+c14579a Thu Dec 3 09:35:14 2015 +0800 jacobdai Update fffProcessor.h
+79c79f5 Thu Dec 3 09:32:10 2015 +0800 jacobdai Update fffProcessor.h
+fdf3fea Tue Dec 1 10:30:52 2015 +0800 jacobdai Update fffProcessor.h
+3fa77e6 Tue Dec 1 10:07:04 2015 +0800 jacobdai Update fffProcessor.h
+837a1ac Tue Dec 1 09:47:19 2015 +0800 jacobdai Update fffProcessor.h
+3d0dc25 Sat Nov 28 10:26:34 2015 +0800 jacobdai Update fffProcessor.h
+78b2839 Fri Nov 27 15:50:14 2015 +0800 jacobdai Update fffProcessor.h
+a689714 Fri Nov 27 09:56:30 2015 +0800 jacobdai Update fffProcessor.h
+80afbcf Thu Nov 26 10:24:44 2015 +0800 jacobdai Update fffProcessor.h
+94c9652 Wed Nov 25 16:51:45 2015 +0800 jacobdai Update fffProcessor.h
+ec1dfed Tue Nov 24 20:59:29 2015 +0800 jacobdai Update fffProcessor.h
+52445f4 Tue Nov 24 17:29:15 2015 +0800 jacobdai Update fffProcessor.h
+7197b8d Tue Nov 24 17:19:51 2015 +0800 jacobdai Update fffProcessor.h
+7f885f1 Tue Nov 24 13:22:02 2015 +0800 jacobdai Update fffProcessor.h
+d386bc0 Tue Nov 24 13:16:34 2015 +0800 jacobdai Update fffProcessor.h
+c97c78d Sat Nov 21 12:29:32 2015 +0800 jacobdai Update fffProcessor.h
+2330392 Mon Nov 16 18:28:14 2015 +0800 jacobdai Update infill.cpp
+4ec7758 Mon Nov 16 18:26:47 2015 +0800 jacobdai Update infill.cpp
+1d5c58a Mon Nov 16 17:29:04 2015 +0800 jacobdai Update fffProcessor.h
+f29602c Mon Nov 16 12:33:51 2015 +0800 jacobdai Update fffProcessor.h
+77e8df5 Mon Nov 16 11:24:31 2015 +0800 jacobdai Update infill.cpp
+79f6ba5 Mon Nov 16 11:14:20 2015 +0800 jacobdai Update fffProcessor.h
+f3c820b Mon Nov 16 10:59:34 2015 +0800 jacobdai Update infill.cpp
+096a495 Thu Oct 29 16:23:52 2015 +0800 jacobdai Update fffProcessor.h
+b992f76 Wed Oct 28 12:49:03 2015 +0800 jacobdai Update fffProcessor.h
+f6c5039 Wed Oct 28 12:46:13 2015 +0800 jacobdai Update gcodeExport.cpp
+e542e33 Wed Oct 28 12:34:01 2015 +0800 jacobdai Update gcodeExport.cpp
+2e29a68 Wed Oct 28 12:21:00 2015 +0800 jacobdai Update gcodeExport.cpp
+6f8fbc7 Wed Oct 28 11:34:56 2015 +0800 jacobdai Update gcodeExport.cpp
+e3d26da Wed Oct 28 11:19:38 2015 +0800 jacobdai Update gcodeExport.cpp
+a84b5ba Wed Oct 28 10:59:03 2015 +0800 jacobdai Update gcodeExport.cpp
+a2f17bb Wed Oct 28 10:52:48 2015 +0800 jacobdai Update gcodeExport.cpp
+f170e50 Wed Oct 28 10:37:59 2015 +0800 jacobdai Update gcodeExport.cpp
+338cf97 Thu Oct 22 10:03:47 2015 +0800 jacobdai Update infill.cpp
+f89cd9b Tue Oct 20 16:29:24 2015 +0800 jacobdai Update gcodeExport.cpp
+5ef534d Tue Oct 20 11:29:59 2015 +0800 jacobdai Update infill.cpp
+1cc25da Tue Oct 20 11:24:19 2015 +0800 jacobdai Update infill.cpp
+d1320f5 Tue Oct 20 11:13:31 2015 +0800 jacobdai Update infill.cpp
+39f33d0 Tue Oct 20 10:59:17 2015 +0800 jacobdai Update infill.cpp
+c45cb1b Tue Oct 20 10:31:08 2015 +0800 jacobdai Update infill.cpp
+f21caa6 Wed Oct 14 16:05:03 2015 +0800 jacobdai Update fffProcessor.h
+6860361 Wed Oct 14 16:03:42 2015 +0800 jacobdai Update gcodeExport.cpp
+3b81a30 Wed Oct 14 09:15:28 2015 +0800 jacobdai Update gcodeExport.cpp
+ffb9368 Tue Oct 13 17:29:54 2015 +0800 jacobdai Update gcodeExport.cpp
+26de92f Tue Oct 13 16:03:13 2015 +0800 jacobdai Update gcodeExport.cpp
+ea7b695 Tue Oct 13 15:45:58 2015 +0800 jacobdai Update gcodeExport.cpp
+ac8fd21 Mon Oct 12 16:01:39 2015 +0800 jacobdai Update gcodeExport.cpp
+b79d5e5 Sat Oct 10 15:54:56 2015 +0800 jacobdai Update gcodeExport.cpp
+41c592f Sat Oct 10 10:04:24 2015 +0800 jacobdai Update gcodeExport.cpp
+389d402 Sat Oct 10 09:46:58 2015 +0800 jacobdai Update gcodeExport.cpp
+a2078b1 Sat Oct 10 09:34:37 2015 +0800 jacobdai Update infill.cpp
+c93d5bc Fri Oct 9 20:39:14 2015 +0800 jacobdai Update infill.cpp
+c49c1e7 Fri Oct 9 20:22:31 2015 +0800 jacobdai Update infill.cpp
+ce04004 Fri Oct 9 18:53:27 2015 +0800 jacobdai Update infill.cpp
+74af3a9 Fri Oct 9 15:47:25 2015 +0800 jacobdai Update infill.cpp
+b2387aa Fri Oct 9 15:11:52 2015 +0800 jacobdai Update infill.cpp
+e4e6f55 Fri Oct 9 15:05:59 2015 +0800 jacobdai Update fffProcessor.h
+3749bef Tue Sep 29 19:09:03 2015 +0800 jacobdai Update fffProcessor.h
+5e45f8c Tue Sep 29 16:48:34 2015 +0800 jacobdai Update infill.cpp
+3b7e0b4 Tue Sep 29 13:35:18 2015 +0800 jacobdai Update infill.cpp
+c940f54 Tue Sep 29 12:53:39 2015 +0800 jacobdai Update infill.cpp
+ba9991d Tue Sep 29 09:56:29 2015 +0800 jacobdai Update infill.cpp
+a7868bc Tue Sep 29 09:30:49 2015 +0800 jacobdai Update infill.cpp
+e071b25 Tue Sep 29 09:09:48 2015 +0800 jacobdai Update infill.cpp
+455b8bb Mon Sep 28 22:11:32 2015 +0800 jacobdai Update fffProcessor.h
+cd9f590 Mon Sep 28 20:42:24 2015 +0800 jacobdai Update fffProcessor.h
+5a0d961 Mon Sep 28 20:41:30 2015 +0800 jacobdai Update infill.cpp
+0dabf3d Mon Sep 28 20:36:24 2015 +0800 jacobdai Update fffProcessor.h
+e5bd08d Mon Sep 28 20:32:18 2015 +0800 jacobdai Update fffProcessor.h
+c644568 Mon Sep 28 20:17:06 2015 +0800 jacobdai Update fffProcessor.h
+19933e5 Mon Sep 28 20:11:13 2015 +0800 jacobdai Update fffProcessor.h
+7cae1bf Mon Sep 28 19:29:10 2015 +0800 jacobdai Update fffProcessor.h
+51c5cae Mon Sep 28 19:17:41 2015 +0800 jacobdai Update fffProcessor.h
+a194a5c Mon Sep 28 19:12:24 2015 +0800 jacobdai Update fffProcessor.h
+9b8a87e Mon Sep 28 10:25:23 2015 +0800 jacobdai Update fffProcessor.h
+fd6c770 Mon Sep 28 09:50:42 2015 +0800 jacobdai Update fffProcessor.h
+920379b Mon Sep 28 09:42:54 2015 +0800 jacobdai Update fffProcessor.h
+c060075 Fri Sep 25 15:24:55 2015 +0800 jacobdai Update fffProcessor.h
+7cd4e6d Thu Sep 24 20:16:58 2015 +0800 jacobdai Update fffProcessor.h
+f2aab92 Thu Sep 24 16:59:29 2015 +0800 jacobdai Update fffProcessor.h
+be4f785 Thu Sep 24 12:01:55 2015 +0800 jacobdai Update fffProcessor.h
+3ccb5a3 Thu Sep 24 10:29:32 2015 +0800 jacobdai Update fffProcessor.h
+c31a483 Thu Sep 24 09:59:56 2015 +0800 jacobdai Update fffProcessor.h
+97e9889 Wed Sep 23 17:52:31 2015 +0800 jacobdai Update fffProcessor.h
+8b05865 Wed Sep 23 16:47:47 2015 +0800 jacobdai Update fffProcessor.h
+5e51ba8 Wed Sep 23 16:36:47 2015 +0800 jacobdai Update fffProcessor.h
+c161f29 Wed Sep 23 16:28:49 2015 +0800 jacobdai Update fffProcessor.h
+49e4f74 Wed Sep 23 16:22:05 2015 +0800 jacobdai Update fffProcessor.h
+795f9b7 Wed Sep 23 16:20:56 2015 +0800 jacobdai Update settings.h
+0cc11d4 Wed Sep 23 16:16:08 2015 +0800 jacobdai Update slicer.cpp
+acc9911 Wed Sep 23 15:54:56 2015 +0800 jacobdai Update slicer.cpp
+5bd0825 Wed Sep 23 15:38:23 2015 +0800 jacobdai Update slicer.cpp
+233ec6c Wed Sep 23 15:30:52 2015 +0800 jacobdai Update slicer.cpp
+0e4fe24 Wed Sep 23 15:18:42 2015 +0800 jacobdai Update slicer.cpp
+dbf8c53 Wed Sep 23 15:06:30 2015 +0800 jacobdai Update slicer.cpp
+42720db Wed Sep 23 15:03:37 2015 +0800 jacobdai Update slicer.h
+083762f Tue Sep 22 17:00:20 2015 +0800 jacobdai Update fffProcessor.h
+e860130 Tue Sep 22 15:48:54 2015 +0800 jacobdai Update fffProcessor.h
+f027d24 Tue Sep 22 14:14:07 2015 +0800 jacobdai Update fffProcessor.h
+2dadf7d Tue Sep 22 11:59:55 2015 +0800 jacobdai Update fffProcessor.h
+b8c92c6 Tue Sep 22 11:00:08 2015 +0800 jacobdai Update fffProcessor.h
+baceab1 Mon Sep 21 20:19:45 2015 +0800 jacobdai Update fffProcessor.h
+f5c0dea Mon Sep 21 20:04:26 2015 +0800 jacobdai Update fffProcessor.h
+330c156 Mon Sep 21 12:03:52 2015 +0800 jacobdai Update fffProcessor.h
+bd405ca Mon Sep 21 10:29:55 2015 +0800 jacobdai Update fffProcessor.h
+7e31cf5 Mon Sep 21 10:20:54 2015 +0800 jacobdai Update fffProcessor.h
+4133919 Mon Sep 21 09:56:18 2015 +0800 jacobdai Update fffProcessor.h
+aca882e Fri Sep 18 14:34:12 2015 +0800 jacobdai Update fffProcessor.h
+0e790dd Thu Sep 17 16:21:10 2015 +0800 jacobdai Update fffProcessor.h
+5460302 Thu Sep 17 15:45:30 2015 +0800 jacobdai Update fffProcessor.h
+02eaacd Thu Sep 17 14:44:22 2015 +0800 jacobdai Update fffProcessor.h
+db5abdd Thu Sep 17 14:31:42 2015 +0800 jacobdai Update fffProcessor.h
+67268a2 Thu Sep 17 14:26:19 2015 +0800 jacobdai Update fffProcessor.h
+81dedf4 Thu Sep 17 14:21:03 2015 +0800 jacobdai Update fffProcessor.h
+e51a948 Thu Sep 17 14:12:33 2015 +0800 jacobdai Update fffProcessor.h
+a87f709 Thu Sep 17 14:05:57 2015 +0800 jacobdai Update fffProcessor.h
+89c8ed2 Thu Sep 17 11:25:37 2015 +0800 jacobdai Update gcodeExport.cpp
+1fc3558 Thu Sep 17 11:22:12 2015 +0800 jacobdai Update fffProcessor.h
+279b9f3 Thu Sep 17 11:13:21 2015 +0800 jacobdai Update settings.h
+8906929 Thu Sep 17 11:11:34 2015 +0800 jacobdai Update settings.h
+238c271 Wed Sep 9 15:30:22 2015 +0800 jacobdai Update gcodeExport.cpp
+6c6f6e8 Wed Sep 9 14:58:57 2015 +0800 jacobdai Update gcodeExport.cpp
+2f522dd Wed Sep 9 14:45:41 2015 +0800 jacobdai Update gcodeExport.cpp
+7ed015d Wed Sep 9 14:09:27 2015 +0800 jacobdai Update gcodeExport.cpp
+9610b90 Wed Sep 9 14:01:57 2015 +0800 jacobdai Update gcodeExport.cpp
+0af216d Wed Sep 9 13:51:23 2015 +0800 jacobdai Update gcodeExport.cpp
+32c37d5 Wed Sep 9 13:37:43 2015 +0800 jacobdai Update gcodeExport.cpp
+4489140 Wed Sep 9 11:08:47 2015 +0800 jacobdai Update gcodeExport.cpp
+d544e68 Wed Sep 9 10:50:36 2015 +0800 jacobdai Update gcodeExport.cpp
+62d4e76 Wed Sep 9 10:34:39 2015 +0800 jacobdai Update gcodeExport.cpp
+96122b3 Wed Sep 9 10:20:52 2015 +0800 jacobdai Update gcodeExport.cpp
+efe6303 Wed Sep 9 10:02:20 2015 +0800 jacobdai Update gcodeExport.cpp
+ec8ad63 Wed Sep 9 09:44:18 2015 +0800 jacobdai Update gcodeExport.cpp
+dee2828 Wed Sep 9 09:14:09 2015 +0800 jacobdai Update gcodeExport.cpp
+c20ee12 Tue Sep 8 22:30:42 2015 +0800 jacobdai Update gcodeExport.cpp
+5466dd5 Tue Sep 8 22:20:17 2015 +0800 jacobdai Update gcodeExport.cpp
+b7f9178 Tue Sep 8 22:06:03 2015 +0800 jacobdai Update gcodeExport.cpp
+0dffed7 Tue Sep 8 20:29:14 2015 +0800 jacobdai Update gcodeExport.cpp
+841ed6c Tue Sep 8 19:57:27 2015 +0800 jacobdai Update gcodeExport.cpp
+f4c1282 Tue Sep 8 16:38:21 2015 +0800 jacobdai Update gcodeExport.cpp
+28ad621 Tue Sep 8 15:58:22 2015 +0800 jacobdai Update gcodeExport.cpp
+8a2ead0 Tue Sep 8 15:23:45 2015 +0800 jacobdai Update gcodeExport.cpp
+7f8ca9c Tue Sep 8 14:26:07 2015 +0800 jacobdai Update gcodeExport.cpp
+1de355a Tue Sep 8 14:18:54 2015 +0800 jacobdai Update gcodeExport.cpp
+034a06c Tue Sep 8 14:07:48 2015 +0800 jacobdai Update gcodeExport.cpp
+fcd0049 Tue Sep 8 09:19:59 2015 +0800 jacobdai Update gcodeExport.cpp
+b942203 Mon Sep 7 22:15:42 2015 +0800 jacobdai Update gcodeExport.cpp
+8bbcf38 Mon Sep 7 20:58:31 2015 +0800 jacobdai Update gcodeExport.cpp
+b1fef34 Mon Sep 7 20:47:29 2015 +0800 jacobdai Update gcodeExport.h
+228a833 Mon Sep 7 20:41:28 2015 +0800 jacobdai Update gcodeExport.cpp
+cd9acf6 Mon Sep 7 20:22:59 2015 +0800 jacobdai Update gcodeExport.h
+b489787 Mon Sep 7 20:22:42 2015 +0800 jacobdai Update gcodeExport.cpp
+2f6305f Mon Sep 7 19:39:40 2015 +0800 jacobdai Update gcodeExport.cpp
+8d26536 Mon Sep 7 19:25:32 2015 +0800 jacobdai Update gcodeExport.h
+42402fd Mon Sep 7 19:25:07 2015 +0800 jacobdai Update gcodeExport.cpp
+e6a888f Mon Sep 7 17:00:05 2015 +0800 jacobdai Update gcodeExport.h
+69ecb86 Mon Sep 7 16:59:35 2015 +0800 jacobdai Update gcodeExport.cpp
+bf225c8 Mon Sep 7 16:22:27 2015 +0800 jacobdai Update gcodeExport.cpp
+318d215 Mon Sep 7 15:51:41 2015 +0800 jacobdai Update gcodeExport.cpp
+fc9ceb9 Mon Sep 7 15:46:16 2015 +0800 jacobdai Update gcodeExport.cpp
+db23b6d Mon Sep 7 14:48:42 2015 +0800 jacobdai Update gcodeExport.cpp
+9c67b40 Mon Sep 7 11:06:55 2015 +0800 jacobdai Update gcodeExport.cpp
+eea84ed Mon Sep 7 10:24:34 2015 +0800 jacobdai Update gcodeExport.cpp
+92d6818 Mon Sep 7 09:56:57 2015 +0800 jacobdai Update gcodeExport.cpp
+ca3d232 Mon Sep 7 09:47:29 2015 +0800 jacobdai Update gcodeExport.cpp
+7b3f77e Mon Sep 7 09:41:13 2015 +0800 jacobdai Update gcodeExport.cpp
+46cd343 Sun Sep 6 19:33:47 2015 +0800 jacobdai Update gcodeExport.cpp
+4110bde Sun Sep 6 16:41:32 2015 +0800 jacobdai Update gcodeExport.cpp
+661e980 Sun Sep 6 16:08:25 2015 +0800 jacobdai Update gcodeExport.cpp
+ed8b8bc Sun Sep 6 15:18:28 2015 +0800 jacobdai Update gcodeExport.cpp
+6e67eaa Sun Sep 6 15:15:51 2015 +0800 jacobdai Update gcodeExport.cpp
+e91e891 Sun Sep 6 14:51:22 2015 +0800 jacobdai Update gcodeExport.cpp
+1ac1ed2 Sun Sep 6 14:37:22 2015 +0800 jacobdai Update gcodeExport.cpp
+e9ef09c Sun Sep 6 14:34:27 2015 +0800 jacobdai Update gcodeExport.cpp
+169ce62 Sun Sep 6 14:04:12 2015 +0800 jacobdai Update gcodeExport.cpp
+9f73c22 Sun Sep 6 13:53:12 2015 +0800 jacobdai Update gcodeExport.cpp
+7e0c828 Sun Sep 6 13:21:51 2015 +0800 jacobdai Update gcodeExport.h
+6d903ab Sun Sep 6 13:21:34 2015 +0800 jacobdai Update gcodeExport.cpp
+cec1f8e Sun Sep 6 13:18:01 2015 +0800 jacobdai Update gcodeExport.cpp
+e4aa023 Sun Sep 6 13:17:44 2015 +0800 jacobdai Update gcodeExport.cpp
+e055879 Sun Sep 6 11:22:36 2015 +0800 jacobdai Update gcodeExport.cpp
+d032384 Sun Sep 6 10:33:34 2015 +0800 jacobdai Update gcodeExport.h
+92f8883 Sun Sep 6 10:32:44 2015 +0800 jacobdai Update gcodeExport.cpp
+c80018b Wed Sep 2 17:16:05 2015 +0800 jacobdai Update gcodeExport.cpp
+e2396aa Wed Sep 2 16:52:24 2015 +0800 jacobdai Update gcodeExport.cpp
+0ed9e17 Wed Sep 2 15:50:28 2015 +0800 jacobdai Update gcodeExport.cpp
+e59f692 Wed Sep 2 15:28:43 2015 +0800 jacobdai Update gcodeExport.cpp
+e971670 Wed Sep 2 15:06:11 2015 +0800 jacobdai Update gcodeExport.cpp
+784f700 Wed Sep 2 15:01:44 2015 +0800 jacobdai Update gcodeExport.cpp
+4b3f72b Wed Sep 2 14:38:47 2015 +0800 jacobdai Update gcodeExport.cpp
+003765f Wed Sep 2 14:28:31 2015 +0800 jacobdai Update gcodeExport.cpp
+e0af68b Wed Sep 2 14:12:02 2015 +0800 jacobdai Update gcodeExport.h
+6ab1621 Wed Sep 2 14:07:32 2015 +0800 jacobdai Update gcodeExport.cpp
+c5648c1 Wed Sep 2 13:38:36 2015 +0800 jacobdai Update gcodeExport.cpp
+ffc6df8 Wed Sep 2 11:09:12 2015 +0800 jacobdai Update gcodeExport.cpp
+d05520e Wed Sep 2 11:03:32 2015 +0800 jacobdai Update gcodeExport.cpp
+174932b Wed Sep 2 10:51:57 2015 +0800 jacobdai Update gcodeExport.cpp
+0194e04 Wed Sep 2 10:27:59 2015 +0800 jacobdai Update gcodeExport.cpp
+d2a12cb Wed Sep 2 10:17:11 2015 +0800 jacobdai Update gcodeExport.cpp
+17b766a Wed Sep 2 10:12:51 2015 +0800 jacobdai Update gcodeExport.h
+cb5a002 Wed Sep 2 10:08:39 2015 +0800 jacobdai Update gcodeExport.cpp
+06a60bd Wed Sep 2 09:50:57 2015 +0800 jacobdai Update gcodeExport.cpp
+83cb76c Wed Sep 2 09:42:46 2015 +0800 jacobdai Update gcodeExport.h
+0160fb0 Wed Sep 2 09:41:20 2015 +0800 jacobdai Update gcodeExport.cpp
+db2a308 Tue Sep 1 13:33:22 2015 +0800 jacobdai Update infill.cpp
+7f946d2 Tue Sep 1 13:23:46 2015 +0800 jacobdai Update infill.cpp
+2e6143f Tue Sep 1 13:14:42 2015 +0800 jacobdai Update infill.cpp
+baaac19 Tue Sep 1 11:20:20 2015 +0800 jacobdai Update infill.cpp
+cfc416d Mon Aug 31 20:36:14 2015 +0800 jacobdai Update fffProcessor.h
+c234925 Mon Aug 31 20:35:28 2015 +0800 jacobdai Update gcodeExport.cpp
+8e3e150 Mon Aug 31 20:20:47 2015 +0800 jacobdai Update gcodeExport.cpp
+06a311f Mon Aug 31 19:49:16 2015 +0800 jacobdai Update gcodeExport.cpp
+ff381f8 Mon Aug 31 19:40:07 2015 +0800 jacobdai Update gcodeExport.cpp
+ec97976 Mon Aug 31 19:02:55 2015 +0800 jacobdai Update gcodeExport.cpp
+b36894e Mon Aug 31 18:55:06 2015 +0800 jacobdai Update gcodeExport.cpp
+7aa3eb1 Fri Aug 28 20:03:14 2015 +0800 jacobdai Update gcodeExport.cpp
+5b49767 Fri Aug 28 16:31:30 2015 +0800 jacobdai Update gcodeExport.cpp
+c35ec15 Fri Aug 28 16:08:59 2015 +0800 jacobdai Update gcodeExport.cpp
+c1cb6c7 Fri Aug 28 14:44:23 2015 +0800 jacobdai Update gcodeExport.cpp
+6e76de2 Fri Aug 28 14:37:38 2015 +0800 jacobdai Update gcodeExport.cpp
+e3f359d Fri Aug 28 14:29:50 2015 +0800 jacobdai Update gcodeExport.cpp
+22d1ceb Fri Aug 28 14:05:07 2015 +0800 jacobdai Update gcodeExport.cpp
+cdc7d9f Fri Aug 28 13:41:19 2015 +0800 jacobdai Update gcodeExport.cpp
+0438e96 Fri Aug 28 11:11:50 2015 +0800 jacobdai Update gcodeExport.cpp
+097f72c Fri Aug 28 11:00:10 2015 +0800 jacobdai Update gcodeExport.cpp
+9e73955 Fri Aug 28 10:51:26 2015 +0800 jacobdai Update gcodeExport.cpp
+a89afd3 Fri Aug 28 10:41:42 2015 +0800 jacobdai Update gcodeExport.cpp
+2d35f2f Fri Aug 28 10:25:56 2015 +0800 jacobdai Update gcodeExport.cpp
+a87a1f9 Fri Aug 28 10:09:18 2015 +0800 jacobdai Update gcodeExport.cpp
+9cf1d7f Fri Aug 28 09:59:15 2015 +0800 jacobdai Update gcodeExport.cpp
+06f2915 Fri Aug 28 09:37:25 2015 +0800 jacobdai Update gcodeExport.cpp
+f7d0ad6 Fri Aug 28 09:33:02 2015 +0800 jacobdai Update gcodeExport.cpp
+c65ddf2 Fri Aug 28 09:17:58 2015 +0800 jacobdai Update gcodeExport.cpp
+404145a Thu Aug 27 23:09:19 2015 +0800 jacobdai Update gcodeExport.cpp
+ded34c1 Thu Aug 27 22:55:29 2015 +0800 jacobdai Update gcodeExport.cpp
+8117fbc Thu Aug 27 21:10:03 2015 +0800 jacobdai Update gcodeExport.cpp
+995861c Thu Aug 27 20:55:51 2015 +0800 jacobdai Update gcodeExport.cpp
+e69f09c Thu Aug 27 20:44:04 2015 +0800 jacobdai Update gcodeExport.cpp
+9413634 Thu Aug 27 20:26:50 2015 +0800 jacobdai Update gcodeExport.cpp
+daa2e24 Thu Aug 27 20:13:18 2015 +0800 jacobdai Update gcodeExport.cpp
+c8820bd Thu Aug 27 19:56:28 2015 +0800 jacobdai Update gcodeExport.cpp
+5088a5d Thu Aug 27 19:39:31 2015 +0800 jacobdai Update gcodeExport.cpp
+24195c1 Thu Aug 27 19:12:07 2015 +0800 jacobdai Update polygonOptimizer.cpp
+885303e Thu Aug 27 19:04:57 2015 +0800 jacobdai Update gcodeExport.cpp
+d5d21ea Thu Aug 27 18:58:38 2015 +0800 jacobdai Update gcodeExport.cpp
+28f766a Thu Aug 27 18:48:54 2015 +0800 jacobdai Update gcodeExport.cpp
+f3b6004 Thu Aug 27 18:47:35 2015 +0800 jacobdai Update gcodeExport.cpp
+5516554 Thu Aug 27 18:32:52 2015 +0800 jacobdai Update gcodeExport.cpp
+61f8233 Thu Aug 27 17:32:28 2015 +0800 jacobdai Update gcodeExport.cpp
+3dbbdfd Thu Aug 27 17:22:39 2015 +0800 jacobdai Update gcodeExport.cpp
+1b2c2fd Thu Aug 27 17:13:06 2015 +0800 jacobdai Update gcodeExport.h
+5c1502c Thu Aug 27 17:06:34 2015 +0800 jacobdai Update gcodeExport.cpp
+bbd87d2 Thu Aug 27 17:00:00 2015 +0800 jacobdai Update gcodeExport.cpp
+bfc7d89 Thu Aug 27 16:33:49 2015 +0800 jacobdai Update gcodeExport.cpp
+86d56f6 Thu Aug 27 15:54:45 2015 +0800 jacobdai Update gcodeExport.cpp
+83cb4a5 Thu Aug 27 15:38:29 2015 +0800 jacobdai Update gcodeExport.cpp
+1d9a074 Thu Aug 27 15:28:26 2015 +0800 jacobdai Update gcodeExport.cpp
+ca19280 Thu Aug 27 15:06:04 2015 +0800 jacobdai Update gcodeExport.cpp
+4de3902 Thu Aug 27 14:55:34 2015 +0800 jacobdai Update gcodeExport.cpp
+a279ed4 Thu Aug 27 14:41:44 2015 +0800 jacobdai Update gcodeExport.cpp
+efeef76 Thu Aug 27 14:24:27 2015 +0800 jacobdai Update gcodeExport.cpp
+181e1ac Thu Aug 27 14:06:46 2015 +0800 jacobdai Update gcodeExport.cpp
+8a1d227 Thu Aug 27 13:56:01 2015 +0800 jacobdai Update gcodeExport.cpp
+dad196a Thu Aug 27 13:56:00 2015 +0800 jacobdai Update polygonOptimizer.cpp
+35bbcc0 Thu Aug 27 13:27:51 2015 +0800 jacobdai Update polygonOptimizer.cpp
+a98de90 Thu Aug 27 13:25:37 2015 +0800 jacobdai Update polygonOptimizer.h
+b1ff57b Thu Aug 27 13:23:35 2015 +0800 jacobdai Update polygonOptimizer.cpp
+bfefd2c Thu Aug 27 13:21:36 2015 +0800 jacobdai Update gcodeExport.cpp
+8db6966 Wed Aug 26 16:32:44 2015 +0800 jacobdai Update gcodeExport.cpp
+9accd7b Wed Aug 26 15:12:31 2015 +0800 jacobdai Update gcodeExport.h
+6b5adf9 Wed Aug 26 15:11:13 2015 +0800 jacobdai Update gcodeExport.cpp
+a885d3c Wed Aug 26 15:05:20 2015 +0800 jacobdai Update gcodeExport.cpp
+fa6ea6f Wed Aug 26 10:58:50 2015 +0800 jacobdai Update gcodeExport.cpp
+cbaf946 Wed Aug 26 10:34:13 2015 +0800 jacobdai Update gcodeExport.cpp
+ccda0bb Wed Aug 26 09:49:11 2015 +0800 jacobdai Update gcodeExport.cpp
+4129be4 Wed Aug 26 09:44:15 2015 +0800 jacobdai Update gcodeExport.cpp
+d9378b7 Wed Aug 26 09:38:45 2015 +0800 jacobdai Update gcodeExport.cpp
+ee21302 Wed Aug 26 09:22:50 2015 +0800 jacobdai Update gcodeExport.cpp
+17d0b1a Tue Aug 25 21:31:26 2015 +0800 jacobdai Update gcodeExport.cpp
+f58feb4 Tue Aug 25 20:34:01 2015 +0800 jacobdai Update gcodeExport.cpp
+bdb3dfa Tue Aug 25 20:02:01 2015 +0800 jacobdai Update gcodeExport.cpp
+a055a0d Tue Aug 25 19:33:02 2015 +0800 jacobdai Update polygonOptimizer.cpp
+b7e3580 Tue Aug 25 19:25:12 2015 +0800 jacobdai Update gcodeExport.cpp
+3b452ae Mon Aug 24 19:38:43 2015 +0800 jacobdai Update polygonOptimizer.cpp
+f5000b2 Mon Aug 24 19:37:16 2015 +0800 jacobdai Update gcodeExport.cpp
+9910d50 Fri Aug 21 16:37:23 2015 +0800 jacobdai Update gcodeExport.cpp
+b947d49 Fri Aug 21 16:21:03 2015 +0800 jacobdai Update gcodeExport.cpp
+77bae51 Fri Aug 21 15:09:39 2015 +0800 jacobdai Update polygonOptimizer.cpp
+111bc54 Fri Aug 21 15:09:15 2015 +0800 jacobdai Update polygonOptimizer.cpp
+3a32efa Fri Aug 21 14:53:15 2015 +0800 jacobdai Update gcodeExport.cpp
+c6b4cb3 Fri Aug 21 14:51:11 2015 +0800 jacobdai Update gcodeExport.cpp
+f3f3ba0 Fri Aug 21 14:48:38 2015 +0800 jacobdai Update gcodeExport.cpp
+6e4c625 Fri Aug 21 14:41:32 2015 +0800 jacobdai Update gcodeExport.cpp
+bf90577 Fri Aug 21 14:38:57 2015 +0800 jacobdai Update gcodeExport.cpp
+9c27730 Fri Aug 21 14:27:56 2015 +0800 jacobdai Update gcodeExport.cpp
+c764cee Fri Aug 21 14:27:06 2015 +0800 jacobdai Update gcodeExport.cpp
+7d9820b Fri Aug 21 14:19:24 2015 +0800 jacobdai Update gcodeExport.cpp
+ded152c Fri Aug 21 14:14:55 2015 +0800 jacobdai Update gcodeExport.cpp
+83b328c Fri Aug 21 14:10:42 2015 +0800 jacobdai Update polygonOptimizer.h
+31aeb13 Fri Aug 21 14:09:22 2015 +0800 jacobdai Update polygonOptimizer.cpp
+1115f3f Thu Aug 20 11:21:04 2015 +0800 jacobdai Update fffProcessor.h
+ff9d65f Wed Aug 19 21:27:14 2015 +0800 jacobdai Update fffProcessor.h
+9e93fc7 Wed Aug 19 21:21:47 2015 +0800 jacobdai Update fffProcessor.h
+68835a2 Tue Aug 18 16:13:15 2015 +0800 jacobdai Update gcodeExport.cpp
+94a9ff0 Tue Aug 18 16:02:59 2015 +0800 jacobdai Update gcodeExport.cpp
+086ccd3 Tue Aug 18 15:47:21 2015 +0800 jacobdai Update gcodeExport.cpp
+eb4b044 Tue Aug 18 15:27:00 2015 +0800 jacobdai Update gcodeExport.cpp
+ad0507f Tue Aug 18 15:03:38 2015 +0800 jacobdai Update gcodeExport.cpp
+1caf348 Tue Aug 18 14:49:52 2015 +0800 jacobdai Update gcodeExport.cpp
+4b911e4 Tue Aug 18 14:49:34 2015 +0800 jacobdai Update polygonOptimizer.cpp
+602f32a Tue Aug 18 14:48:40 2015 +0800 jacobdai Update gcodeExport.cpp
+6b0ef55 Tue Aug 18 14:45:53 2015 +0800 jacobdai Update gcodeExport.cpp
+174c052 Tue Aug 18 14:07:50 2015 +0800 jacobdai Update gcodeExport.cpp
+ecffd47 Tue Aug 18 11:52:27 2015 +0800 jacobdai Update gcodeExport.cpp
+62f5465 Tue Aug 18 10:48:26 2015 +0800 jacobdai Update gcodeExport.cpp
+619279e Tue Aug 18 10:03:36 2015 +0800 jacobdai Update gcodeExport.cpp
+739d139 Tue Aug 18 09:48:16 2015 +0800 jacobdai Update polygonOptimizer.cpp
+75a8202 Tue Aug 18 09:46:44 2015 +0800 jacobdai Update gcodeExport.cpp
+1a1ef8e Tue Aug 18 09:17:48 2015 +0800 jacobdai Update polygonOptimizer.cpp
+702490b Mon Aug 17 21:05:16 2015 +0800 jacobdai Update polygonOptimizer.cpp
+16fdba1 Mon Aug 17 20:49:38 2015 +0800 jacobdai Update polygonOptimizer.cpp
+ed3d6f1 Mon Aug 17 20:33:36 2015 +0800 jacobdai Update polygonOptimizer.cpp
+7f44fba Mon Aug 17 20:14:43 2015 +0800 jacobdai Update polygonOptimizer.cpp
+d1cdee5 Mon Aug 17 20:08:26 2015 +0800 jacobdai Update polygonOptimizer.cpp
+0ae9621 Mon Aug 17 19:57:14 2015 +0800 jacobdai Update polygonOptimizer.cpp
+ed771f6 Mon Aug 17 19:51:22 2015 +0800 jacobdai Update polygonOptimizer.cpp
+d0cd9f9 Mon Aug 17 19:44:53 2015 +0800 jacobdai Update polygonOptimizer.cpp
+c0a5231 Mon Aug 17 19:26:54 2015 +0800 jacobdai Update polygonOptimizer.cpp
+8e013a9 Mon Aug 17 19:22:17 2015 +0800 jacobdai Update polygonOptimizer.cpp
+7a9e3cc Mon Aug 17 19:06:27 2015 +0800 jacobdai Update polygonOptimizer.cpp
+0412861 Mon Aug 17 16:57:42 2015 +0800 jacobdai Update polygonOptimizer.h
+b24f4f2 Mon Aug 17 16:53:11 2015 +0800 jacobdai Update polygonOptimizer.h
+da754d2 Mon Aug 17 16:48:27 2015 +0800 jacobdai Update gcodeExport.cpp
+7a139e6 Mon Aug 17 16:46:42 2015 +0800 jacobdai Update polygonOptimizer.cpp
+9c465ac Mon Aug 17 16:45:02 2015 +0800 jacobdai Update polygonOptimizer.cpp
+9903783 Mon Aug 17 16:36:48 2015 +0800 jacobdai Update fffProcessor.h
+6b4a315 Mon Aug 17 16:26:15 2015 +0800 jacobdai Update fffProcessor.h
+d30a20f Mon Aug 17 16:17:02 2015 +0800 jacobdai Update fffProcessor.h
+3492546 Mon Aug 17 16:13:10 2015 +0800 jacobdai Update fffProcessor.h
+ff59fc3 Mon Aug 17 15:06:21 2015 +0800 jacobdai Update gcodeExport.cpp
+a83659c Mon Aug 17 14:52:39 2015 +0800 jacobdai Update gcodeExport.cpp
+941d44e Fri Aug 14 16:26:23 2015 +0800 jacobdai Update gcodeExport.cpp
+9c25a66 Fri Aug 14 16:21:28 2015 +0800 jacobdai Update gcodeExport.cpp
+ef9a06a Fri Aug 14 16:17:35 2015 +0800 jacobdai Update gcodeExport.cpp
+2fa4f4f Fri Aug 14 16:09:16 2015 +0800 jacobdai Update gcodeExport.cpp
+2c2f8da Fri Aug 14 16:02:05 2015 +0800 jacobdai Update gcodeExport.cpp
+3581b63 Fri Aug 14 15:54:14 2015 +0800 jacobdai Update gcodeExport.cpp
+fa1eea7 Fri Aug 14 15:48:15 2015 +0800 jacobdai Update gcodeExport.cpp
+12fd6e7 Fri Aug 14 15:40:29 2015 +0800 jacobdai Update gcodeExport.cpp
+7bc05da Fri Aug 14 15:33:39 2015 +0800 jacobdai Update gcodeExport.cpp
+6bf1cdd Fri Aug 14 15:27:11 2015 +0800 jacobdai Update gcodeExport.cpp
+17827fb Fri Aug 14 15:06:13 2015 +0800 jacobdai Update gcodeExport.cpp
+36e59b4 Fri Aug 14 15:01:18 2015 +0800 jacobdai Update gcodeExport.cpp
+8134309 Fri Aug 14 14:56:19 2015 +0800 jacobdai Update gcodeExport.cpp
+2786874 Fri Aug 14 14:36:44 2015 +0800 jacobdai Update gcodeExport.cpp
+1c1d372 Fri Aug 14 14:27:44 2015 +0800 jacobdai Update gcodeExport.cpp
+145cef1 Wed Aug 12 21:14:12 2015 +0800 jacobdai Update gcodeExport.cpp
+81c88c8 Wed Aug 12 20:32:10 2015 +0800 jacobdai Update gcodeExport.cpp
+1cdf416 Tue Aug 11 14:29:30 2015 +0800 jacobdai Update polygonOptimizer.cpp
+9112ba8 Tue Aug 11 14:28:47 2015 +0800 jacobdai Update skin.cpp
+4fcfebe Tue Aug 11 14:28:31 2015 +0800 jacobdai Update skin.cpp
+3eb9515 Tue Aug 11 14:27:53 2015 +0800 jacobdai Update inset.cpp
+252efff Tue Aug 11 13:35:26 2015 +0800 jacobdai Update inset.cpp
+63f1459 Tue Aug 11 11:09:23 2015 +0800 jacobdai Update skin.cpp
+42e0cf8 Tue Aug 11 10:55:52 2015 +0800 jacobdai Update skin.cpp
+1e78441 Tue Aug 11 10:42:45 2015 +0800 jacobdai Update skin.cpp
+cf3b33d Tue Aug 11 10:39:51 2015 +0800 jacobdai Update skin.cpp
+3b1499a Mon Aug 10 15:33:06 2015 +0800 jacobdai Update skin.cpp
+ef3863d Mon Aug 10 15:21:33 2015 +0800 jacobdai Update skin.cpp
+6639b6c Mon Aug 10 15:18:29 2015 +0800 jacobdai Update inset.cpp
+1d2101d Mon Aug 10 10:17:31 2015 +0800 jacobdai Update polygonOptimizer.cpp
+ace4e1c Mon Aug 10 10:15:26 2015 +0800 jacobdai Update polygonOptimizer.cpp
+357cba5 Mon Aug 10 10:09:44 2015 +0800 jacobdai Update polygonOptimizer.cpp
+acaca8b Mon Aug 10 10:08:56 2015 +0800 jacobdai Update inset.cpp
+4acc1b1 Mon Aug 3 10:55:23 2015 +0800 jacobdai Update polygonOptimizer.cpp
+965f225 Mon Aug 3 10:51:45 2015 +0800 jacobdai Update polygonOptimizer.cpp
+27bb2bf Mon Aug 3 10:19:49 2015 +0800 jacobdai Update polygonOptimizer.cpp
+0dcb4f7 Mon Aug 3 10:02:23 2015 +0800 jacobdai Update polygonOptimizer.cpp
+bba2478 Thu Jul 30 14:22:11 2015 +0800 jacobdai Update polygonOptimizer.cpp
+280592e Thu Jul 30 10:06:09 2015 +0800 jacobdai Update polygonOptimizer.cpp
+288f0b0 Wed Jul 29 10:52:49 2015 +0800 jacobdai Update polygonOptimizer.cpp
+93c0490 Wed Jul 29 09:47:17 2015 +0800 jacobdai Update polygonOptimizer.cpp
+673f2cc Wed Jul 29 09:19:22 2015 +0800 jacobdai Update polygonOptimizer.cpp
+41f08eb Wed Jul 29 09:19:00 2015 +0800 jacobdai Update polygonOptimizer.cpp
+d23e5af Wed Jul 29 09:18:48 2015 +0800 jacobdai Update polygonOptimizer.cpp
+0082e46 Wed Jul 29 09:18:25 2015 +0800 jacobdai Update polygonOptimizer.cpp
+9f1eff1 Wed Jul 29 09:18:10 2015 +0800 jacobdai Update polygonOptimizer.cpp
+26f710d Tue Jul 28 21:46:49 2015 +0800 jacobdai Update polygonOptimizer.cpp
+1df7957 Tue Jul 28 21:18:07 2015 +0800 jacobdai Update polygonOptimizer.cpp
+18a123c Tue Jul 28 20:58:25 2015 +0800 jacobdai Update polygonOptimizer.cpp
+4cf9318 Tue Jul 28 19:25:12 2015 +0800 jacobdai Update polygonOptimizer.cpp
+8cc7b80 Tue Jul 28 19:19:31 2015 +0800 jacobdai Update polygonOptimizer.cpp
+2a09558 Mon Jul 27 16:48:09 2015 +0800 jacobdai Update polygonOptimizer.cpp
+81fe27a Mon Jul 27 16:45:06 2015 +0800 jacobdai Update polygonOptimizer.cpp
+b15bd50 Mon Jul 27 16:44:02 2015 +0800 jacobdai Update polygonOptimizer.cpp
+84b008a Mon Jul 27 16:07:03 2015 +0800 jacobdai Update polygonOptimizer.cpp
+6d29c05 Mon Jul 27 16:00:21 2015 +0800 jacobdai Update README.md
+3c236cd Mon Jul 27 15:20:55 2015 +0800 jacobdai Update polygonOptimizer.cpp
