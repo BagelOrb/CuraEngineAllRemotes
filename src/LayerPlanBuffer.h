@@ -96,7 +96,7 @@ private:
     void insertPreheatCommand(ExtruderPlan& extruder_plan_before, double time_before_extruder_plan_end, int extruder, double temp);
     
     /*!
-     * Compute the time needed to preheat, based either on the time the extruder has been on standby 
+     * Compute the time needed to preheat (with 1 second plus margin), based either on the time the extruder has been on standby
      * or based on the temp of the previous extruder plan which has the same extruder nr.
      * 
      * \param extruder_plans The extruder plans in the buffer, moved to a temporary vector (from lower to upper layers)

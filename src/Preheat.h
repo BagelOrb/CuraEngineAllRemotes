@@ -106,6 +106,25 @@ public:
     {
         return config_per_extruder[extruder].material_final_print_temperature;
     }
+    /*!
+     * Returns the time needed to reach the stand by temperature.
+     * Two cases are considered:
+     * the case where the standby temperature is reached  \__/    .
+     * and the case where it isn't  \/    .
+     *
+     * IT is assumed that the printer is not printing during this cool down and warm up time.
+     *
+     * Assumes from_temp is approximately the same as @p temp
+     *
+     * \param extruder The extruder used
+     * \param time_to_heat_from_standby_to_print_temp time to heat up from standby temperature to a given temperature.
+     */
+    double timeToStandbyTempCoolDownWarmUp(unsigned int extruder, double time_to_heat_from_standby_to_print_temp)
+    {
+        const double time_ratio_cooldown_heatup (config_per_extruder[extruder].time_to_cooldown_1_degree / config_per_extruder[extruder].time_to_heatup_1_degree);
+
+        return time_to_heat_from_standby_to_print_temp * (1.0 + time_ratio_cooldown_heatup);
+    }
 
     /*!
      * Set the nozzle and material temperature settings for each extruder train.

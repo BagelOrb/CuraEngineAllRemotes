@@ -172,7 +172,7 @@ void LayerPlanBuffer::insertTempCommands(std::vector<ExtruderPlan*>& extruder_pl
     { // set previous extruder to standby temperature
         extruder_plan.prev_extruder_standby_temp = preheat_config.getStandbyTemp(prev_extruder);
     }
-    
+
     if (prev_extruder == extruder)
     {
         insertPreheatCommand_singleExtrusion(*prev_extruder_plan, extruder, extruder_plan.printing_temperature);
