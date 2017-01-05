@@ -50,7 +50,7 @@ public:
  * 
  * \param meshgroup The meshgroup where to store the mesh
  * \param filename The filename of the mesh file
- * \param transformation The transformation applied to all vertices
+ * \param transformation The transformation applied to all vertices 所有顶点的变换
  * \param object_parent_settings (optional) The parent settings object of the new mesh. Defaults to \p meshgroup if none is given.
  * \return whether the file could be loaded
  */

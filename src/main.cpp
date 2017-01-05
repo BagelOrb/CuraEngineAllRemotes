@@ -71,6 +71,9 @@ void print_call(int argc, char **argv)
     cura::logError("\n");
 }
 
+/**
+ * 主方法:链接
+ */
 void connect(int argc, char **argv)
 {
     std::string ip;
@@ -118,6 +121,9 @@ void connect(int argc, char **argv)
     CommandSocket::getInstance()->connect(ip, port);
 }
 
+/**
+ * 主方法:切片
+ */
 void slice(int argc, char **argv)
 {
     FffProcessor::getInstance()->time_keeper.restart();

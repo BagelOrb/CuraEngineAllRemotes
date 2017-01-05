@@ -79,6 +79,7 @@ public:
     /*!
      * Offset the whole mesh (all vertices and the bounding box).
      * \param offset The offset byu which to offset the whole mesh.
+     * 给模型设置offset
      */
     void offset(Point3 offset)
     {

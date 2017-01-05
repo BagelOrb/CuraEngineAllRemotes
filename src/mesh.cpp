@@ -30,7 +30,7 @@ Mesh::Mesh(SettingsBaseVirtual* parent)
 
 void Mesh::addFace(Point3& v0, Point3& v1, Point3& v2)
 {
-    int vi0 = findIndexOfVertex(v0);
+    int vi0 = findIndexOfVertex(v0); // 得到顶点的一个哈希值
     int vi1 = findIndexOfVertex(v1);
     int vi2 = findIndexOfVertex(v2);
     if (vi0 == vi1 || vi1 == vi2 || vi0 == vi2) return; // the face has two vertices which get assigned the same location. Don't add the face.
@@ -41,7 +41,7 @@ void Mesh::addFace(Point3& v0, Point3& v1, Point3& v2)
     face.vertex_index[0] = vi0;
     face.vertex_index[1] = vi1;
     face.vertex_index[2] = vi2;
-    vertices[face.vertex_index[0]].connected_faces.push_back(idx);
+    vertices[face.vertex_index[0]].connected_faces.push_back(idx);// 添加点到面的反向链接
     vertices[face.vertex_index[1]].connected_faces.push_back(idx);
     vertices[face.vertex_index[2]].connected_faces.push_back(idx);
 }
@@ -104,7 +104,7 @@ int Mesh::findIndexOfVertex(const Point3& v)
     vertex_hash_map[hash].push_back(vertices.size());
     vertices.emplace_back(v);
     
-    aabb.include(v);
+    aabb.include(v);// 顶点放入aabb检查,计算打印物体偏移
     
     return vertices.size() - 1;
 }

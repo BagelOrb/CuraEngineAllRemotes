@@ -198,6 +198,14 @@ bool loadMeshSTL_ascii(Mesh* mesh, const char* filename, const FMatrix3x3& matri
     FPoint3 vertex;
     int n = 0;
     Point3 v0(0,0,0), v1(0,0,0), v2(0,0,0);
+    /*
+     * 代码来看,文本文件格式应该是如下
+     * solid
+     * vertex 1.0 1.5 2.5 # 这代表一个点,每三个点一组,组成一个面.
+     * vertex 1.2 1.2 2.1
+     * vertex 1.3 1.3 2.5
+     * ...
+     */
     while(fgets_(buffer, sizeof(buffer), f))
     {
         if (sscanf(buffer, " vertex %f %f %f", &vertex.x, &vertex.y, &vertex.z) == 3)

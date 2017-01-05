@@ -66,6 +66,9 @@ public:
     bool operator!=(const Point3& p) const { return x!=p.x||y!=p.y||z!=p.z; }
 
 
+    /**
+     * 此方法可以增加<<到输出流的方法
+     */
     template<class CharT, class TraitsT>
     friend
     std::basic_ostream<CharT, TraitsT>&
@@ -93,11 +96,17 @@ public:
         return vSize2() <= len*len;
     }
 
+    /**
+     * return 原点距离^2
+     */
     int64_t vSize2() const
     {
         return int64_t(x)*int64_t(x)+int64_t(y)*int64_t(y)+int64_t(z)*int64_t(z);
     }
 
+    /**
+     * return 原点距离
+     */
     int32_t vSize() const
     {
         return sqrt(vSize2());
