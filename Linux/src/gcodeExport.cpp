@@ -234,7 +234,7 @@ void GCodeExport::writeMove(Point p, int speed, int lineWidth)
                 isRetracted = true;
             }
         }
-        fprintf(f, "G1 X%0.2f Y%0.2f Z%0.2f F%0.1f\n", INT2MM(p.X - extruderOffset[extruderNr].X), INT2MM(p.Y - extruderOffset[extruderNr].Y), INT2MM(zPos), fspeed);
+        fprintf(f, "G1 X%0.3f Y%0.3f Z%0.3f F%0.1f\n", INT2MM(p.X - extruderOffset[extruderNr].X), INT2MM(p.Y - extruderOffset[extruderNr].Y), INT2MM(zPos), fspeed);
     }else{
         
         //Normal E handling.
@@ -244,7 +244,7 @@ void GCodeExport::writeMove(Point p, int speed, int lineWidth)
             if (isRetracted)
             {
                 if (retractionZHop > 0)
-                    fprintf(f, "G1 Z%0.2f\n", float(currentPosition.z)/1000);
+                    fprintf(f, "G1 Z%0.3f\n", float(currentPosition.z)/1000);
                 if (flavor == GCODE_FLAVOR_ULTIGCODE || flavor == GCODE_FLAVOR_REPRAP_VOLUMATRIC)
                 {
                     fprintf(f, "G11\n");
@@ -270,9 +270,9 @@ void GCodeExport::writeMove(Point p, int speed, int lineWidth)
             currentSpeed = speed;
         }
 
-        fprintf(f, " X%0.2f Y%0.2f", INT2MM(p.X - extruderOffset[extruderNr].X), INT2MM(p.Y - extruderOffset[extruderNr].Y));
+        fprintf(f, " X%0.3f Y%0.3f", INT2MM(p.X - extruderOffset[extruderNr].X), INT2MM(p.Y - extruderOffset[extruderNr].Y));
         if (zPos != currentPosition.z)
-            fprintf(f, " Z%0.2f", INT2MM(zPos));
+            fprintf(f, " Z%0.3f", INT2MM(zPos));
         if (lineWidth != 0)
             fprintf(f, " %c%0.5f", extruderCharacter[extruderNr], extrusionAmount);
 
@@ -328,7 +328,7 @@ void GCodeExport::writeRetraction()
             estimateCalculator.plan(TimeEstimateCalculator::Position(INT2MM(currentPosition.x), INT2MM(currentPosition.y), INT2MM(currentPosition.z), extrusionAmount - retractionAmount), currentSpeed);
         }
         if (retractionZHop > 0)
-            fprintf(f, "G1 Z%0.2f\n", INT2MM(currentPosition.z + retractionZHop));
+            fprintf(f, "G1 Z%0.3f\n", INT2MM(currentPosition.z + retractionZHop));
         extrusionAmountAtPreviousRetraction = extrusionAmount;
         isRetracted = true;
     }
