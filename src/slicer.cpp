@@ -1,5 +1,12 @@
 /** Copyright (C) 2013 David Braam - Released under terms of the AGPLv3 License */
 #include <stdio.h>
+#include <stdint.h>
+#include <sys/mman.h>
+#include <tuple>
+#include <benejson/pull.hh>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 #include <algorithm> // remove_if
 #include <queue>
@@ -10,7 +17,7 @@
 
 #include "slicer.h"
 
-
+using BNJ::PullParser;
 namespace cura {
 
 int largest_neglected_gap_first_phase = MM2INT(0.01); //!< distance between two line segments regarded as connected
