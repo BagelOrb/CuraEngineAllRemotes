@@ -505,8 +505,8 @@ public:
 		clipper.AddPaths(paths, ClipperLib::ptSubject, true);
 		clipper.AddPaths(other.paths, ClipperLib::ptClip, true);
 		clipper.Execute(ClipperLib::ctIntersection, ret.paths);
-        return ret;
-    }
+		return ret;
+	}
     /*!
      * Clips input line segments by this Polygons.
      * \param other Input line segments to be cropped
