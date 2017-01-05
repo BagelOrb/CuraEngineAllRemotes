@@ -7,7 +7,7 @@
 
 #include "modelFile.h"
 #include "../utils/logoutput.h"
-#include "../utils/string.h"
+#include "../utils/curastring.h"
 
 FILE* binaryMeshBlob = nullptr;
 

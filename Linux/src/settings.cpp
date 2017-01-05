@@ -2,7 +2,7 @@
 #include <fstream>
 #include <stdio.h>
 #include "utils/logoutput.h"
-#include "utils/string.h"
+#include "utils/curastring.h"
 
 #include "settings.h"
 

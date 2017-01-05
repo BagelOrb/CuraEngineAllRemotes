@@ -307,7 +307,75 @@ void SlicerLayer::makePolygons(OptimizedVolume* ov, bool keepNoneClosed, bool ex
     //Finally optimize all the polygons. Every point removed saves time in the long run.
     optimizePolygons(polygonList);
 }
+    
+SlicerLayer* Slicer::sliceLayer(OptimizedVolume* ov,unsigned int layerNr, int32_t initial, int32_t thickness, bool keepNoneClosed, bool extensiveStitching) {
+    Point3 modelSize = ov->model->modelSize;
+    Slicer tmpSlicer;
+        
+    unsigned int layerCount = (modelSize.z - initial) / thickness + 1;
+    //log("Layer count: %i\n", layerCount);
+    if (layerNr > layerCount) {
+        log("Layer number exceeded layer count. (%i layer count, wanted layer %i)",layerCount,layerNr);
+        return NULL;
+    }
+    
+    SlicerLayer* layer = new SlicerLayer();
+    
+    layer->z = initial + thickness * layerNr;
+    
+    for(unsigned int i=0; i<ov->faces.size(); i++)
+    {
+        Point3 p0 = ov->points[ov->faces[i].index[0]].p;
+        Point3 p1 = ov->points[ov->faces[i].index[1]].p;
+        Point3 p2 = ov->points[ov->faces[i].index[2]].p;
+        int32_t minZ = p0.z;
+        int32_t maxZ = p0.z;
+        if (p1.z < minZ) minZ = p1.z;
+        if (p2.z < minZ) minZ = p2.z;
+        if (p1.z > maxZ) maxZ = p1.z;
+        if (p2.z > maxZ) maxZ = p2.z;
+        
+        //for(int32_t layerNr = (minZ - initial) / thickness; layerNr <= (maxZ - initial) / thickness; layerNr++)
+        //{
+        int32_t z = layerNr * thickness + initial;
+        //if (z < minZ) continue;
+        //if (layerNr < 0) continue;
+        
+        SlicerSegment s;
+        if (p0.z < z && p1.z >= z && p2.z >= z)
+            s = tmpSlicer.project2D(p0, p2, p1, z);
+        else if (p0.z > z && p1.z < z && p2.z < z)
+            s = tmpSlicer.project2D(p0, p1, p2, z);
+        
+        else if (p1.z < z && p0.z >= z && p2.z >= z)
+            s = tmpSlicer.project2D(p1, p0, p2, z);
+        else if (p1.z > z && p0.z < z && p2.z < z)
+            s = tmpSlicer.project2D(p1, p2, p0, z);
+        
+        else if (p2.z < z && p1.z >= z && p0.z >= z)
+            s = tmpSlicer.project2D(p2, p1, p0, z);
+        else if (p2.z > z && p1.z < z && p0.z < z)
+            s = tmpSlicer.project2D(p2, p0, p1, z);
+        else
+        {
+            //Not all cases create a segment, because a point of a face could create just a dot, and two touching faces
+            //  on the slice would create two segments
+            continue;
+        }
+        layer->faceToSegmentIndex[i] = layer->segmentList.size();
+        s.faceIndex = i;
+        s.addedToPolygon = false;
+        layer->segmentList.push_back(s);
+        //}
+    }
+    
+    layer->makePolygons(ov, keepNoneClosed, extensiveStitching);
+    
+    return layer;
+}
 
+Slicer::Slicer(){}
+    
 
 Slicer::Slicer(OptimizedVolume* ov, int32_t initial, int32_t thickness, bool keepNoneClosed, bool extensiveStitching)
 {

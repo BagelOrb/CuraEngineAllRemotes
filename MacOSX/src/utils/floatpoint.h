@@ -11,6 +11,7 @@ They represent millimeters in 3D space.
 
 #include <stdint.h>
 #include <math.h>
+#include <sstream>
 
 class FPoint3
 {
@@ -29,6 +30,12 @@ public:
     
     bool operator==(FPoint3& p) const { return x==p.x&&y==p.y&&z==p.z; }
     bool operator!=(FPoint3& p) const { return x!=p.x||y!=p.y||z!=p.z; }
+    
+    const char* str(){
+    	std::stringstream out;
+    	out << "[" << x << "," << y << "," << z << "]";
+		return out.str().c_str();    	
+    }
     
     double max()
     {
@@ -77,6 +84,14 @@ public:
             MM2INT(p.x * m[0][0] + p.y * m[1][0] + p.z * m[2][0]),
             MM2INT(p.x * m[0][1] + p.y * m[1][1] + p.z * m[2][1]),
             MM2INT(p.x * m[0][2] + p.y * m[1][2] + p.z * m[2][2]));
+    }
+    
+    FPoint3 applyFloat(FPoint3 p)
+    {
+        return FPoint3(
+                       (p.x * m[0][0] + p.y * m[1][0] + p.z * m[2][0]),
+                       (p.x * m[0][1] + p.y * m[1][1] + p.z * m[2][1]),
+                       (p.x * m[0][2] + p.y * m[1][2] + p.z * m[2][2]));
     }
 };
 

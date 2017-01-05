@@ -35,17 +35,17 @@ void log(const char* fmt, ...)
 
     va_list args;
     va_start(args, fmt);
-    vfprintf(stderr, fmt, args);
+    vfprintf(stdout, fmt, args);
     va_end(args);
-    fflush(stderr);
+    fflush(stdout);
 }
 void logProgress(const char* type, int value, int maxValue)
 {
     if (!progressLogging)
         return;
 
-    fprintf(stderr, "Progress:%s:%i:%i\n", type, value, maxValue);
-    fflush(stderr);
+    fprintf(stdout, "Progress:%s:%i:%i\n", type, value, maxValue);
+    fflush(stdout);
 }
 
 }//namespace cura
