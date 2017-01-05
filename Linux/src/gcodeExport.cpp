@@ -19,6 +19,7 @@ GCodeExport::GCodeExport()
     minimalExtrusionBeforeRetraction = 0.0;
     extrusionAmountAtPreviousRetraction = -10000;
     extruderSwitchRetraction = 14.5;
+    extruderSwitchReturn = 0.0;
     extruderNr = 0;
     currentFanSpeed = -1;
     
@@ -105,12 +106,13 @@ void GCodeExport::setExtrusion(int layerThickness, int filamentDiameter, int flo
         extrusionPerMM = INT2MM(layerThickness) / filamentArea * double(flow) / 100.0;
 }
 
-void GCodeExport::setRetractionSettings(int retractionAmount, int retractionSpeed, int extruderSwitchRetraction, int minimalExtrusionBeforeRetraction, int zHop, int retractionAmountPrime)
+void GCodeExport::setRetractionSettings(int retractionAmount, int retractionSpeed, int extruderSwitchRetraction, int extruderSwitchReturn, int minimalExtrusionBeforeRetraction, int zHop, int retractionAmountPrime)
 {
     this->retractionAmount = INT2MM(retractionAmount);
     this->retractionAmountPrime = INT2MM(retractionAmountPrime);
     this->retractionSpeed = retractionSpeed;
     this->extruderSwitchRetraction = INT2MM(extruderSwitchRetraction);
+    this->extruderSwitchReturn = INT2MM(extruderSwitchReturn);
     this->minimalExtrusionBeforeRetraction = INT2MM(minimalExtrusionBeforeRetraction);
     this->retractionZHop = zHop;
 }
@@ -361,8 +363,14 @@ void GCodeExport::switchExtruder(int newExtruder)
     isRetracted = true;
     if (flavor == GCODE_FLAVOR_MAKERBOT)
         fprintf(f, "M135 T%i\n", extruderNr);
-    else
+    else {
         fprintf(f, "T%i\n", extruderNr);
+        if (this->extruderSwitchReturn > 0.0)
+        {
+          fprintf(f, "G1 F%i %c%0.5f\n", retractionSpeed * 60, extruderCharacter[extruderNr], (float)extruderSwitchReturn);
+          extrusionAmount += extruderSwitchRetraction;
+        }
+    }
 }
 
 void GCodeExport::writeCode(const char* str)

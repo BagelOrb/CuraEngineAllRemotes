@@ -54,6 +54,7 @@ ConfigSettings::ConfigSettings()
     SETTING(retractionAmountPrime, 0);
     SETTING(retractionSpeed, 45);
     SETTING(retractionAmountExtruderSwitch, 14500);
+    SETTING(returnAmountExtruderSwitch, 0);
     SETTING(retractionMinimalDistance, 1500);
     SETTING(minimalExtrusionBeforeRetraction, 100);
     SETTING(retractionZHop, 0);
